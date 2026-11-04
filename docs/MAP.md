@@ -9,10 +9,14 @@ Search this file before creating anything.
 - layers.ts: config/layers: the six layer configs in locked top-to-bottom order. @see docs/COPY.md, src/config/types.ts
   exports: LAYERS
   uses: src/config/types
-- palette.ts: config/palette: the only place hex colors may live, plus lighten/darken. @see docs/DESIGN.md, src/config/types.ts
-  exports: PALETTE, PaletteName, lighten, darken
+- palette.ts: config/palette: the only place hex colors may live, plus lighten/darken and the theme palettes. @see docs/DESIGN.md (Dual theme), src/config/theme.ts
+  exports: PALETTE, PaletteName, lighten, darken, LIGHT, DARK
+  uses: src/config/theme
 - site.ts: config/site: person, links and availability in one place. @see docs/COPY.md, src/content/en.ts
   exports: SITE
+- theme.ts: config/theme: the light and dark palettes as semantic roles, shared by CSS and the scene. @see docs/DESIGN.md (Dual theme), src/styles/tokens.css
+  exports: ThemeName, ThemeColors
+  uses: src/config/palette
 - tuning.ts: config/tuning: geometry, scroll step, camera and render tuning constants. @see docs/DESIGN.md, docs/MOTION.md, src/config/types.ts
   exports: FOOTPRINT, SLAB_T, WALL_H, WALL_THICK, CORNER_R, LIFT, STEP_VH, CAM_DIR, CAM_DISTANCE, CAM_TARGET_OFFSET_Y, CAM_VIEW_HEIGHT, CAM_DAMP_LAMBDA, EXPOSURE, MAX_PIXEL_RATIO, SHADOW_MAP_DESKTOP, SHADOW_MAP_MOBILE
   uses: src/config/types
@@ -256,7 +260,7 @@ Search this file before creating anything.
 - Hero.astro: sections/Hero: tall scroll stage, sticky canvas mount, poster, layer nav, hero copy, no-JS fallback. @see docs/MOTION.md, src/styles/hud.css, src/styles/sections.css
   uses: src/config/layers, src/lib/i18n
 - Hud.astro: sections/Hud: sticky header with name, role, nav links, availability, progress bar. @see src/styles/hud.css, docs/DESIGN.md (HUD and UI style)
-  uses: src/config/site, src/config/layers, src/lib/i18n, src/lib/bus
+  uses: src/config/site, src/config/layers, src/lib/i18n, src/lib/bus, src/ui/theme
 - Toolkit.astro: sections/Toolkit: six tiles, one per layer, with tool chips. @see docs/DESIGN.md (Sections), src/config/layers.ts
   uses: src/config/layers, src/lib/i18n
 
@@ -272,3 +276,6 @@ Search this file before creating anything.
 - preview.ts: ui/preview: the preview card; follows the hovered or selected slab. @see docs/MOTION.md (Pick, hover, touch), src/scene/api.ts, src/lib/bus.ts
   exports: initPreview
   uses: src/lib/bus, src/config/layers, src/scene/api, src/lib/ticker, src/lib/i18n
+- theme.ts: ui/theme: the theme toggle; flips data-theme, persists the choice, emits on the bus. @see docs/DESIGN.md (Dual theme), src/config/theme.ts, src/sections/Hud.astro
+  exports: initThemeToggle
+  uses: src/lib/bus, src/config/theme

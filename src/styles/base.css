@@ -101,3 +101,24 @@ button {
     scroll-behavior: auto;
   }
 }
+
+/* Theme switches ease in place; disabled for reduced motion (docs/MOTION.md). */
+@media (prefers-reduced-motion: no-preference) {
+  body,
+  .hud,
+  .hud-nav a,
+  .btn,
+  .tile,
+  .panel,
+  .contact-panel,
+  .detail-panel,
+  .preview-card,
+  .sample-card,
+  .cap-list li,
+  .chip,
+  .layer-nav button,
+  .stack-fallback article,
+  .footer {
+    transition: background-color 0.25s, color 0.25s, border-color 0.25s, box-shadow 0.25s;
+  }
+}

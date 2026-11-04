@@ -29,6 +29,15 @@ const links = [
       <span class="dot" aria-hidden="true"></span>
       {t('contact.availability')}
     </p>
+    <button type="button" id="theme-toggle" class="theme-toggle" aria-pressed="false" aria-label={t('a11y.themeToggle')}>
+      <svg class="icon-sun" viewBox="0 0 24 24" aria-hidden="true">
+        <circle cx="12" cy="12" r="4.5" />
+        <path d="M12 2v3M12 19v3M2 12h3M19 12h3M4.5 4.5l2.1 2.1M17.4 17.4l2.1 2.1M19.5 4.5l-2.1 2.1M6.6 17.4l-2.1 2.1" />
+      </svg>
+      <svg class="icon-moon" viewBox="0 0 24 24" aria-hidden="true">
+        <path d="M20 14.5A8.5 8.5 0 0 1 9.5 4a8.5 8.5 0 1 0 10.5 10.5z" />
+      </svg>
+    </button>
     <ol class="progress" aria-hidden="true">
       {LAYERS.map((l) => (
         <li style={`--layer-c: var(--c-${l.color})`}></li>
@@ -39,10 +48,12 @@ const links = [
 
 <script>
   import { bus } from '@/lib/bus';
+  import { initThemeToggle } from '@/ui/theme';
   const bar = document.querySelector<HTMLElement>('.progress');
   if (bar) {
     bus.on('step:change', ({ step }) => {
       [...bar.children].forEach((li, i) => li.classList.toggle('on', i <= step));
     });
   }
+  initThemeToggle(document.getElementById('theme-toggle'));
 </script>

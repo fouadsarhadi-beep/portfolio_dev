@@ -46,6 +46,7 @@ export const en = {
     skipToContent: 'Skip to content',
     openLayer: 'Open layer',
     close: 'Close',
+    themeToggle: 'Toggle color theme',
   },
   footer: {
     note: 'Built as one page and six layers.',

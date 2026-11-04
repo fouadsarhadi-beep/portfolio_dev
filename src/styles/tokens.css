@@ -18,7 +18,7 @@
   --led-amber: #FFC857;
   --led-red: #FF8A80;
 
-  /* Layer colors */
+  /* Layer accents (light theme; values mirror LIGHT.layerAccents in config/theme.ts) */
   --c-butter: #F5C64F;
   --c-lilac: #B9A8EE;
   --c-peach: #F9A87B;
@@ -56,4 +56,26 @@
   /* Layout */
   --content-max: 68rem;
   --hud-h: 56px;
+}
+
+/* Dark theme (values mirror DARK in config/theme.ts; approved design in docs/DESIGN.md) */
+[data-theme='dark'] {
+  --bg: #090B0E;
+  --bg-glow: #10151C;
+  --surface: #11151A;
+  --line: #303943;
+  --ink: #E7E9E8;
+  --ink-soft: #A1A9AE;
+  --wall: #1A2029;
+  --wall-shade: #161B22;
+  --wood: #4A4036;
+  --c-white: #DDE1E6;
+  --graphite: #6B7480;
+  --c-butter: #F6CE66;
+  --c-lilac: #C5B6F2;
+  --c-peach: #FBB894;
+  --c-rose: #F5AFC4;
+  --c-blue: #A8CCEF;
+  --c-sage: #BFD8B2;
+  --c-steel: #BCC9DB;
 }

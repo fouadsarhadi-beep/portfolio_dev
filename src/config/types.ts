@@ -38,6 +38,7 @@ export interface StackEvents {
   'layer:open': { id: LayerId };
   'layer:close': undefined;
   'step:change': { step: number };
+  'theme:change': { name: 'light' | 'dark' };
 }
 
 /** Debug state on window.__stack, refreshed every frame (docs/WIRING.md). */
