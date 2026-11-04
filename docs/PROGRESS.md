@@ -1,6 +1,6 @@
 # PROGRESS
 
-Current task: T15 — merge design and frontend rooms
+Current task: T20 — room-by-room visual refinement
 
 ## Handoff note (max 8 lines, rewrite each session)
 T14 done: all specs now describe the approved six-layer architecture (content, translation, seo, web-design-development, cms, infrastructure; 5 scroll steps) and the dual-theme system (light + dark, palettes in palette.ts, tokens.css [data-theme='dark'], scene role registry per docs/DESIGN.md). Code still has seven layers until T15/T16 — docs describe the approved target.

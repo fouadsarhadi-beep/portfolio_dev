@@ -15,8 +15,11 @@ export function initLabels(): LabelParts {
   }
 
   // Buttons become absolutely positioned children of the sticky stage,
-  // one per slab, following its right face every frame.
+  // one per slab, following its right face every frame. Clearing the CSS
+  // transform matters: it would keep the nav a stacking context + containing
+  // block, trapping the buttons below the canvas (T19 QA finding).
   nav.style.position = 'static';
+  nav.style.transform = 'none';
   for (const li of nav.querySelectorAll('li')) {
     (li as HTMLElement).style.display = 'contents';
   }
@@ -24,6 +27,7 @@ export function initLabels(): LabelParts {
     btn.style.position = 'absolute';
     btn.style.left = '0';
     btn.style.top = '0';
+    btn.style.zIndex = '4'; // above the canvas (z 2), below the preview card (z 6)
     btn.style.willChange = 'transform';
   }
 
