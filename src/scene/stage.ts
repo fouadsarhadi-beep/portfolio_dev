@@ -1,7 +1,8 @@
-/** @module scene/stage: ground, platform, dust particles and floating shapes around the stack. @see docs/DESIGN.md (Environment around the stack), src/scene/loop.ts */
+/** @module scene/stage: ground, platform, dust particles and floating shapes around the stack. @see docs/DESIGN.md (Environment around the stack), src/scene/loop.ts, src/scene/scene-theme.ts */
 import * as THREE from 'three';
 import { PALETTE, lighten, darken } from '@/config/palette';
 import { prefersReducedMotion } from '@/lib/reduced-motion';
+import { registerMaterial, registerValue } from './scene-theme';
 
 const PLATFORM_R = 4.8;
 const PLATFORM_H = 0.5;
@@ -27,9 +28,11 @@ export function createStage(tier: 'high' | 'low'): Stage {
   group.add(ground);
 
   // Round platform under the stack. Its top surface is y = 0, where the stack rests.
+  const platformMat = new THREE.MeshStandardMaterial({ color: PALETTE.wall, roughness: 0.9, metalness: 0 });
+  registerMaterial((c) => c.wall, platformMat);
   const platform = new THREE.Mesh(
     new THREE.CylinderGeometry(PLATFORM_R, PLATFORM_R + 0.15, PLATFORM_H, 64),
-    new THREE.MeshStandardMaterial({ color: PALETTE.wall, roughness: 0.9, metalness: 0 }),
+    platformMat,
   );
   platform.position.y = -PLATFORM_H / 2;
   platform.receiveShadow = true;
@@ -76,9 +79,11 @@ export function createStage(tier: 'high' | 'low'): Stage {
 }
 
 function addRing(group: THREE.Group, radius: number): void {
+  const ringMat = new THREE.MeshBasicMaterial({ color: darken(PALETTE.wall, 0.25), transparent: true, opacity: 0.5 });
+  registerMaterial((c) => c.wall, ringMat, (hex) => darken(hex, 0.25));
   const ring = new THREE.Mesh(
     new THREE.RingGeometry(radius, radius + 0.08, 64),
-    new THREE.MeshBasicMaterial({ color: darken(PALETTE.wall, 0.25), transparent: true, opacity: 0.5 }),
+    ringMat,
   );
   ring.rotation.x = -Math.PI / 2;
   ring.position.y = 0.002; // platform top surface
@@ -112,20 +117,20 @@ function makeDust(count: number): Dust {
 interface ShapeSpec { mesh: THREE.Mesh; baseY: number; speed: number; phase: number }
 
 function makeShapes(): ShapeSpec[] {
-  // Three to five floating shapes in palette colors at different depths (docs/DESIGN.md).
-  const specs: Array<{ color: string; x: number; y: number; z: number; s: number; kind: 'round' | 'square' }> = [
-    { color: PALETTE.butter, x: -7.5, y: 6.5, z: -5.5, s: 0.55, kind: 'round' },
-    { color: PALETTE.blue, x: 7.8, y: 10.5, z: -6.0, s: 0.42, kind: 'square' },
-    { color: PALETTE.lilac, x: -8.2, y: 13.5, z: 4.5, s: 0.5, kind: 'round' },
-    { color: PALETTE.sage, x: 8.4, y: 3.5, z: 5.2, s: 0.38, kind: 'square' },
+  // Three to five floating shapes in layer accents at different depths (docs/DESIGN.md).
+  const specs: Array<{ role: string; x: number; y: number; z: number; s: number; kind: 'round' | 'square' }> = [
+    { role: 'content', x: -7.5, y: 6.5, z: -5.5, s: 0.55, kind: 'round' },
+    { role: 'web-design-development', x: 7.8, y: 10.5, z: -6.0, s: 0.42, kind: 'square' },
+    { role: 'translation', x: -8.2, y: 13.5, z: 4.5, s: 0.5, kind: 'round' },
+    { role: 'cms', x: 8.4, y: 3.5, z: 5.2, s: 0.38, kind: 'square' },
   ];
   return specs.map((sp, i) => {
     const geo = sp.kind === 'round'
       ? new THREE.CylinderGeometry(sp.s, sp.s, sp.s * 0.35, 24)
       : new THREE.BoxGeometry(sp.s * 1.3, sp.s * 0.35, sp.s * 1.3);
-    const mesh = new THREE.Mesh(geo, new THREE.MeshStandardMaterial({
-      color: lighten(sp.color, 0.25), roughness: 0.85, metalness: 0,
-    }));
+    const mat = new THREE.MeshStandardMaterial({ color: PALETTE.butter, roughness: 0.85, metalness: 0 });
+    registerMaterial((c) => c.layerAccents[sp.role], mat, (hex) => lighten(hex, 0.25));
+    const mesh = new THREE.Mesh(geo, mat);
     mesh.position.set(sp.x, sp.y, sp.z);
     mesh.rotation.y = i * 1.1;
     return { mesh, baseY: sp.y, speed: 0.5 + i * 0.13, phase: i * 1.7 };

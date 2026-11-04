@@ -30,4 +30,8 @@ export interface ThemeColors {
   layerAccents: Record<string, string>;
 }
 
-export { LIGHT, DARK } from './palette';
+import { LIGHT, DARK } from './palette';
+
+export { LIGHT, DARK };
+
+export const THEMES: Record<ThemeName, ThemeColors> = { light: LIGHT, dark: DARK };

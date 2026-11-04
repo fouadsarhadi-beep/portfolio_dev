@@ -1,16 +1,17 @@
-/** @module scene/rooms/shell: room floor, back walls, AO strips and the shared material kit. @see docs/ROOMS.md (Rules), docs/DESIGN.md, src/scene/rooms/props/screen.ts */
+/** @module scene/rooms/shell: room floor, back walls, AO strips and the shared material kit. @see docs/ROOMS.md (Rules), docs/DESIGN.md, src/scene/rooms/props/screen.ts, src/scene/scene-theme.ts */
 import * as THREE from 'three';
 import { FOOTPRINT, WALL_H, WALL_THICK } from '@/config/tuning';
 import { PALETTE, lighten, darken } from '@/config/palette';
 import type { MaterialKit } from '@/config/types';
 import { makeGradientTexture } from './props/screen';
+import { registerMaterial } from '../scene-theme';
 
 const FLOOR_HALF = FOOTPRINT / 2 - 0.26; // room floor inset from the slab edge
 
 export function createMaterialKit(): MaterialKit {
   const std = (o: THREE.MeshStandardMaterialParameters): THREE.MeshStandardMaterial =>
     new THREE.MeshStandardMaterial({ roughness: 0.8, metalness: 0, ...o });
-  return {
+  const kit: MaterialKit = {
     wall: std({ color: PALETTE.wall, roughness: 0.95 }),
     wallShade: std({ color: PALETTE.wallShade, roughness: 0.95 }),
     wood: std({ color: PALETTE.wood, roughness: 0.8 }),
@@ -20,6 +21,16 @@ export function createMaterialKit(): MaterialKit {
     glow: std({ color: PALETTE.glow, roughness: 0.3 }),
     sage: std({ color: PALETTE.sage, roughness: 0.7 }),
   };
+  // Every kit material follows its semantic role, so all rooms theme at once.
+  registerMaterial((c) => c.wall, kit.wall as THREE.MeshStandardMaterial);
+  registerMaterial((c) => c.wallShade, kit.wallShade as THREE.MeshStandardMaterial);
+  registerMaterial((c) => c.wood, kit.wood as THREE.MeshStandardMaterial);
+  registerMaterial((c) => c.woodDark, kit.woodDark as THREE.MeshStandardMaterial, (hex) => darken(hex, 0.2));
+  registerMaterial((c) => c.white, kit.white as THREE.MeshStandardMaterial);
+  registerMaterial((c) => c.graphite, kit.graphite as THREE.MeshStandardMaterial);
+  registerMaterial((c) => c.glow, kit.glow as THREE.MeshStandardMaterial);
+  registerMaterial((c) => c.layerAccents.cms, kit.sage as THREE.MeshStandardMaterial);
+  return kit;
 }
 
 /** Wood floor with instanced tile pattern, two back walls (-x, -z) with caps and AO strips. */

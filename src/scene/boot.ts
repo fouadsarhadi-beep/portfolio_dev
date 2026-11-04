@@ -1,6 +1,7 @@
 /** @module scene/boot: entry; dynamic-imports three after first paint, mounts the canvas or falls back. @see src/scene/loop.ts, src/main.ts, docs/WIRING.md */
 import type { WebGLRenderer, OrthographicCamera, Scene, ShadowMaterial, Object3D, Mesh } from 'three';
 import type { StackDebugState } from '@/config/types';
+import type { ThemeColors } from '@/config/theme';
 import type { Stage } from './stage';
 
 interface SceneBundle {
@@ -47,12 +48,16 @@ async function makeScene(mount: HTMLElement, tier: 'high' | 'low'): Promise<Scen
   const stage = createStage(tier);
   scene.add(stage.group);
 
-  // RoomEnvironment through PMREM, intensity 0.5 (no downloaded HDRI).
+  // RoomEnvironment through PMREM (no downloaded HDRI); intensity follows the theme.
+  const { registerValue } = await import('./scene-theme');
   const { RoomEnvironment } = await import('three/addons/environments/RoomEnvironment.js');
   const pmrem = new THREE.PMREMGenerator(renderer);
   scene.environment = pmrem.fromScene(new RoomEnvironment(), 0.04).texture;
   scene.environmentIntensity = 0.5;
   pmrem.dispose();
+  registerValue((_c: 'light' | 'dark' | ThemeColors, name: 'light' | 'dark') => {
+    scene.environmentIntensity = name === 'dark' ? 0.38 : 0.5;
+  });
 
   return { renderer, camera, scene, stage, three: THREE, tier, resizeFrustum: (w, h) => resizeCamera(camera, w, h) };
 }
@@ -74,12 +79,16 @@ export async function boot(): Promise<void> {
     { CAM_DIR, CAM_DISTANCE, SLAB_T }, { LAYERS }, { bus }, { createStack },
     { createState }, { createMotion }, { createLanding }, { createPick },
     { initLabels }, { createFocus }, { bindSceneApi }, { startLoop }, { detectTier },
+    { initSceneTheme },
   ] = await Promise.all([
     import('@/config/tuning'), import('@/config/layers'), import('@/lib/bus'),
     import('./stack/stack'), import('./stack/state'), import('./stack/motion'),
     import('./stack/landing'), import('./stack/pick'), import('./stack/labels'),
     import('./focus'), import('./api'), import('./loop'), import('@/lib/quality'),
+    import('./scene-theme'),
   ]);
+  // The registry applies the active theme to every material registered during build.
+  initSceneTheme();
 
   let bundle: SceneBundle | null = null;
   try {

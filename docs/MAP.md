@@ -15,7 +15,7 @@ Search this file before creating anything.
 - site.ts: config/site: person, links and availability in one place. @see docs/COPY.md, src/content/en.ts
   exports: SITE
 - theme.ts: config/theme: the light and dark palettes as semantic roles, shared by CSS and the scene. @see docs/DESIGN.md (Dual theme), src/styles/tokens.css
-  exports: ThemeName, ThemeColors
+  exports: ThemeName, ThemeColors, THEMES
   uses: src/config/palette
 - tuning.ts: config/tuning: geometry, scroll step, camera and render tuning constants. @see docs/DESIGN.md, docs/MOTION.md, src/config/types.ts
   exports: FOOTPRINT, SLAB_T, WALL_H, WALL_THICK, CORNER_R, LIFT, STEP_VH, CAM_DIR, CAM_DISTANCE, CAM_TARGET_OFFSET_Y, CAM_VIEW_HEIGHT, CAM_DAMP_LAMBDA, EXPOSURE, MAX_PIXEL_RATIO, SHADOW_MAP_DESKTOP, SHADOW_MAP_MOBILE
@@ -60,33 +60,36 @@ Search this file before creating anything.
   uses: src/lib/bus, src/config/types
 - boot.ts: scene/boot: entry; dynamic-imports three after first paint, mounts the canvas or falls back. @see src/scene/loop.ts, src/main.ts, docs/WIRING.md
   exports: boot
-  uses: src/config/types, src/scene/stage
+  uses: src/config/types, src/config/theme, src/scene/stage
 - camera.ts: scene/camera: orthographic camera locked to the (1,1,1) isometric view, with damped follow. @see docs/DESIGN.md (Camera), docs/MOTION.md (Camera), src/config/tuning.ts
   exports: createCamera, resizeCamera, followCamera
   uses: src/config/tuning
 - focus.ts: scene/focus: camera whoosh onto one layer, blur, fade of the other slabs. @see docs/MOTION.md (Detail view), src/ui/detail.ts, src/scene/loop.ts
   exports: Focus, createFocus
   uses: src/config/tuning, src/lib/reduced-motion
-- lights.ts: scene/lights: hemisphere, warm key with soft shadows, weak cool fill. @see docs/DESIGN.md (Light and render), src/scene/renderer.ts
+- lights.ts: scene/lights: hemisphere, warm key with soft shadows, weak cool fill. @see docs/DESIGN.md (Light and render), src/scene/renderer.ts, src/scene/scene-theme.ts
   exports: createLights
-  uses: src/config/palette, src/lib/quality, src/scene/renderer
+  uses: src/config/palette, src/lib/quality, src/scene/renderer, src/scene/scene-theme
 - loop.ts: scene/loop: the per-frame update: state, pick, labels, camera follow, rooms, render. @see src/scene/boot.ts, docs/MOTION.md (Camera), src/lib/ticker.ts
   exports: LoopParts, startLoop
   uses: src/config/tuning, src/lib/ticker, src/lib/reduced-motion, src/scene/camera, src/scene/focus, src/scene/stack/state, src/scene/stack/landing, src/scene/stack/pick, src/scene/stack/labels, src/scene/stack/stack, src/scene/stage
 - renderer.ts: scene/renderer: transparent WebGL renderer with capped pixel ratio and soft shadows. @see docs/DESIGN.md (Light and render), src/scene/boot.ts
   exports: createRenderer, shadowMapSize
   uses: src/config/tuning, src/lib/quality
-- stage.ts: scene/stage: ground, platform, dust particles and floating shapes around the stack. @see docs/DESIGN.md (Environment around the stack), src/scene/loop.ts
+- scene-theme.ts: scene/scene-theme: material, light and value registry that applies theme changes in place. @see docs/DESIGN.md (Dual theme), src/config/theme.ts, docs/WIRING.md
+  exports: registerColor, registerMaterial, registerEmissive, registerLight, registerValue, initSceneTheme
+  uses: src/config/theme, src/lib/bus
+- stage.ts: scene/stage: ground, platform, dust particles and floating shapes around the stack. @see docs/DESIGN.md (Environment around the stack), src/scene/loop.ts, src/scene/scene-theme.ts
   exports: Stage, createStage
-  uses: src/config/palette, src/lib/reduced-motion
+  uses: src/config/palette, src/lib/reduced-motion, src/scene/scene-theme
 
 ## src/scene/rooms/
 - index.ts: scene/rooms/index: room registry; keys match LayerConfig.room. @see docs/WIRING.md (How to add a layer), src/config/layers.ts
   exports: ROOMS
   uses: src/config/types, src/scene/rooms/content, src/scene/rooms/translation, src/scene/rooms/seo, src/scene/rooms/web-design-development, src/scene/rooms/cms, src/scene/rooms/infrastructure
-- shell.ts: scene/rooms/shell: room floor, back walls, AO strips and the shared material kit. @see docs/ROOMS.md (Rules), docs/DESIGN.md, src/scene/rooms/props/screen.ts
+- shell.ts: scene/rooms/shell: room floor, back walls, AO strips and the shared material kit. @see docs/ROOMS.md (Rules), docs/DESIGN.md, src/scene/rooms/props/screen.ts, src/scene/scene-theme.ts
   exports: createMaterialKit, buildShell
-  uses: src/config/tuning, src/config/palette, src/config/types, src/scene/rooms/props/screen
+  uses: src/config/tuning, src/config/palette, src/config/types, src/scene/rooms/props/screen, src/scene/scene-theme
 
 ## src/scene/rooms/cms/
 - anim.ts: scene/rooms/cms/anim: idle loops of the publishing studio. @see docs/ROOMS.md (6 cms), docs/MOTION.md (Idle animation)
@@ -242,7 +245,7 @@ Search this file before creating anything.
   uses: src/lib/bus, src/config/layers, src/config/tuning, src/config/palette
 - slab.ts: scene/stack/slab: builds one chunky slab per LayerConfig. @see docs/DESIGN.md (Slab), src/scene/stack/stack.ts, src/scene/stack/icons.ts
   exports: makeSlab
-  uses: src/config/tuning, src/config/palette, src/config/types, src/scene/stack/icons
+  uses: src/config/tuning, src/config/palette, src/config/types, src/scene/stack/icons, src/scene/scene-theme
 - stack.ts: scene/stack/stack: builds the six-slab column from config in locked order. @see src/scene/stack/slab.ts, src/scene/rooms/index.ts, docs/MOTION.md (State)
   exports: restY, Stack, createStack
   uses: src/config/tuning, src/config/layers, src/scene/stack/slab, src/scene/rooms/index, src/scene/rooms/shell, src/scene/rooms/props/index, src/config/types

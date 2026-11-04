@@ -5,6 +5,7 @@ import { FOOTPRINT, SLAB_T, CORNER_R } from '@/config/tuning';
 import { PALETTE, lighten, darken } from '@/config/palette';
 import type { LayerConfig } from '@/config/types';
 import { makeIconTexture, makeNumberTexture } from './icons';
+import { registerMaterial } from '../scene-theme';
 
 const HALF = FOOTPRINT / 2;
 const TOP = SLAB_T / 2;
@@ -21,14 +22,16 @@ export function makeSlab(layer: LayerConfig): THREE.Group {
   const group = new THREE.Group();
   group.name = `slab-${layer.id}`;
   const color = PALETTE[layer.color as keyof typeof PALETTE];
+  const accent = (c: { layerAccents: Record<string, string> }) => c.layerAccents[layer.id];
 
   const body = new THREE.Mesh(getBodyGeo(), bodyMaterial(color));
+  registerMaterial(accent, body.material as THREE.MeshStandardMaterial);
   body.castShadow = true;
   body.receiveShadow = true;
   group.add(body);
 
-  addTop(group, color);
-  addBottomBand(group, color);
+  addTop(group, layer.id, color);
+  addBottomBand(group, layer.id, color);
   addRightBadge(group, layer, color);
   addLeftNumber(group, layer, color);
 
@@ -40,16 +43,17 @@ function bodyMaterial(color: string): THREE.MeshStandardMaterial {
 }
 
 /** Inset floor with a lightened rim running around it. */
-function addTop(group: THREE.Group, color: string): void {
+function addTop(group: THREE.Group, accentId: string, color: string): void {
   const floorGeo = new THREE.BoxGeometry((FLAT - 0.12) * 2, 0.04, (FLAT - 0.12) * 2);
-  const floor = new THREE.Mesh(floorGeo, new THREE.MeshStandardMaterial({
-    color: lighten(color, 0.06), roughness: 0.65, metalness: 0,
-  }));
+  const floorMat = new THREE.MeshStandardMaterial({ color: lighten(color, 0.06), roughness: 0.65, metalness: 0 });
+  registerMaterial((c) => c.layerAccents[accentId], floorMat, (hex) => lighten(hex, 0.06));
+  const floor = new THREE.Mesh(floorGeo, floorMat);
   floor.position.y = TOP + 0.015;
   floor.receiveShadow = true;
   group.add(floor);
 
   const rimMat = new THREE.MeshStandardMaterial({ color: lighten(color, 0.12), roughness: 0.6, metalness: 0 });
+  registerMaterial((c) => c.layerAccents[accentId], rimMat, (hex) => lighten(hex, 0.12));
   const long = new THREE.BoxGeometry((FLAT - 0.12) * 2, 0.04, 0.12);
   const deep = new THREE.BoxGeometry(0.12, 0.04, (FLAT - 0.12) * 2);
   for (const side of [-1, 1]) {
@@ -63,8 +67,9 @@ function addTop(group: THREE.Group, color: string): void {
 }
 
 /** Darker band along the four bottom edges. */
-function addBottomBand(group: THREE.Group, color: string): void {
+function addBottomBand(group: THREE.Group, accentId: string, color: string): void {
   const mat = new THREE.MeshStandardMaterial({ color: darken(color, 0.15), roughness: 0.7, metalness: 0 });
+  registerMaterial((c) => c.layerAccents[accentId], mat, (hex) => darken(hex, 0.15));
   const alongZ = new THREE.BoxGeometry(FLAT * 2, 0.12, 0.05);
   const alongX = new THREE.BoxGeometry(0.05, 0.12, FLAT * 2);
   for (const side of [-1, 1]) {
@@ -83,6 +88,7 @@ function addRightBadge(group: THREE.Group, layer: LayerConfig, color: string): v
     new THREE.BoxGeometry(0.06, SLAB_T - 0.5, FOOTPRINT - 1.4),
     new THREE.MeshStandardMaterial({ color: darken(color, 0.08), roughness: 0.6, metalness: 0 }),
   );
+  registerMaterial((c) => c.layerAccents[layer.id], panel.material as THREE.MeshStandardMaterial, (hex) => darken(hex, 0.08));
   panel.position.set(HALF + 0.03, 0, 0);
   group.add(panel);
 
