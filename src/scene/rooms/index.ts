@@ -3,8 +3,7 @@ import type { RoomBuilder } from '@/config/types';
 import { build as content } from './content';
 import { build as translation } from './translation';
 import { build as seo } from './seo';
-import { build as design } from './design';
-import { build as frontend } from './frontend';
+import { build as webDesignDevelopment } from './web-design-development';
 import { build as cms } from './cms';
 import { build as infrastructure } from './infrastructure';
 
@@ -12,8 +11,7 @@ export const ROOMS: Record<string, RoomBuilder> = {
   content,
   translation,
   seo,
-  design,
-  frontend,
+  'web-design-development': webDesignDevelopment,
   cms,
   infrastructure,
 };

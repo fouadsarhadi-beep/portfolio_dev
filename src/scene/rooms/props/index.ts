@@ -14,10 +14,18 @@ import { makeWallFrame } from './frame';
 import { makeCorkboard } from './corkboard';
 import { makeWindow } from './window';
 import { makeKeyboard } from './keyboard';
+import { makeDuck } from './duck';
+import { makeGauge } from './gauge';
+import { makeEasel } from './easel';
+import { makeChipFan } from './chipfan';
+import { makeMoodBoard } from './moodboard';
+import { makeCardGrid } from './cardgrid';
+import { makeTokenRack } from './tokenrack';
 
 export {
   makeDesk, makeChair, makeMonitor, makeLaptop, makePlant, makeLamp,
   makeShelf, makeRug, makeMug, makePapers, makeWallFrame, makeCorkboard, makeWindow, makeKeyboard,
+  makeDuck, makeGauge, makeEasel, makeChipFan, makeMoodBoard, makeCardGrid, makeTokenRack,
 };
 
 export const PROPS: PropKit = {
@@ -35,4 +43,11 @@ export const PROPS: PropKit = {
   corkboard: makeCorkboard,
   window: makeWindow,
   keyboard: makeKeyboard,
+  duck: makeDuck,
+  gauge: makeGauge,
+  easel: makeEasel,
+  chipFan: makeChipFan,
+  moodBoard: makeMoodBoard,
+  cardGrid: makeCardGrid,
+  tokenRack: makeTokenRack,
 };

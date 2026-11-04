@@ -49,9 +49,9 @@
   --radius-pill: 999px;
   --hard-offset: 4px;
 
-  /* Scroll mapping (docs/MOTION.md) */
+  /* Scroll mapping (docs/MOTION.md); --steps mirrors LAYERS.length - 1 */
   --step-vh: 80svh;
-  --steps: 6;
+  --steps: 5;
 
   /* Layout */
   --content-max: 68rem;

@@ -79,7 +79,7 @@ Search this file before creating anything.
 ## src/scene/rooms/
 - index.ts: scene/rooms/index: room registry; keys match LayerConfig.room. @see docs/WIRING.md (How to add a layer), src/config/layers.ts
   exports: ROOMS
-  uses: src/config/types, src/scene/rooms/content, src/scene/rooms/translation, src/scene/rooms/seo, src/scene/rooms/design, src/scene/rooms/frontend, src/scene/rooms/cms, src/scene/rooms/infrastructure
+  uses: src/config/types, src/scene/rooms/content, src/scene/rooms/translation, src/scene/rooms/seo, src/scene/rooms/web-design-development, src/scene/rooms/cms, src/scene/rooms/infrastructure
 - shell.ts: scene/rooms/shell: room floor, back walls, AO strips and the shared material kit. @see docs/ROOMS.md (Rules), docs/DESIGN.md, src/scene/rooms/props/screen.ts
   exports: createMaterialKit, buildShell
   uses: src/config/tuning, src/config/palette, src/config/types, src/scene/rooms/props/screen
@@ -105,28 +105,6 @@ Search this file before creating anything.
   exports: buildLayout
   uses: src/config/tuning, src/config/palette, src/config/types
 
-## src/scene/rooms/design/
-- anim.ts: scene/rooms/design/anim: idle loops of the design studio. @see docs/ROOMS.md (4 design), docs/MOTION.md (Idle animation)
-  exports: Anim, createAnim
-  uses: src/scene/rooms/design/layout
-- index.ts: scene/rooms/design: the design studio on layer 4. @see docs/ROOMS.md (4 design), README.md (in this folder)
-  exports: build
-  uses: src/config/types, src/scene/rooms/shell.ts, src/scene/rooms/design/layout, src/scene/rooms/design/anim
-- layout.ts: scene/rooms/design/layout: places the design studio props. @see docs/ROOMS.md (4 design), src/scene/rooms/props/index.ts
-  exports: DesignHandles, buildLayout, drawStroke, drawGlyph
-  uses: src/config/tuning, src/config/palette, src/config/types, src/scene/rooms/props/screen.ts
-
-## src/scene/rooms/frontend/
-- anim.ts: scene/rooms/frontend/anim: idle loops of the development workspace. @see docs/ROOMS.md (5 frontend), docs/MOTION.md (Idle animation)
-  exports: Anim, createAnim
-  uses: src/config/palette, src/scene/rooms/frontend/layout
-- index.ts: scene/rooms/frontend: the development workspace on layer 5. @see docs/ROOMS.md (5 frontend), README.md (in this folder)
-  exports: build
-  uses: src/config/types, src/scene/rooms/shell.ts, src/scene/rooms/frontend/layout, src/scene/rooms/frontend/anim
-- layout.ts: scene/rooms/frontend/layout: places the development workspace props. @see docs/ROOMS.md (5 frontend), src/scene/rooms/props/index.ts
-  exports: FrontendHandles, drawEditor, drawBrowser, buildLayout
-  uses: src/config/tuning, src/config/palette, src/config/types, src/scene/rooms/props/screen.ts
-
 ## src/scene/rooms/infrastructure/
 - anim.ts: scene/rooms/infrastructure/anim: idle loops of the server facility. @see docs/ROOMS.md (7 infrastructure), docs/MOTION.md (Idle animation)
   exports: drawGraph, Anim, createAnim, warnTexture, makeNetworkPanel
@@ -139,22 +117,37 @@ Search this file before creating anything.
   uses: src/config/tuning, src/config/palette, src/config/types, src/scene/rooms/props/screen.ts, src/scene/rooms/infrastructure/anim
 
 ## src/scene/rooms/props/
+- cardgrid.ts: scene/rooms/props/cardgrid: wall grid of component cards (names: card-0..5). @see src/scene/rooms/props/index.ts
+  exports: makeCardGrid
+  uses: src/config/palette, src/config/types
 - chair.ts: scene/rooms/props/chair: small studio chair, seat, backrest and four legs. @see src/scene/rooms/props/index.ts
   exports: makeChair
   uses: src/config/types
+- chipfan.ts: scene/rooms/props/chipfan: fanned color-chip deck (pivot name: fanPivot). @see src/scene/rooms/props/index.ts
+  exports: makeChipFan
+  uses: src/config/palette, src/config/types
 - corkboard.ts: scene/rooms/props/corkboard: corkboard with six pinned notes (names: note-0..5). @see src/scene/rooms/props/index.ts, docs/ROOMS.md (1 content)
   exports: makeCorkboard
   uses: src/config/palette, src/config/types
 - desk.ts: scene/rooms/props/desk: writing desk with drawer block and knob. @see src/scene/rooms/props/index.ts, docs/DESIGN.md (Prop quality rules)
   exports: makeDesk
   uses: src/config/palette, src/config/types
+- duck.ts: scene/rooms/props/duck: rubber duck that bobs (anim moves the group). @see src/scene/rooms/props/index.ts
+  exports: makeDuck
+  uses: src/config/palette, src/config/types
+- easel.ts: scene/rooms/props/easel: floor easel holding a painted canvas (opts: tex). @see src/scene/rooms/props/index.ts
+  exports: makeEasel
+  uses: src/config/palette, src/config/types
 - frame.ts: scene/rooms/props/frame: wall frame with a drawn canvas (opts: draw, w, h). @see src/scene/rooms/props/screen.ts, src/scene/rooms/props/index.ts
   exports: makeWallFrame
   uses: src/config/palette, src/config/types, src/scene/rooms/props/screen
+- gauge.ts: scene/rooms/props/gauge: wall gauge with an animated needle (name: needle). @see src/scene/rooms/props/index.ts
+  exports: makeGauge
+  uses: src/config/palette, src/config/types
 - index.ts: scene/rooms/props/index: the shared prop kit; rooms import props only through here. @see docs/WIRING.md (How to add a prop)
   exports: PROPS
-  uses: src/config/types, src/scene/rooms/props/desk, src/scene/rooms/props/chair, src/scene/rooms/props/monitor, src/scene/rooms/props/laptop, src/scene/rooms/props/plant, src/scene/rooms/props/lamp, src/scene/rooms/props/shelf, src/scene/rooms/props/rug, src/scene/rooms/props/mug, src/scene/rooms/props/papers, src/scene/rooms/props/frame, src/scene/rooms/props/corkboard, src/scene/rooms/props/window, src/scene/rooms/props/keyboard
-- keyboard.ts: scene/rooms/props/keyboard: desk keyboard with key rows and a space bar. @see src/scene/rooms/props/index.ts
+  uses: src/config/types, src/scene/rooms/props/desk, src/scene/rooms/props/chair, src/scene/rooms/props/monitor, src/scene/rooms/props/laptop, src/scene/rooms/props/plant, src/scene/rooms/props/lamp, src/scene/rooms/props/shelf, src/scene/rooms/props/rug, src/scene/rooms/props/mug, src/scene/rooms/props/papers, src/scene/rooms/props/frame, src/scene/rooms/props/corkboard, src/scene/rooms/props/window, src/scene/rooms/props/keyboard, src/scene/rooms/props/duck, src/scene/rooms/props/gauge, src/scene/rooms/props/easel, src/scene/rooms/props/chipfan, src/scene/rooms/props/moodboard, src/scene/rooms/props/cardgrid, src/scene/rooms/props/tokenrack
+- keyboard.ts: scene/rooms/props/keyboard: desk keyboard with instanced key rows and a space bar. @see src/scene/rooms/props/index.ts
   exports: makeKeyboard
   uses: src/config/palette, src/config/types
 - lamp.ts: scene/rooms/props/lamp: floor lamp with a pulsing warm glow (names: lampShade, lampLight). @see src/scene/rooms/props/index.ts
@@ -166,6 +159,9 @@ Search this file before creating anything.
 - monitor.ts: scene/rooms/props/monitor: desk monitor with a drawn canvas screen. @see src/scene/rooms/props/screen.ts, src/scene/rooms/props/index.ts
   exports: makeMonitor
   uses: src/config/palette, src/config/types, src/scene/rooms/props/screen
+- moodboard.ts: scene/rooms/props/moodboard: wall mood board with swatches (names: swatch-0..5). @see src/scene/rooms/props/index.ts
+  exports: makeMoodBoard
+  uses: src/config/palette, src/config/types
 - mug.ts: scene/rooms/props/mug: mug with handle and three steam puffs. @see src/scene/rooms/props/index.ts
   exports: makeMug
   uses: src/config/palette, src/config/types
@@ -183,6 +179,9 @@ Search this file before creating anything.
   uses: src/config/palette
 - shelf.ts: scene/rooms/props/shelf: bookshelf with instanced books (opts: books). @see src/scene/rooms/props/index.ts, docs/ROOMS.md
   exports: makeShelf
+  uses: src/config/palette, src/config/types
+- tokenrack.ts: scene/rooms/props/tokenrack: wall rack of design-token swatches. @see src/scene/rooms/props/index.ts
+  exports: makeTokenRack
   uses: src/config/palette, src/config/types
 - window.ts: scene/rooms/props/window: wall window with cross bars and soft glow glass. @see src/scene/rooms/props/index.ts
   exports: makeWindow
@@ -209,6 +208,17 @@ Search this file before creating anything.
 - layout.ts: scene/rooms/translation/layout: places the language studio props. @see docs/ROOMS.md (2 translation), src/scene/rooms/props/index.ts
   exports: TranslationHandles, drawDualPane, buildLayout
   uses: src/config/tuning, src/config/palette, src/config/types, src/scene/rooms/props/screen.ts
+
+## src/scene/rooms/web-design-development/
+- anim.ts: scene/rooms/web-design-development/anim: idle loops of the merged workspace. @see docs/ROOMS.md (4), docs/MOTION.md (Idle animation)
+  exports: drawEditor, drawBrowser, drawStroke, Anim, createAnim
+  uses: src/scene/rooms/web-design-development/layout, src/config/palette
+- index.ts: scene/rooms/web-design-development: the merged design-and-development workspace on layer 4. @see docs/ROOMS.md (4), README.md (in this folder)
+  exports: build
+  uses: src/config/types, src/scene/rooms/shell.ts, src/scene/rooms/web-design-development/layout, src/scene/rooms/web-design-development/anim
+- layout.ts: scene/rooms/web-design-development/layout: places the merged workspace props. @see docs/ROOMS.md (4), src/scene/rooms/props/index.ts
+  exports: WddHandles, buildLayout
+  uses: src/config/tuning, src/config/palette, src/config/types, src/scene/rooms/props/screen.ts, src/scene/rooms/web-design-development/anim
 
 ## src/scene/stack/
 - icons.ts: scene/stack/icons: draws layer icons, numbers and registration crosses to CanvasTextures. @see docs/DESIGN.md (Slab), src/scene/stack/slab.ts

@@ -1,8 +1,8 @@
 /** @module config/layers: the seven layer configs in locked top-to-bottom order. @see docs/COPY.md, src/config/types.ts */
 import type { LayerConfig } from './types';
 
-// The order lives only here (locked decision): content, translation, seo, design,
-// frontend, cms, infrastructure, top to bottom.
+// The order lives only here (locked decision): content, translation, seo,
+// web-design-development, cms, infrastructure, top to bottom.
 // Intro, capabilities and samples are placeholder copy per docs/COPY.md.
 export const LAYERS: LayerConfig[] = [
   {
@@ -54,40 +54,24 @@ export const LAYERS: LayerConfig[] = [
     room: 'seo',
   },
   {
-    id: 'design',
+    id: 'web-design-development',
     number: '04',
-    title: 'Web Design',
-    short: 'Layouts, type and color systems, from first sketch to redesign.',
-    intro: 'I sketch layouts, type scales and color systems. The system carries every page from first sketch to redesign.',
+    title: 'Web Design & Development',
+    short: 'Design systems and fast, accessible interfaces, from first sketch to shipped front-end.',
+    intro: 'I design the layouts and build the interfaces that ship them. One practice keeps the design and the front-end honest.',
     color: 'rose',
-    icon: 'M12 2l7 7-7 13-7-13z M12 10.8a2.4 2.4 0 1 1-.01 4.8 2.4 2.4 0 0 1 .01-4.8z',
-    capabilities: ['Layout systems', 'Type scales', 'Color systems', 'Wireframes and reviews'],
-    toolkit: ['Figma', 'Type scales', 'Color systems', 'Wireframes', 'Design reviews'],
+    icon: 'M9.2 4.6L3 12l6.2 7.4 2.3-1.9L6.7 12l4.8-5.5z M14.8 4.6L21 12l-6.2 7.4-2.3-1.9 4.8-5.5-4.8-5.5z M11.6 7.5l-2.4 9h1.7l2.4-9z',
+    capabilities: ['Design systems', 'Wireframes and prototypes', 'Semantic HTML and CSS', 'Motion and 3D'],
+    toolkit: ['Figma', 'HTML', 'CSS', 'TypeScript', 'Astro', 'Three.js'],
     samples: [
       { title: 'Portfolio redesign', blurb: 'A type and color system rebuilt around one strong grid.', tags: ['Figma', 'Type scale', 'Color'] },
-      { title: 'Landing page kit', blurb: 'Wireframes and components a small team can reuse.', tags: ['Wireframes', 'Components', 'Reviews'] },
-    ],
-    room: 'design',
-  },
-  {
-    id: 'frontend',
-    number: '05',
-    title: 'Front-End',
-    short: 'Fast, accessible interfaces in HTML, CSS and TypeScript.',
-    intro: 'I build fast, accessible interfaces in HTML, CSS and TypeScript. Astro and Three.js handle the heavy parts.',
-    color: 'blue',
-    icon: 'M9.2 4.6L3 12l6.2 7.4 2.3-1.9L6.7 12l4.8-5.5z M14.8 4.6L21 12l-6.2 7.4-2.3-1.9 4.8-5.5-4.8-5.5z',
-    capabilities: ['Semantic HTML', 'Modern CSS', 'TypeScript interfaces', 'Motion and 3D'],
-    toolkit: ['HTML', 'CSS', 'TypeScript', 'Astro', 'Three.js'],
-    samples: [
-      { title: 'Astro marketing site', blurb: 'A static site with clean markup and fast loads.', tags: ['Astro', 'CSS', 'A11y'] },
       { title: '3D product viewer', blurb: 'An interactive Three.js viewer that runs on phones.', tags: ['Three.js', 'TypeScript', 'Motion'] },
     ],
-    room: 'frontend',
+    room: 'web-design-development',
   },
   {
     id: 'cms',
-    number: '06',
+    number: '05',
     title: 'CMS & WordPress',
     short: 'Themes, plugins and editing setups your team can run alone.',
     intro: 'I build WordPress themes and plugins teams can run alone. Gutenberg and ACF give editors clear controls.',
@@ -103,7 +87,7 @@ export const LAYERS: LayerConfig[] = [
   },
   {
     id: 'infrastructure',
-    number: '07',
+    number: '06',
     title: 'Infrastructure',
     short: 'Hosting, DNS, SSL, backups and monitoring that keep sites up.',
     intro: 'I set up hosting, DNS, SSL, backups and monitoring. The site stays up and recovers on its own.',

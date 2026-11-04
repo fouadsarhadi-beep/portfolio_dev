@@ -1,4 +1,4 @@
-/** @module scene/rooms/props/keyboard: desk keyboard with key rows and a space bar. @see src/scene/rooms/props/index.ts */
+/** @module scene/rooms/props/keyboard: desk keyboard with instanced key rows and a space bar. @see src/scene/rooms/props/index.ts */
 import * as THREE from 'three';
 import { RoundedBoxGeometry } from 'three/addons/geometries/RoundedBoxGeometry.js';
 import { PALETTE, lighten } from '@/config/palette';
@@ -16,18 +16,21 @@ export const makeKeyboard: PropFactory = (ctx) => {
   base.castShadow = true;
   group.add(base);
 
+  // Key rows as one InstancedMesh: keeps the merged room inside its mesh budget.
   const keyMat = new THREE.MeshStandardMaterial({ color: PALETTE.graphite, roughness: 0.6, metalness: 0 });
-  const keyGeo = new THREE.BoxGeometry(0.028, 0.012, 0.028);
+  const keys = new THREE.InstancedMesh(new THREE.BoxGeometry(0.028, 0.012, 0.028), keyMat, 33);
+  const m = new THREE.Matrix4();
+  let i = 0;
   for (let row = 0; row < 3; row++) {
     for (let col = 0; col < 11; col++) {
-      const key = new THREE.Mesh(keyGeo, keyMat);
-      key.position.set(-0.18 + col * 0.034, 0.034, -0.045 + row * 0.04);
-      group.add(key);
+      m.makeTranslation(-0.18 + col * 0.034, 0.034, -0.045 + row * 0.04);
+      keys.setMatrixAt(i++, m);
     }
   }
-  const space = new THREE.Mesh(new THREE.BoxGeometry(0.16, 0.012, 0.028), keyMat);
-  space.position.set(0, 0.034, 0.062);
-  group.add(space);
+  m.makeTranslation(0, 0.034, 0.062);
+  keys.setMatrixAt(i++, m); // space bar
+  keys.instanceMatrix.needsUpdate = true;
+  group.add(keys);
 
   return group;
 };
