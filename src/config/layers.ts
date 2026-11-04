@@ -1,4 +1,4 @@
-/** @module config/layers: the seven layer configs in locked top-to-bottom order. @see docs/COPY.md, src/config/types.ts */
+/** @module config/layers: the six layer configs in locked top-to-bottom order. @see docs/COPY.md, src/config/types.ts */
 import type { LayerConfig } from './types';
 
 // The order lives only here (locked decision): content, translation, seo,

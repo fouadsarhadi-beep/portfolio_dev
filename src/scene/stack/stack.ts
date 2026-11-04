@@ -1,4 +1,4 @@
-/** @module scene/stack/stack: builds the seven-slab column from config in locked order. @see src/scene/stack/slab.ts, src/scene/rooms/index.ts, docs/MOTION.md (State) */
+/** @module scene/stack/stack: builds the six-slab column from config in locked order. @see src/scene/stack/slab.ts, src/scene/rooms/index.ts, docs/MOTION.md (State) */
 import * as THREE from 'three';
 import { SLAB_T, FOOTPRINT, WALL_H } from '@/config/tuning';
 import { LAYERS } from '@/config/layers';

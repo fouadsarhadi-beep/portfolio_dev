@@ -48,7 +48,7 @@ export const en = {
     close: 'Close',
   },
   footer: {
-    note: 'Built as one page and seven layers.',
+    note: 'Built as one page and six layers.',
   },
 } as const;
 

@@ -6,7 +6,7 @@ Search this file before creating anything.
 - main.ts: main: page entry; boots the scene, then wires the UI layer to it. @see src/scene/boot.ts, src/ui/preview.ts, src/ui/detail.ts, src/ui/keyboard.ts
 
 ## src/config/
-- layers.ts: config/layers: the seven layer configs in locked top-to-bottom order. @see docs/COPY.md, src/config/types.ts
+- layers.ts: config/layers: the six layer configs in locked top-to-bottom order. @see docs/COPY.md, src/config/types.ts
   exports: LAYERS
   uses: src/config/types
 - palette.ts: config/palette: the only place hex colors may live, plus lighten/darken. @see docs/DESIGN.md, src/config/types.ts
@@ -239,7 +239,7 @@ Search this file before creating anything.
 - slab.ts: scene/stack/slab: builds one chunky slab per LayerConfig. @see docs/DESIGN.md (Slab), src/scene/stack/stack.ts, src/scene/stack/icons.ts
   exports: makeSlab
   uses: src/config/tuning, src/config/palette, src/config/types, src/scene/stack/icons
-- stack.ts: scene/stack/stack: builds the seven-slab column from config in locked order. @see src/scene/stack/slab.ts, src/scene/rooms/index.ts, docs/MOTION.md (State)
+- stack.ts: scene/stack/stack: builds the six-slab column from config in locked order. @see src/scene/stack/slab.ts, src/scene/rooms/index.ts, docs/MOTION.md (State)
   exports: restY, Stack, createStack
   uses: src/config/tuning, src/config/layers, src/scene/stack/slab, src/scene/rooms/index, src/scene/rooms/shell, src/scene/rooms/props/index, src/config/types
 - state.ts: scene/stack/state: scroll-derived step, the u and e arrays, the invariant, window.__stack. @see docs/MOTION.md (Scroll mapping, State, Debug), src/scene/stack/motion.ts
@@ -247,7 +247,7 @@ Search this file before creating anything.
   uses: src/config/tuning, src/config/layers
 
 ## src/sections/
-- About.astro: sections/About: statement, seven-layer diagram, three color panels. @see docs/DESIGN.md (Sections), src/styles/sections.css
+- About.astro: sections/About: statement, six-layer diagram, three color panels. @see docs/DESIGN.md (Sections), src/styles/sections.css
   uses: src/config/layers, src/lib/i18n
 - Contact.astro: sections/Contact: end-of-level panel with heading, mailto, socials, availability. @see docs/COPY.md, src/config/site.ts
   uses: src/config/site, src/lib/i18n
@@ -257,7 +257,7 @@ Search this file before creating anything.
   uses: src/config/layers, src/lib/i18n
 - Hud.astro: sections/Hud: sticky header with name, role, nav links, availability, progress bar. @see src/styles/hud.css, docs/DESIGN.md (HUD and UI style)
   uses: src/config/site, src/config/layers, src/lib/i18n, src/lib/bus
-- Toolkit.astro: sections/Toolkit: seven tiles, one per layer, with tool chips. @see docs/DESIGN.md (Sections), src/config/layers.ts
+- Toolkit.astro: sections/Toolkit: six tiles, one per layer, with tool chips. @see docs/DESIGN.md (Sections), src/config/layers.ts
   uses: src/config/layers, src/lib/i18n
 
 ## src/ui/

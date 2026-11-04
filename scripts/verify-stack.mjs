@@ -3,7 +3,7 @@
 import { chromium } from 'playwright';
 
 const url = process.env.URL || 'http://127.0.0.1:4321/';
-const LIFT = 8.2;
+const LIFT = 8.2; // src/config/tuning.ts (locked geometry)
 const EPS = 0.05;
 let failures = 0;
 
@@ -19,17 +19,20 @@ const page = await browser.newPage({ viewport: { width: 1440, height: 900 } });
 page.on('pageerror', (e) => fail('pageerror: ' + e));
 await page.goto(url, { waitUntil: 'networkidle' });
 
-// wait for the debug state to exist
+// wait for the debug state to exist, then derive the layer count from config
 let stack = null;
 for (let i = 0; i < 60 && !stack; i++) {
   await page.waitForTimeout(500);
   stack = await readStack(page);
 }
 if (!stack) { fail('window.__stack never appeared'); process.exit(1); }
+const N = stack.ids.length;
+const STEPS = N - 1;
 const range = await page.evaluate(() => {
   const el = document.querySelector('.stage');
   return el ? el.offsetHeight - innerHeight : 0;
 });
+console.log(`config: ${N} layers, ${STEPS} steps`);
 
 // 1. s = 0: all u are 0, only layer 0 has e = 1.
 await page.evaluate((y) => scrollTo(0, y), 0);
@@ -41,23 +44,24 @@ else ok('s=0: step 0, all u = 0');
 if (Math.abs(stack.e[0] - 1) > EPS || stack.e.slice(1).some((v) => v > EPS)) fail('e wrong at s=0: ' + JSON.stringify(stack.e));
 else ok('s=0: only layer 0 has e = 1');
 
-// 2. mid: s = 0.5 x STEPS
+// 2. mid: s = 0.5 x STEPS (half the layers lifted, middle layer exposed)
 await page.evaluate((y) => scrollTo(0, y), Math.round(range * 0.5));
 await page.waitForTimeout(3200);
 stack = await readStack(page);
-if (stack.step !== 3) fail(`step ${stack.step} at s=3, want 3`);
-const liftedMid = stack.u.slice(0, 3).every((v) => Math.abs(v - LIFT) < EPS) && stack.u.slice(3).every((v) => v < EPS);
-liftedMid ? ok('s=3: u[0..2] = LIFT, u[3..6] = 0') : fail('u wrong at s=3: ' + JSON.stringify(stack.u));
-Math.abs(stack.e[3] - 1) < EPS ? ok('s=3: layer 3 exposed') : fail('e wrong at s=3: ' + JSON.stringify(stack.e));
+const mid = Math.round(STEPS / 2);
+if (stack.step !== mid) fail(`step ${stack.step} at s=${mid}, want ${mid}`);
+const liftedMid = stack.u.slice(0, mid).every((v) => Math.abs(v - LIFT) < EPS) && stack.u.slice(mid).every((v) => v < EPS);
+liftedMid ? ok(`s=${mid}: u[0..${mid - 1}] = LIFT, rest = 0`) : fail('u wrong at mid: ' + JSON.stringify(stack.u));
+Math.abs(stack.e[mid] - 1) < EPS ? ok(`s=${mid}: layer ${mid} exposed`) : fail('e wrong at mid: ' + JSON.stringify(stack.e));
 
 // 3. s = STEPS
 await page.evaluate((y) => scrollTo(0, y), range);
 await page.waitForTimeout(3200);
 stack = await readStack(page);
-if (stack.step !== 6) fail(`step ${stack.step} at s=6, want 6`);
-const liftedAll = stack.u.slice(0, 6).every((v) => Math.abs(v - LIFT) < EPS) && Math.abs(stack.u[6]) < EPS;
-liftedAll ? ok('s=6: u[0..5] = LIFT, u[6] = 0') : fail('u wrong at s=6: ' + JSON.stringify(stack.u));
-Math.abs(stack.e[6] - 1) < EPS ? ok('s=6: layer 6 exposed') : fail('e wrong at s=6: ' + JSON.stringify(stack.e));
+if (stack.step !== STEPS) fail(`step ${stack.step} at s=${STEPS}, want ${STEPS}`);
+const liftedAll = stack.u.slice(0, STEPS).every((v) => Math.abs(v - LIFT) < EPS) && Math.abs(stack.u[STEPS]) < EPS;
+liftedAll ? ok(`s=${STEPS}: u[0..${STEPS - 1}] = LIFT, u[${STEPS}] = 0`) : fail('u wrong at full lift: ' + JSON.stringify(stack.u));
+Math.abs(stack.e[STEPS] - 1) < EPS ? ok(`s=${STEPS}: layer ${STEPS} exposed`) : fail('e wrong at full lift: ' + JSON.stringify(stack.e));
 
 // 4. fast jump back to 0: invariant must hold during the whole slam.
 await page.evaluate((y) => scrollTo(0, y), 0);
@@ -66,7 +70,7 @@ for (let i = 0; i < 40; i++) {
   const s = await readStack(page);
   if (s) {
     samples++;
-    for (let k = 0; k < 6; k++) {
+    for (let k = 0; k < N - 1; k++) {
       if (s.u[k] < s.u[k + 1] - 1e-4) { bad++; break; }
     }
   }
