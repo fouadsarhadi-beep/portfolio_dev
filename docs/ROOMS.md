@@ -1,4 +1,4 @@
-# ROOMS: the seven dioramas
+# ROOMS: the six dioramas
 
 Rules for all rooms: footprint FOOTPRINT x FOOTPRINT, two back walls (-x, -z), wood floor, wall height WALL_H, props at most WALL_H x 0.95 tall. Target 35 to 80 meshes (count instances once). At least four distinct idle loops. At most 6 colors (DESIGN.md). Props come from the shared kit in rooms/props/. Each room is its own folder and imports nothing from another room.
 
@@ -16,18 +16,24 @@ Loops: globe spins; the two bubbles pop in turn; screen text swaps pairs; cursor
 Analytics command center. Dashboard wall with a bar chart and a line chart. Laptop. Magnifying glass on a stand. Keyword cards on a board joined by strings (crawl map). Funnel of three stacked trapezoids. Four metric tiles. Search-result panel. Podium with a "1".
 Loops: bars change height; a scan line sweeps the line chart; metric numbers tick up; a glint sweeps the magnifier.
 
-## 4 design (rose)
-Design studio. Drafting table. Large mood board with swatches and cards. Easel with a canvas. Color-chip fan. Tablet and stylus. Poster with a big "Aa". Stool. Plant.
-Loops: swatches highlight in turn; a stroke draws on the canvas; the poster glyph swaps; the chip fan opens and closes slowly.
+## 4 web-design-development (rose, blue accent)
+One intentional design-and-development workspace, not two rooms side by side.
+L-shaped workstation: the desk along the -z wall carries dual monitors (a self-typing
+code editor and a browser preview), keyboard, rubber duck and the LED strip under the
+desk lip; the drafting-table arm carries tablet, stylus and the color-chip fan.
+Inspiration wall on -z: mood board with swatches beside the component-card grid, framed
+as one continuous wall. Standards panel on -x: token swatch rack and performance gauge.
+Easel with the self-drawing canvas in the right corner. Chair or stool at the desk.
+Plant and rug.
+Loops: code types itself; a stroke draws on the easel canvas; swatches highlight in turn;
+gauge needle moves; LED strip shifts color; duck bobs.
+Mesh budget: curate toward 80 (both source rooms totaled ~135; merge the desks, drop
+duplicate furniture, fold the poster into the mood-board wall).
 
-## 5 frontend (blue)
-Development workspace. Dual monitors: one shows a code editor, one a browser preview. Keyboard. Rubber duck. Stool. Component cards on a wall grid. Token swatch rack. Performance gauge. LED strip under the desk.
-Loops: code types itself; cards snap into the grid; gauge needle moves; LED strip shifts color; duck bobs.
-
-## 6 cms (sage)
+## 5 cms (sage)
 Publishing studio. Editor desk. Large monitor with a block-editor UI. Keyboard. Mug. Desk lamp. Three floating content blocks. Editorial calendar. Pinned cards. Shelf with small plugin modules. Draft documents. Publish status lights. Plant.
 Loops: blocks float; monitor blocks rearrange; plant sways; publish light pulses; calendar dots tick.
 
-## 7 infrastructure (steel), bottom layer
+## 6 infrastructure (steel), bottom layer
 Server facility. Two racks with rows of LEDs. Cable trays. Floor tile pattern. Network panel with patch cables. Router. Backup battery unit. Two cooling fans. Coiled cable. Clipboard. Warning decals.
 Loops: LEDs blink in different patterns; fans spin; a screen graph scrolls; cable status lights pulse; ambient light shifts slightly.

@@ -10,6 +10,6 @@ Files
 - AGENTS.md: the rules the agent re-reads every session.
 - docs/DESIGN.md, MOTION.md, ROOMS.md, COPY.md, WIRING.md: style, behavior, rooms, words, connections.
 - docs/PROGRESS.md: current task and handoff note. docs/MAP.md appears after the first `npm run map`.
-- docs/tasks/: one small card per task, T00 to T12.
+- docs/tasks/: one small card per task, T00 to T12. Tasks from T13 on are defined in docs/PROGRESS.md.
 - scripts/check.mjs: tests the rules (file size, headers, colors, forbidden imports) and writes docs/MAP.md.
 - scripts/shots.mjs: screenshots for visual review.

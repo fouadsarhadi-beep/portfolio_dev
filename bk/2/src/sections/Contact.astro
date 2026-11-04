@@ -1,0 +1,22 @@
+---
+/** @module sections/Contact: end-of-level panel with heading, mailto, socials, availability. @see docs/COPY.md, src/config/site.ts */
+import { SITE } from '@/config/site';
+import { t } from '@/lib/i18n';
+---
+
+<section id="contact" class="contact wrap">
+  <div class="contact-panel" style="--layer-c: var(--c-butter)">
+    <h2>{t('contact.heading')}</h2>
+    <p>{t('contact.body')}</p>
+    <p class="avail" data-available={String(SITE.available)}>
+      <span class="dot" aria-hidden="true"></span>
+      {t('contact.availability')}
+    </p>
+    <a class="btn" href={`mailto:${SITE.email}`}>{t('contact.emailButton')}</a>
+    <ul class="socials">
+      {SITE.socials.map((s) => (
+        <li><a href={s.href}>{s.label}</a></li>
+      ))}
+    </ul>
+  </div>
+</section>

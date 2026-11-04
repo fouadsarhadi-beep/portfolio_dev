@@ -1,0 +1,34 @@
+---
+/** @module sections/About: statement, seven-layer diagram, three color panels. @see docs/DESIGN.md (Sections), src/styles/sections.css */
+import { LAYERS } from '@/config/layers';
+import { t } from '@/lib/i18n';
+
+// Panel content comes from config, no new copy.
+const panelIds = ['content', 'frontend', 'infrastructure'];
+const panels = LAYERS.filter((l) => panelIds.includes(l.id));
+---
+
+<section id="about" class="about wrap">
+  <h2 class="section-head">{t('about.heading')}</h2>
+  <div class="about-cols">
+    <div>
+      <p class="statement">{t('about.body')}</p>
+      <ul class="layer-diagram">
+        {LAYERS.map((l) => (
+          <li style={`--layer-c: var(--c-${l.color})`}>
+            <span class="ld-num" aria-hidden="true">{l.number}</span>
+            <span>{l.title}</span>
+          </li>
+        ))}
+      </ul>
+    </div>
+    <div class="about-panels">
+      {panels.map((p) => (
+        <article class="panel" style={`--layer-c: var(--c-${p.color})`}>
+          <h3>{p.title}</h3>
+          <p>{p.short}</p>
+        </article>
+      ))}
+    </div>
+  </div>
+</section>

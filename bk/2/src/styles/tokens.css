@@ -1,0 +1,59 @@
+/* @module styles/tokens: palette variables, type scale, radii, scroll-step tokens. @see src/config/palette.ts, docs/DESIGN.md */
+
+:root {
+  /* Palette mirrors src/config/palette.ts (hex may live here and there only) */
+  --bg: #F8F9EF;
+  --bg-glow: #FEFFF8;
+  --surface: #FFFFFF;
+  --ink: #3D4339;
+  --ink-soft: #6B7566;
+  --line: #E3E6D6;
+  --wall: #F4F2EA;
+  --wall-shade: #E6E3D8;
+  --wood: #F0D5A8;
+  --c-white: #FBFBF6;
+  --graphite: #59606B;
+  --glow: #BFE3FF;
+  --led-green: #7BE0A4;
+  --led-amber: #FFC857;
+  --led-red: #FF8A80;
+
+  /* Layer colors */
+  --c-butter: #F5C64F;
+  --c-lilac: #B9A8EE;
+  --c-peach: #F9A87B;
+  --c-rose: #F29AB0;
+  --c-blue: #8FBDE8;
+  --c-sage: #AECB9F;
+  --c-steel: #A9B8CC;
+
+  /* Type: local fonts through Fontsource; *-alt reserved for Persian fonts later */
+  --font-display: 'Fredoka Variable', 'Fredoka', sans-serif;
+  --font-body: 'DM Sans Variable', 'DM Sans', sans-serif;
+  --font-display-alt: '__reserved-display-alt';
+  --font-body-alt: '__reserved-body-alt';
+
+  /* Type scale (px): 12, 14, 16, 20, 28, 44, 72, 120 */
+  --fs-12: 12px;
+  --fs-14: 14px;
+  --fs-16: 16px;
+  --fs-20: 20px;
+  --fs-28: 28px;
+  --fs-44: 44px;
+  --fs-72: 72px;
+  --fs-120: 120px;
+
+  /* Radii and hard shadows (docs/DESIGN.md HUD style) */
+  --radius-m: 14px;
+  --radius-l: 20px;
+  --radius-pill: 999px;
+  --hard-offset: 4px;
+
+  /* Scroll mapping (docs/MOTION.md) */
+  --step-vh: 80svh;
+  --steps: 6;
+
+  /* Layout */
+  --content-max: 68rem;
+  --hud-h: 56px;
+}

@@ -14,8 +14,8 @@ Look: a premium indie game diorama. Bright, colorful, calm around one memorable 
 | butter | #F5C64F | layer: content |
 | lilac | #B9A8EE | layer: translation |
 | peach | #F9A87B | layer: seo |
-| rose | #F29AB0 | layer: design |
-| blue | #8FBDE8 | layer: frontend |
+| rose | #F29AB0 | layer: web-design-development |
+| blue | #8FBDE8 | room accent: web-design-development |
 | sage | #AECB9F | layer: cms |
 | steel | #A9B8CC | layer: infrastructure |
 | wall | #F4F2EA | room back walls |
@@ -27,6 +27,34 @@ Look: a premium indie game diorama. Bright, colorful, calm around one memorable 
 | ledGreen / ledAmber / ledRed | #7BE0A4 / #FFC857 / #FF8A80 | status lights |
 Export helpers `lighten(hex, k)` and `darken(hex, k)`. Colors in the scene come from tokens only.
 Each room uses at most 6 colors: its layer color, wall, wood, white, graphite and one accent from the table.
+
+## Dual theme (approved design, implemented in T17/T18)
+
+The site ships two themes: light (this table, the original) and dark. Both palettes live in
+`src/config/palette.ts`; CSS exposes them as variables in `src/styles/tokens.css` under
+`:root` (light) and `[data-theme='dark']`. The user's choice persists in localStorage and
+falls back to `prefers-color-scheme`. The 3D scene reads the active theme through a
+material role registry (docs/WIRING.md), so a theme switch updates materials, lights and
+canvas textures in place without rebuilding the scene.
+
+Dark starting values (to be contrast-checked on real surfaces in T17):
+
+| Token | Starting value |
+|---|---|
+| bg | #090B0E |
+| bgDeep | #060709 |
+| surface | #11151A |
+| surfaceAlt | #171D23 |
+| elevated | #202831 |
+| line | #303943 |
+| ink | #E7E9E8 |
+| inkSoft | #A1A9AE |
+| inkMuted | #737D85 |
+| accent | #9AAEB4 |
+| accent2 | #B69B76 |
+| highlight | #D1D8D5 |
+
+Layer accents must stay distinguishable in both themes; dark variants are validated in T17.
 
 ## Type (local fonts through Fontsource)
 - Display: Fredoka Variable, weights 600 to 700. Headings, layer numbers, HUD labels.
@@ -82,12 +110,12 @@ Orthographic. Position = target + (1,1,1) x 30. Looks at target. Visible faces: 
 Round platform under the stack, with thin ring markings. CSS background: radial gradient from bgGlow in the center to bg at the edges. 40 to 60 slow dust particles (instanced). Three to five floating shapes in palette colors at different depths for parallax. A faint vignette. Keep it calm.
 
 ## HUD and UI style
-Rounded 14 to 20px corners. Chunky pill buttons: 2px ink border, a hard 4px offset shadow in the layer color. Numeric badges. A pulsing green availability dot. Scroll progress is a bar of seven segments, one per layer. No glassmorphism. Cards are white with a colored side tab.
+Rounded 14 to 20px corners. Chunky pill buttons: 2px ink border, a hard 4px offset shadow in the layer color. Numeric badges. A pulsing green availability dot. Scroll progress is a bar of six segments, one per layer. No glassmorphism. Cards are white with a colored side tab.
 
 ## Sections
 - HUD header: name, role, links to Stack, Toolkit, About, Contact, availability, progress bar. Small and distinctive, not a SaaS bar.
 - Hero: stack stage plus spatial labels and layer numbers.
-- About: two columns. Left: a short statement and a small diagram of the seven layers. Right: three color panels.
+- About: two columns. Left: a short statement and a small diagram of the six layers. Right: three color panels.
 - Toolkit: seven tiles, one per layer, each with number, color swatch and tool chips.
 - Contact: an end-of-level panel with a big heading, a mailto button, social links and availability.
 - Footer: compact.

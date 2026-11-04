@@ -18,14 +18,13 @@ Sub: Alex Morgan is a web generalist. Scroll to take the stack apart and see eac
 - content, Content: Website copy, editorial plans and guides that answer real questions.
 - translation, Translation: Persian to English translation and localization that keeps the tone.
 - seo, SEO & Analytics: Audits, keyword research and technical fixes, tracked in rankings and speed.
-- design, Web Design: Layouts, type and color systems, from first sketch to redesign.
-- frontend, Front-End: Fast, accessible interfaces in HTML, CSS and TypeScript.
+- web-design-development, Web Design & Development: Design systems and fast, accessible interfaces, from first sketch to shipped front-end.
 - cms, CMS & WordPress: Themes, plugins and editing setups your team can run alone.
 - infrastructure, Infrastructure: Hosting, DNS, SSL, backups and monitoring that keep sites up.
 Write for each layer: a two-sentence intro, four capabilities and two sample projects (title, one-line blurb, three tags). Mark them placeholder in a code comment.
 
 ## Toolkit placeholders
-content: Briefs, Editorial calendars, Style guides, Interviews, Editing. translation: Persian, English, Glossaries, Localization QA, CAT tools. seo: Search Console, GA4, Screaming Frog, Ahrefs, Schema markup. design: Figma, Type scales, Color systems, Wireframes, Design reviews. frontend: HTML, CSS, TypeScript, Astro, Three.js. cms: WordPress, Gutenberg, ACF, WooCommerce, Custom themes. infrastructure: cPanel, Nginx, Cloudflare, SSL, Backups.
+content: Briefs, Editorial calendars, Style guides, Interviews, Editing. translation: Persian, English, Glossaries, Localization QA, CAT tools. seo: Search Console, GA4, Screaming Frog, Ahrefs, Schema markup. web-design-development: Figma, HTML, CSS, TypeScript, Astro, Three.js. cms: WordPress, Gutenberg, ACF, WooCommerce, Custom themes. infrastructure: cPanel, Nginx, Cloudflare, SSL, Backups.
 
 ## About
 I work across the systems that make a website function: the hosting, the editing setup, the interface, the design, the search setup and the words. I started with content and followed each problem down a layer.

@@ -1,6 +1,6 @@
 # AGENTS.md: read this first, every session
 
-Project: a one-page portfolio for a web generalist. Centerpiece: a real-3D isometric stack of seven thick layers, like Lego plates. Each layer carries a dollhouse room. Scrolling lifts the layers off one at a time. English only for now. Structure everything so a second language can be added later.
+Project: a one-page portfolio for a web generalist. Centerpiece: a real-3D isometric stack of six thick layers, like Lego plates. Each layer carries a dollhouse room. Scrolling lifts the layers off one at a time. English only for now. Structure everything so a second language can be added later.
 
 ## Session protocol (follow exactly)
 START
@@ -16,7 +16,8 @@ WORK
 END
 9. Run `npm run check`. Fix every error it prints.
 10. Update docs/PROGRESS.md: mark the task, then write the handoff note (max 8 lines: what exists, what is next, gotchas).
-11. Stop. Start the next task only when asked.
+11. Commit the task's changes with a clear message (user-approved git-per-task workflow; commits are the revert points).
+12. Stop. Start the next task only when asked.
 
 Long session or unsure what was decided earlier (about 15 tool calls on one task)? Stop. Re-read this file and the task card. Rewrite the handoff note. Continue.
 Stuck after 3 attempts? Write it under "Blocked" in docs/PROGRESS.md and report it.
@@ -24,11 +25,11 @@ Stuck after 3 attempts? Write it under "Blocked" in docs/PROGRESS.md and report 
 ## Locked decisions (ask before you change any)
 - Stack: Astro (static output), TypeScript strict, vanilla Three.js, GSAP. No React. No Lenis.
 - English only now. All UI text lives in src/content/en.ts and is read through `t()`. Use CSS logical properties (margin-inline, padding-inline) so RTL can arrive later.
-- Seven layers, top to bottom: content, translation, seo, design, frontend, cms, infrastructure. The order lives only in src/config/layers.ts.
+- Six layers, top to bottom: content, translation, seo, web-design-development, cms, infrastructure. The order lives only in src/config/layers.ts. (Approved redesign, 2026-11: design and frontend merged into web-design-development.)
 - Slab thickness equals wall height (SLAB_T). Closed floor-to-floor spacing equals SLAB_T. Lift distance LIFT = FOOTPRINT + SLAB_T + 0.4. See docs/DESIGN.md.
 - Motion is triggered, not scrubbed: one layer per scroll step, top layer first. See docs/MOTION.md.
 - Every layer is clickable from its side at all times, including while stacked.
-- High-key palette. Background is near-white with a faint green-yellow cast. No dark slabs.
+- Dual theme. Light theme is high-key: near-white background with a faint green-yellow cast, no dark slabs. Dark theme deepens surfaces to a blue-charcoal range while layer accents stay readable. Hex colors only in palette.ts (both themes) and tokens.css.
 - Native document scroll is the source of truth.
 
 ## Folder map
@@ -41,7 +42,7 @@ src/scene/stack slab.ts, stack.ts, state.ts, motion.ts, landing.ts, pick.ts, lab
 src/scene/rooms one folder per room id, plus props/ (shared kit) and shell.ts
 src/ui          preview card, detail view, keyboard, dialog. Talks to the scene through scene/api.ts and lib/bus.ts only.
 src/lib         ticker, bus, math, quality, reduced-motion.
-docs            DESIGN, MOTION, ROOMS, WIRING, COPY, PROGRESS, MAP (generated), tasks/.
+docs            DESIGN, MOTION, ROOMS, WIRING, COPY, PROGRESS, QA, MAP (generated), tasks/.
 
 ## Hard rules
 Code

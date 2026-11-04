@@ -1,0 +1,64 @@
+---
+/** @module pages/work/[layer]: static page per layer; the SEO page and no-JS detail. @see docs/WIRING.md (Routes), src/config/layers.ts */
+import Base from '@/layouts/Base.astro';
+import Hud from '@/sections/Hud.astro';
+import Footer from '@/sections/Footer.astro';
+import { LAYERS } from '@/config/layers';
+import { SITE } from '@/config/site';
+import { t } from '@/lib/i18n';
+import type { LayerConfig } from '@/config/types';
+
+export function getStaticPaths() {
+  return LAYERS.map((l) => ({ params: { layer: l.id }, props: { layer: l } }));
+}
+
+interface Props { layer: LayerConfig }
+
+const { layer } = Astro.props;
+---
+
+<Base title={`${layer.title} — ${SITE.name}`} description={layer.short}>
+  <Hud />
+  <main id="main">
+    <article class="work wrap" style={`--layer-c: var(--c-${layer.color})`}>
+      <p class="work-num" aria-hidden="true">{layer.number}</p>
+      <h1>{layer.title}</h1>
+      <p class="work-short">{layer.short}</p>
+      <p class="work-intro">{layer.intro}</p>
+
+      <h2>{t('detail.capabilitiesHeading')}</h2>
+      <ul class="cap-list">
+        {layer.capabilities.map((c) => (
+          <li>{c}</li>
+        ))}
+      </ul>
+
+      <h2>{t('detail.samplesHeading')}</h2>
+      <div class="samples">
+        {layer.samples.map((s) => (
+          <article class="sample-card">
+            <h3>{s.title}</h3>
+            <p>{s.blurb}</p>
+            <ul class="chips">
+              {s.tags.map((tag) => (
+                <li class="chip">{tag}</li>
+              ))}
+            </ul>
+          </article>
+        ))}
+      </div>
+
+      <h2>{t('detail.toolkitHeading')}</h2>
+      <ul class="chips">
+        {layer.toolkit.map((tool) => (
+          <li class="chip">{tool}</li>
+        ))}
+      </ul>
+
+      <p class="work-back">
+        <a class="btn" href="/#stack">{t('detail.back')}</a>
+      </p>
+    </article>
+  </main>
+  <Footer />
+</Base>

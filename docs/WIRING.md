@@ -33,6 +33,7 @@ Debug state: `window.__stack = { step, u, e, restY, ids }`, refreshed every fram
 ## Routes
 - `/` : the experience.
 - `/work/<id>` : one static page per layer (getStaticPaths from config). It is the SEO page and the no-JS fallback. The 3D detail view uses pushState to the same URL and shows the same content.
+- Legacy URLs `/work/design/` and `/work/frontend/` redirect to `/work/web-design-development/` (Astro redirects config; static output emits meta-refresh pages). Old links never 404.
 
 ## How to add a layer
 1. Add a LayerConfig to src/config/layers.ts (this sets the order).

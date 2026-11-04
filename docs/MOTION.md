@@ -1,9 +1,9 @@
 # MOTION: scroll, lift, slam, camera, interaction
 
-Layers are indexed 0 (top) to N-1 (bottom). N = 7, STEPS = N - 1 = 6.
+Layers are indexed 0 (top) to N-1 (bottom). N = 6, STEPS = N - 1 = 5.
 
 ## Scroll mapping
-- `#stage` height = 100svh + STEPS x STEP_VH (STEP_VH = 80svh). Total about 580svh.
+- `#stage` height = 100svh + STEPS x STEP_VH (STEP_VH = 80svh). Total about 500svh.
 - Its child is `position: sticky; top: 0; height: 100svh` and holds the canvas, labels and HUD.
 - progress s = (scrollY - stageTop) / STEP_PX, where STEP_PX = 0.8 x innerHeight. Clamp to 0..STEPS.
 - Wanted step m uses hysteresis so edges do not flicker: open to m+1 when s >= m + 0.35. Close to m-1 when s < m - 1 + 0.15.
