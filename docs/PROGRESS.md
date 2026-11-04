@@ -3,11 +3,12 @@
 Current task: T20 — room-by-room visual refinement
 
 ## Handoff note (max 8 lines, rewrite each session)
-T14 done: all specs now describe the approved six-layer architecture (content, translation, seo, web-design-development, cms, infrastructure; 5 scroll steps) and the dual-theme system (light + dark, palettes in palette.ts, tokens.css [data-theme='dark'], scene role registry per docs/DESIGN.md). Code still has seven layers until T15/T16 — docs describe the approved target.
-T13 verified earlier (check, build, visual: t13-pills.png).
-Git policy (user, 2026-11-05): commit after EVERY task; commits are the revert points. Do not push unless asked.
-Known issues: docs/QA.md "partially verified" rows; WebGL context loss under swiftshader (environment) — re-verify visuals on a real GPU.
-How to run: see "How to run" below; npm install inside portfolio-kit, then npm run dev (localhost:4321).
+Redesign T13-T19 all done and committed (git log: T14 docs, T15 merge c4c537b, T16 migration 881eeca, T17 theme foundations e92aea4, T18 3D theming cf25cb6, T19 QA fab3a5c).
+Six layers: content, translation, seo, web-design-development, cms, infrastructure; 5 scroll steps. Legacy routes /work/design + /work/frontend redirect. Dual theme: CSS data-theme + scene role registry (scene-theme.ts); verified live (shots t17-dark, t18-dark-scene, t19-dark-detail). verify-stack derives N/STEPS from config (PASS). QA: docs/QA.md redesign section.
+T19 QA caught a real regression: T13 left transform:translateY(-50%) on .layer-nav, trapping the pills below the canvas (unclickable). Fixed in labels.ts (clear transform + z-index 4).
+Git policy (user): commit after EVERY task; do not push unless asked.
+Gotchas: labels transform fix must stay; draw fns live in anim.ts when layout hits the 200-line cap; screens are self-lit and intentionally identical in both themes; WebGL context loss under swiftshader is environmental.
+Next: T20 room-by-room visual refinement (all six rooms, both themes, intended camera angle), then T21-T27 (cards in docs/tasks/).
 
 ## How to run
 - Open a terminal in the portfolio-kit folder (the one with package.json): `cd "C:\Users\ASUS\OneDrive - sternx.de\Desktop\personal\homepage\GLM 5.3_2\portfolio-kit"`
@@ -28,7 +29,8 @@ How to run: see "How to run" below; npm install inside portfolio-kit, then npm r
 - T10: loop.ts (stage.update hook), boot.ts, renderer.ts (PCFShadowMap), Hud.astro (progress fill script).
 - T11: stage.ts (tier dust count), boot.ts (all-dynamic scene imports, mobile zoom, no-webgl fallback), loop.ts (reduced-motion gate), Hero.astro (poster.png), main.ts (lazy ui init), sections.css (no-webgl layout).
 - External (user + another assistant, 2026-11-04): git init with GitHub remote fouadsarhadi-beep/portfolio_dev, baseline commit including bk/1 and bk/2 backups, and T13 (labels.ts pill clamp). Verified 2026-11-05: check, build, visual pill check pass.
-- Redesign approved (2026-11-05, user brief): seven layers -> six (design + frontend merge into web-design-development), dual theme. Docs updated in T14; code follows in T15/T16; theme in T17/T18.
+- Redesign approved (2026-11-05, user brief): seven layers -> six (design + frontend merge into web-design-development), dual theme. Implemented across T14-T19.
+- T15: kit grew — props/keyboard.ts instanced; new kit props duck, gauge, easel, chipFan, moodBoard, cardGrid, tokenRack (rooms/web-design-development consumes them).
 
 ## Tasks
 | Task | What | Status |
@@ -54,16 +56,24 @@ How to run: see "How to run" below; npm install inside portfolio-kit, then npm r
 | T12 | QA and report | done |
 | T13 | Move layer-name pills clear of the stack (external) | done, verified |
 | T14 | Specs: six-layer architecture + dual theme | done |
-| T15 | Merge design + frontend rooms | todo |
-| T16 | Complete six-layer migration | todo |
-| T17 | Theme foundations (CSS + persistence + toggle) | todo |
-| T18 | Live 3D theme switching | todo |
-| T19 | QA: six layers + both themes | todo |
+| T15 | Merge design + frontend rooms | done |
+| T16 | Complete six-layer migration | done |
+| T17 | Theme foundations (CSS + persistence + toggle) | done |
+| T18 | Live 3D theme switching | done |
+| T19 | QA: six layers + both themes (+ pill stacking fix) | done |
+| T20 | Room-by-room visual refinement | todo |
+| T21 | Stack animation, camera, and interaction polish | todo |
+| T22 | HUD, detail panels, and website section refinement | todo |
+| T23 | Responsive visual refinement | todo |
+| T24 | Scene lifecycle and performance refinement | todo |
+| T25 | Loading, fallback, and asset refinement | todo |
+| T26 | Code cleanup and production preparation | todo |
+| T27 | Final visual consistency and release-readiness pass | todo |
 
 ## Blocked
 (none)
 
 ## Not verified yet
-- T08/T12: focused-canvas pixels (WebGL context loss under swiftshader; all logic verified numerically).
+- Focused-canvas pixels (WebGL context loss under swiftshader; logic verified numerically).
 - Landing squash/jolt/prop-punch pixels (single-frame effects under software rendering; rings verified, code implemented per docs/MOTION.md).
 - Whoosh wall-clock and trackpad/real-touch-drag on real hardware.
