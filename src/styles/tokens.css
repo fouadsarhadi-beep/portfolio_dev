@@ -1,6 +1,8 @@
 /* @module styles/tokens: palette variables, type scale, radii, scroll-step tokens. @see src/config/palette.ts, docs/DESIGN.md */
 
 :root {
+  color-scheme: light;
+
   /* Palette mirrors src/config/palette.ts (hex may live here and there only) */
   --bg: #F8F9EF;
   --bg-glow: #FEFFF8;
@@ -60,6 +62,8 @@
 
 /* Dark theme (values mirror DARK in config/theme.ts; approved design in docs/DESIGN.md) */
 [data-theme='dark'] {
+  color-scheme: dark;
+
   --bg: #090B0E;
   --bg-glow: #10151C;
   --surface: #11151A;
