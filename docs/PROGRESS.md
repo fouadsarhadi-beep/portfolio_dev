@@ -1,6 +1,6 @@
 # PROGRESS
 
-Current task: T27 — final visual consistency pass
+Current task: none (redesign complete, T27 done)
 
 ## Handoff note (max 8 lines, rewrite each session)
 Redesign T13-T19 all done and committed (git log: T14 docs, T15 merge c4c537b, T16 migration 881eeca, T17 theme foundations e92aea4, T18 3D theming cf25cb6, T19 QA fab3a5c).
@@ -70,7 +70,8 @@ Next: T20 room-by-room visual refinement (all six rooms, both themes, intended c
 | T25 | Loading/fallback (canvas fade-in, poster fade-out) | done (4a74e76) |
 | T26 | Code cleanup and production preparation | done (fc1169c) |
   T26 cleanup also fixed: translation screen swap never advanced (pair argument dropped). |
-| T27 | Final visual consistency and release-readiness pass | in progress |
+| T27 | Final visual consistency and release-readiness pass | done |
+  Final sweep (shots/final-*.png): desktop light+dark heroes coherent, mobile dark HUD/copy correct with poster as loading state. Remaining limitations documented in "Not verified yet" + mobile dark shows the light captured poster until the scene is ready (by design; a dark poster could be captured later). |
 
 ## Blocked
 (none)
