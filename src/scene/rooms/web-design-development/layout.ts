@@ -28,7 +28,7 @@ export function buildLayout(ctx: RoomContext, room: THREE.Group): WddHandles {
   devDesk.position.set(-0.7, 0, -1.85);
   room.add(devDesk);
   const draftDesk = p.desk(ctx, {});
-  draftDesk.position.set(1.6, 0, -0.35);
+  draftDesk.position.set(2.1, 0, 0.9);
   draftDesk.rotation.y = -Math.PI / 2;
   room.add(draftDesk);
   const chair = p.chair(ctx, {});
@@ -81,15 +81,15 @@ export function buildLayout(ctx: RoomContext, room: THREE.Group): WddHandles {
   // Drafting arm props: tablet, stylus, chip fan.
   const tablet = new THREE.Mesh(new RoundedBoxGeometry(0.34, 0.02, 0.24, 1, 0.02),
     new THREE.MeshStandardMaterial({ color: PALETTE.graphite, roughness: 0.4, metalness: 0.1 }));
-  tablet.position.set(1.55, 0.8, -0.5);
+  tablet.position.set(2.05, 0.8, 0.85);
   tablet.rotation.y = Math.PI / 2;
   room.add(tablet);
   const stylus = new THREE.Mesh(new THREE.CylinderGeometry(0.008, 0.008, 0.16, 8), ctx.mat.white);
-  stylus.position.set(1.7, 0.82, -0.28);
+  stylus.position.set(2.2, 0.82, 0.55);
   stylus.rotation.z = Math.PI / 2;
   room.add(stylus);
   const chipFan = p.chipFan(ctx, {});
-  chipFan.position.set(1.7, 0.82, -0.75);
+  chipFan.position.set(2.25, 0.82, 1.3);
   room.add(chipFan);
   const plant = p.plant(ctx, {});
   plant.position.set(2.3, 0, -2.3);
