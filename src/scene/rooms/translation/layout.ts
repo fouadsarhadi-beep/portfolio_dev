@@ -52,15 +52,13 @@ export function buildLayout(ctx: RoomContext, room: THREE.Group): TranslationHan
 
   // Dual-pane monitor on the desk.
   const size = { w: 512, h: 320 };
-  let pair = 0;
-  const drawScreen = (c: CanvasRenderingContext2D, w: number, h: number): void => drawDualPane(c, w, h, pair);
+  const drawScreen = (c: CanvasRenderingContext2D, w: number, h: number, p2: number): void => drawDualPane(c, w, h, p2);
   const monitor = p.monitor(ctx, { draw: drawScreen });
   monitor.position.set(-0.9, 0.8, -1.9);
   monitor.rotation.y = 0.15;
   room.add(monitor);
   const screenMesh = monitor.getObjectByName('screen') as THREE.Mesh;
   const screenTex = (screenMesh.material as THREE.MeshBasicMaterial).map as THREE.CanvasTexture;
-  void pair;
   const headphones = makeHeadphones(ctx);
   headphones.position.set(0.15, 0.81, -1.7);
   room.add(headphones);

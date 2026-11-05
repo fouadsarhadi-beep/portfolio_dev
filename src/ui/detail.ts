@@ -94,7 +94,6 @@ function open(id: string): void {
 function close(opts: { fromPop?: boolean; quick?: boolean } = {}): void {
   if (!isOpen || !dialog) return;
   isOpen = false;
-  const id = currentId;
   currentId = null;
 
   releaseFocus();
@@ -117,5 +116,4 @@ function close(opts: { fromPop?: boolean; quick?: boolean } = {}): void {
       items.forEach((el) => (el.style.opacity = ''));
     },
   });
-  void id;
 }

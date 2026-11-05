@@ -31,7 +31,6 @@ export function createAnim(handles: InfraHandles): Anim {
   const on = new THREE.Color(PALETTE.glow);
   const off = new THREE.Color(darken(PALETTE.graphite, 0.2));
   const dim = new THREE.Color(lighten(PALETTE.graphite, 0.3));
-  const m = new THREE.Matrix4();
 
   return {
     update(time, dt, _exposure) {
@@ -46,7 +45,6 @@ export function createAnim(handles: InfraHandles): Anim {
             mesh.setColorAt(i, phase > 0 ? on : mi === 0 ? off : dim);
           }
           if (mesh.instanceColor) mesh.instanceColor.needsUpdate = true;
-          void m;
         });
       }
 

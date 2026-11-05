@@ -150,7 +150,6 @@ function makeFan(ctx: RoomContext, x: number, z: number, yaw: number): THREE.Gro
     blade.rotation.z = (i / 4) * Math.PI * 2;
     blades.add(blade);
   }
-  void ctx;
   blades.rotation.y = yaw;
   group.add(blades);
   group.position.set(x, 0, z);
