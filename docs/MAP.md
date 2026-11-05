@@ -236,7 +236,7 @@ Search this file before creating anything.
   uses: src/config/layers, src/scene/api
 - landing.ts: scene/stack/landing: touchdown effects: squash, shadow pulse, impact ring, camera jolt, prop punch. @see docs/MOTION.md (Slam), src/scene/stack/motion.ts
   exports: Landing, createLanding
-  uses: src/config/tuning, src/config/palette, src/lib/reduced-motion
+  uses: src/config/tuning, src/config/palette, src/config/layers, src/lib/reduced-motion
 - motion.ts: scene/stack/motion: GSAP tweens on the u array; lift and slam timings per MOTION.md. @see docs/MOTION.md (Lift, Slam), src/scene/stack/state.ts, src/scene/stack/landing.ts
   exports: Motion, createMotion
   uses: src/config/tuning, src/lib/reduced-motion

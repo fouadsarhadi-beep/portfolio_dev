@@ -2,7 +2,8 @@
 import { gsap } from 'gsap';
 import * as THREE from 'three';
 import { SLAB_T, FOOTPRINT } from '@/config/tuning';
-import { PALETTE, darken } from '@/config/palette';
+import { PALETTE, darken, lighten } from '@/config/palette';
+import { LAYERS } from '@/config/layers';
 import { prefersReducedMotion } from '@/lib/reduced-motion';
 
 const JOLT_AMP = 0.08;
@@ -39,10 +40,13 @@ export function createLanding(groundMat: THREE.ShadowMaterial | null): Landing {
           .to(groundMat, { opacity: base, duration: 0.125 });
       }
 
-      // 3. Impact ring at the slab footprint.
+      // 3. Impact ring at the slab footprint, tinted with the layer accent.
+      const layerId = slab.userData.layerId as string | undefined;
+      const layer = LAYERS.find((l) => l.id === layerId);
+      const ringColor = layer ? lighten(PALETTE[layer.color as keyof typeof PALETTE], 0.15) : darken(PALETTE.graphite, 0.1);
       const ring = new THREE.Mesh(
         new THREE.RingGeometry(FOOTPRINT / 2 - 0.45, FOOTPRINT / 2 - 0.25, 48),
-        new THREE.MeshBasicMaterial({ color: darken(PALETTE.graphite, 0.1), transparent: true, opacity: 0.5, depthWrite: false }),
+        new THREE.MeshBasicMaterial({ color: ringColor, transparent: true, opacity: 0.5, depthWrite: false }),
       );
       ring.rotation.x = -Math.PI / 2;
       ring.position.y = slabBaseY - SLAB_T / 2 + 0.02;

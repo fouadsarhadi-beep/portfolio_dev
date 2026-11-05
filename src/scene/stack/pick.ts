@@ -119,7 +119,7 @@ export function createPick(opts: {
 
   return {
     update(dt, time) {
-      const k = 1 - Math.exp(-12 * Math.max(dt, 0));
+      const k = 1 - Math.exp(-10 * Math.max(dt, 0));
       for (let i = 0; i < n; i++) {
         const active = hovered === LAYERS[i].id;
         const gapAbove = (i === 0 ? u[0] : u[i - 1]) > 0.1;
