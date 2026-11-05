@@ -170,7 +170,7 @@ export async function boot(): Promise<void> {
 function markReady(mount: HTMLElement): void {
   document.documentElement.setAttribute('data-scene-ready', 'true');
   const poster = document.querySelector<HTMLElement>('.poster');
-  if (poster) poster.style.display = 'none';
+  if (poster) poster.style.opacity = '0'; // CSS fades it out; it stays non-interactive
   mount.setAttribute('data-live', 'true');
 }
 

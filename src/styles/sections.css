@@ -89,6 +89,16 @@ html:not(.js) .layer-nav {
   z-index: 2;
 }
 
+/* The canvas fades in after its first rendered frame (data-live from boot). */
+#canvas-mount canvas {
+  opacity: 0;
+  transition: opacity 0.6s;
+}
+
+#canvas-mount[data-live='true'] canvas {
+  opacity: 1;
+}
+
 .hero-copy {
   position: absolute;
   inset-inline-start: clamp(16px, 5vw, 56px);
