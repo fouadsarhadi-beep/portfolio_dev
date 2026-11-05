@@ -44,6 +44,13 @@ export function createStage(tier: 'high' | 'low'): Stage {
 
   const dust = makeDust(DUST_COUNT);
   group.add(dust.mesh);
+  const tmp = {
+    m: new THREE.Matrix4(),
+    q: new THREE.Quaternion(),
+    e: new THREE.Euler(),
+    s: new THREE.Vector3(1, 1, 1),
+    p: new THREE.Vector3(),
+  };
   const shapes = makeShapes();
   shapes.forEach((s) => group.add(s.mesh));
 
@@ -53,19 +60,14 @@ export function createStage(tier: 'high' | 'low'): Stage {
       const frozen = prefersReducedMotion();
       // Dust drifts slowly upward and around; no drift under reduced motion.
       if (!frozen) {
-        const m = new THREE.Matrix4();
-        const q = new THREE.Quaternion();
-        const s = new THREE.Vector3(1, 1, 1);
         for (let i = 0; i < dust.base.length; i++) {
           const p = dust.base[i];
           const y = ((p.y + time * p.speed) % 16 + 16) % 16;
           const wob = Math.sin(time * 0.6 + p.phase) * 0.15;
-          m.compose(
-            new THREE.Vector3(p.x + wob, y, p.z - wob),
-            q.setFromEuler(new THREE.Euler(0, time * 0.2 + p.phase, 0)),
-            s,
-          );
-          dust.mesh.setMatrixAt(i, m);
+          tmp.p.set(p.x + wob, y, p.z - wob);
+          tmp.q.setFromEuler(tmp.e.set(0, time * 0.2 + p.phase, 0));
+          tmp.m.compose(tmp.p, tmp.q, tmp.s);
+          dust.mesh.setMatrixAt(i, tmp.m);
         }
         dust.mesh.instanceMatrix.needsUpdate = true;
         // Floating shapes bob and yaw gently at their own depths (parallax).

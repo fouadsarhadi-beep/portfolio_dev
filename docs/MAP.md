@@ -88,7 +88,7 @@ Search this file before creating anything.
   exports: ROOMS
   uses: src/config/types, src/scene/rooms/content, src/scene/rooms/translation, src/scene/rooms/seo, src/scene/rooms/web-design-development, src/scene/rooms/cms, src/scene/rooms/infrastructure
 - shell.ts: scene/rooms/shell: room floor, back walls, AO strips and the shared material kit. @see docs/ROOMS.md (Rules), docs/DESIGN.md, src/scene/rooms/props/screen.ts, src/scene/scene-theme.ts
-  exports: createMaterialKit, buildShell
+  exports: disposeObject, createMaterialKit, buildShell
   uses: src/config/tuning, src/config/palette, src/config/types, src/scene/rooms/props/screen, src/scene/scene-theme
 
 ## src/scene/rooms/cms/

@@ -1,7 +1,7 @@
 /** @module scene/rooms/web-design-development: the merged design-and-development workspace on layer 4. @see docs/ROOMS.md (4), README.md (in this folder) */
 import * as THREE from 'three';
 import type { RoomBuilder } from '@/config/types';
-import { buildShell } from '../shell.ts';
+import { buildShell, disposeObject } from '../shell.ts';
 import { buildLayout, type WddHandles } from './layout';
 import { createAnim } from './anim';
 
@@ -16,6 +16,9 @@ export const build: RoomBuilder = (ctx) => {
   return {
     group,
     update: anim.update,
-    dispose: anim.dispose,
+    dispose() {
+      anim.dispose();
+      disposeObject(group);
+    },
   };
 };

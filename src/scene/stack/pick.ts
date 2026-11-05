@@ -30,6 +30,7 @@ export function createPick(opts: {
   const n = slabs.length;
   const raycaster = new THREE.Raycaster();
   const ndc = new THREE.Vector2();
+  const rectVector = new THREE.Vector3();
   const lift = new Array<number>(n).fill(0);
   const nudgeX = new Array<number>(n).fill(0);
   const nudgeZ = new Array<number>(n).fill(0);

@@ -8,6 +8,21 @@ import { registerMaterial } from '../scene-theme';
 
 const FLOOR_HALF = FOOTPRINT / 2 - 0.26; // room floor inset from the slab edge
 
+/** Disposes a room's geometries and texture maps. Shared kit materials and
+ *  theme-registered materials survive (they belong to the scene, not the room). */
+export function disposeObject(group: THREE.Group): void {
+  group.traverse((o) => {
+    const mesh = o as THREE.Mesh;
+    if (!mesh.isMesh) return;
+    mesh.geometry.dispose();
+    const mats = Array.isArray(mesh.material) ? mesh.material : [mesh.material];
+    for (const m of mats) {
+      const std = m as THREE.MeshStandardMaterial;
+      if (std.map) std.map.dispose();
+    }
+  });
+}
+
 export function createMaterialKit(): MaterialKit {
   const std = (o: THREE.MeshStandardMaterialParameters): THREE.MeshStandardMaterial =>
     new THREE.MeshStandardMaterial({ roughness: 0.8, metalness: 0, ...o });
