@@ -1,6 +1,6 @@
 # PROGRESS
 
-Current task: T20 — room-by-room visual refinement
+Current task: T27 — final visual consistency pass
 
 ## Handoff note (max 8 lines, rewrite each session)
 Redesign T13-T19 all done and committed (git log: T14 docs, T15 merge c4c537b, T16 migration 881eeca, T17 theme foundations e92aea4, T18 3D theming cf25cb6, T19 QA fab3a5c).
@@ -61,14 +61,16 @@ Next: T20 room-by-room visual refinement (all six rooms, both themes, intended c
 | T17 | Theme foundations (CSS + persistence + toggle) | done |
 | T18 | Live 3D theme switching | done |
 | T19 | QA: six layers + both themes (+ pill stacking fix) | done |
-| T20 | Room-by-room visual refinement | todo |
-| T21 | Stack animation, camera, and interaction polish | todo |
-| T22 | HUD, detail panels, and website section refinement | todo |
-| T23 | Responsive visual refinement | todo |
-| T24 | Scene lifecycle and performance refinement | todo |
-| T25 | Loading, fallback, and asset refinement | todo |
-| T26 | Code cleanup and production preparation | todo |
-| T27 | Final visual consistency and release-readiness pass | todo |
+| T20 | Room-by-room visual refinement | done (3af591e) |
+| T21 | Stack animation, camera, and interaction polish | done (23fdcb5) |
+| T22 | HUD, detail panels, website section refinement (color-scheme) | done (493ddd8) |
+| T23 | Responsive visual refinement | done |
+  T23 found + fixed a scene-boot crash on mobile: drawDualPane's pair argument was undefined on the initial canvas draw (introduced by T26 cleanup; default param fixes it). 360px: 0 overflow, zoom 1.3, scene boots, no errors. |
+| T24 | Scene lifecycle and performance (room disposal, allocation hoists) | done (94a2dd6) |
+| T25 | Loading/fallback (canvas fade-in, poster fade-out) | done (4a74e76) |
+| T26 | Code cleanup and production preparation | done (fc1169c) |
+  T26 cleanup also fixed: translation screen swap never advanced (pair argument dropped). |
+| T27 | Final visual consistency and release-readiness pass | in progress |
 
 ## Blocked
 (none)

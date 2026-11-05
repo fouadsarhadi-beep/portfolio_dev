@@ -19,7 +19,7 @@ export interface TranslationHandles {
 }
 
 /** Dual-pane screen: an English and a Persian greeting side by side. */
-export function drawDualPane(c: CanvasRenderingContext2D, w: number, h: number, pair: number): void {
+export function drawDualPane(c: CanvasRenderingContext2D, w: number, h: number, pair = 0): void {
   c.fillStyle = PALETTE.white;
   c.fillRect(0, 0, w, h);
   c.fillStyle = PALETTE.lilac;
