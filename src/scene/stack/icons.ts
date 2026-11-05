@@ -1,6 +1,5 @@
 /** @module scene/stack/icons: draws layer icons, numbers and registration crosses to CanvasTextures. @see docs/DESIGN.md (Slab), src/scene/stack/slab.ts */
 import * as THREE from 'three';
-import { PALETTE } from '@/config/palette';
 
 function toTexture(canvas: HTMLCanvasElement): THREE.CanvasTexture {
   const tex = new THREE.CanvasTexture(canvas);
@@ -32,6 +31,12 @@ interface FaceColors {
 
 const FONT = "'Fredoka Variable', 'DM Sans Variable', system-ui, sans-serif";
 
+export interface NumberTexture {
+  tex: THREE.CanvasTexture;
+  /** Redraws in place so a theme switch can re-ink the engraving. */
+  redraw(colors: FaceColors): void;
+}
+
 /** Number + registration crosses for the whole +z face (w x h world units). */
 export function makeNumberTexture(
   number: string,
@@ -39,32 +44,37 @@ export function makeNumberTexture(
   h: number,
   colors: FaceColors,
   pxPerUnit = 160,
-): THREE.CanvasTexture {
+): NumberTexture {
   const canvas = document.createElement('canvas');
   canvas.width = Math.round(w * pxPerUnit);
   canvas.height = Math.round(h * pxPerUnit);
   const ctx = canvas.getContext('2d') as CanvasRenderingContext2D;
 
-  drawCross(ctx, 34, 34);
-  drawCross(ctx, canvas.width - 34, canvas.height - 34);
+  function draw(colors: FaceColors): void {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    drawCross(ctx, 34, 34, colors.cross);
+    drawCross(ctx, canvas.width - 34, canvas.height - 34, colors.cross);
 
-  const size = canvas.height * 0.62;
-  ctx.font = `600 ${size}px ${FONT}`;
-  ctx.textBaseline = 'middle';
-  const x = canvas.height * 0.42;
-  const y = canvas.height / 2 + size * 0.12;
-  ctx.fillStyle = colors.highlight;
-  ctx.fillText(number, x + 3, y + 5);
-  ctx.fillStyle = colors.main;
-  ctx.fillText(number, x, y);
+    const size = canvas.height * 0.62;
+    ctx.font = `600 ${size}px ${FONT}`;
+    ctx.textBaseline = 'middle';
+    const x = canvas.height * 0.42;
+    const y = canvas.height / 2 + size * 0.12;
+    ctx.fillStyle = colors.highlight;
+    ctx.fillText(number, x + 3, y + 5);
+    ctx.fillStyle = colors.main;
+    ctx.fillText(number, x, y);
+  }
+  draw(colors);
 
-  return toTexture(canvas);
+  const tex = toTexture(canvas);
+  return { tex, redraw: (c) => { draw(c); tex.needsUpdate = true; } };
 }
 
 /** Small print-style registration cross, used in two corners of the left face. */
-function drawCross(ctx: CanvasRenderingContext2D, cx: number, cy: number): void {
+function drawCross(ctx: CanvasRenderingContext2D, cx: number, cy: number, color: string): void {
   const arm = 13;
-  ctx.strokeStyle = PALETTE.graphite;
+  ctx.strokeStyle = color;
   ctx.globalAlpha = 0.65;
   ctx.lineWidth = 3;
   ctx.beginPath();

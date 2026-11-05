@@ -73,6 +73,19 @@ html:not(.js) .layer-nav {
   height: 100svh;
 }
 
+/* Atmospheric framing (T28): a faint warm glow rises behind the tower; the
+   vignette in ::after frames it. Both follow the theme through tokens. */
+.stage-sticky::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  pointer-events: none;
+  background:
+    radial-gradient(52% 44% at 50% 58%, color-mix(in srgb, var(--under-glow) 34%, transparent), transparent 70%),
+    linear-gradient(to top, color-mix(in srgb, var(--under-glow) 14%, transparent), transparent 36%);
+}
+
 /* Faint vignette around the stage (docs/DESIGN.md: keep it calm) */
 .stage-sticky::after {
   content: '';

@@ -1,5 +1,5 @@
 /** @module scene/stack/state: scroll-derived step, the u and e arrays, the invariant, window.__stack. @see docs/MOTION.md (Scroll mapping, State, Debug), src/scene/stack/motion.ts */
-import { LIFT, SLAB_T } from '@/config/tuning';
+import { LIFT, SLAB_T, STACK_BASE_Y } from '@/config/tuning';
 import { LAYERS } from '@/config/layers';
 import * as THREE from 'three';
 
@@ -29,7 +29,7 @@ export interface StackState {
 
 export function createState(): StackState {
   const ids = LAYERS.map((l) => l.id);
-  const restY = LAYERS.map((_, i) => (N - 1 - i) * SLAB_T);
+  const restY = LAYERS.map((_, i) => STACK_BASE_Y + (N - 1 - i) * SLAB_T);
   const u = new Array<number>(N).fill(0);
   const e = new Array<number>(N).fill(0);
   const state: StackState = {

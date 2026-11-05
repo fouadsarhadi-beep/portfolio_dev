@@ -1,6 +1,6 @@
 # DESIGN: style and geometry rules
 
-Look: a premium indie game diorama. Bright, colorful, calm around one memorable object (the stack). Think crafted miniature with soft light, not a template and not a toy. Real 3D with real light and shadow does the work; do not fake it with flat colors.
+Look (T28 redesign): a restrained architectural diorama. One warm plaster-and-wood material family across the whole tower; floors are distinguished by typography, numbering, icons and room contents, never by side colors. Think crafted architectural model with soft light, not a toy. Real 3D with real light and shadow does the work; do not fake it with flat colors.
 
 ## Palette (src/config/palette.ts is the only place for hex)
 | Key | Hex | Use |
@@ -11,21 +11,25 @@ Look: a premium indie game diorama. Bright, colorful, calm around one memorable 
 | ink | #3D4339 | text (never pure black) |
 | inkSoft | #6B7566 | secondary text |
 | line | #E3E6D6 | borders |
-| butter | #F5C64F | layer: content |
-| lilac | #B9A8EE | layer: translation |
-| peach | #F9A87B | layer: seo |
-| rose | #F29AB0 | layer: web-design-development |
+| slab | #EDE9DE | unified slab body (T28; both themes register it) |
+| slabShade | #D9D4C6 | slab trims, bottom band, inset panels |
+| underGlow | #D8C9A3 | restrained glow beneath the floating tower |
+| butter | #F5C64F | layer accent: content (DOM labels/cards only) |
+| lilac | #B9A8EE | layer accent: translation (DOM only) |
+| peach | #F9A87B | layer accent: seo (DOM only) |
+| rose | #F29AB0 | layer accent: web-design-development (DOM only) |
 | blue | #8FBDE8 | room accent: web-design-development |
-| sage | #AECB9F | layer: cms |
-| steel | #A9B8CC | layer: infrastructure |
+| sage | #AECB9F | layer accent: cms (DOM only) |
+| steel | #A9B8CC | layer accent: infrastructure (DOM only) |
 | wall | #F4F2EA | room back walls |
 | wallShade | #E6E3D8 | right-hand wall |
-| wood | #F0D5A8 | room floors |
-| white | #FBFBF6 | props |
-| graphite | #59606B | small details only, never a slab or a wall |
+| wood | #F0D5A8 | slab deck floors and room floors |
+| white | #FBFBF6 | props, slab badges |
+| graphite | #59606B | icons, engraved numbers, small details |
 | glow | #BFE3FF | screens |
 | ledGreen / ledAmber / ledRed | #7BE0A4 / #FFC857 / #FF8A80 | status lights |
 Export helpers `lighten(hex, k)` and `darken(hex, k)`. Colors in the scene come from tokens only.
+Layer accents (butter, lilac, ...) are a DOM concern: layer-nav pills, hover card, detail card. Slab sides never carry them (T28: no per-floor color identity).
 Each room uses at most 6 colors: its layer color, wall, wood, white, graphite and one accent from the table.
 
 ## Dual theme (approved design, implemented in T17/T18)
@@ -71,6 +75,7 @@ export const WALL_H = SLAB_T;          // wall height equals slab thickness (loc
 export const WALL_THICK = 0.14;
 export const CORNER_R = 0.14;
 export const LIFT = FOOTPRINT + SLAB_T + 0.4; // 8.2: how far a lifted layer rises
+export const STACK_BASE_Y = 1.35;      // T28: the whole tower floats this high (see below)
 ```
 Why these numbers
 - Closed stack: each layer's floor sits SLAB_T above the floor below. A lower room's walls then fill exactly the volume of the slab above it, so the stack reads as seven equal chunky plates. When the layer above lifts, the walls appear where that slab's side used to be.
@@ -81,21 +86,23 @@ Why these numbers
 ## Camera
 Orthographic. Position = target + (1,1,1) x 30. Looks at target. Visible faces: top, +x (right face), +z (left face). Back walls sit on the -x and -z sides. Never rotate the camera or the stack.
 
-## Slab (scene/stack/slab.ts)
-- Body: rounded box FOOTPRINT x SLAB_T x FOOTPRINT, radius CORNER_R, 4 segments.
-- Top: floor inset 0.18 from the edge. A rim in the layer color, lightened 12 percent, runs around it.
-- Right face (+x): inset panel and a round white badge (diameter 0.9 x SLAB_T) with the layer icon. Icon comes from the config path, drawn to a CanvasTexture.
-- Left face (+z): the layer number engraved large, a darker tone of the layer color. Registration crosses in two corners.
-- Thin lighter trim along the top perimeter. A darker band along the bottom edge.
-- Material: MeshStandardMaterial, roughness 0.6, metalness 0.
+## Slab (scene/stack/slab.ts) — T28 unified family
+- Body: rounded box FOOTPRINT x SLAB_T x FOOTPRINT, radius CORNER_R, 4 segments. One shared geometry.
+- Material: warm plaster (`slab` role, roughness 0.55, metalness 0.04). Identical on all six floors.
+- Top: warm wood deck inset 0.18 from the edge, with a quiet `slabShade` rim around it.
+- Right face (+x): inset `slabShade` panel and a round plaster badge (diameter 0.9 x SLAB_T) with the layer icon in graphite. Icon comes from the config path, drawn to a CanvasTexture.
+- Left face (+z): the layer number engraved in theme ink (light floors get dark ink, dark floors light ink; the CanvasTexture redraws on theme change). Registration crosses in graphite in two corners.
+- Thin `slabShade` band along the four bottom edges.
+- Floors are told apart by number, icon, layer-nav pill and room contents, never by side color.
 
 ## Light and render
 - ACESFilmic tone mapping, exposure 1.05, sRGB output.
-- Environment: RoomEnvironment through PMREM, intensity 0.5. No downloaded HDRI.
-- HemisphereLight sky #FFFFFF, ground #F0EBD8, intensity 0.7.
-- Key light: DirectionalLight from the top-left-front, warm white, intensity 2.2, soft shadows (PCFSoftShadowMap, radius 4, bias -0.0004).
+- Environment: RoomEnvironment through PMREM, intensity 0.5 (0.38 dark). No downloaded HDRI.
+- HemisphereLight sky follows bgGlow, ground follows the floor tone, intensity 0.7 (0.45 dark).
+- Key light: DirectionalLight from the top-left-front, warm white, intensity 2.2 (1.5 dark), soft shadows (PCFShadowMap, radius 4, bias -0.0004), shadow camera 16 world units wide for self-shadowing across the raised tower.
 - Fill light: weak cool DirectionalLight from the right, no shadows.
-- Ground: ShadowMaterial plane, opacity 0.18, under a round platform.
+- Under light (T28): dim PointLight in `underGlow` beneath the floating tower; lifts the undersides.
+- Contact shadow (T28): soft radial-gradient plane 11x11 at y = -0.12 under the tower (opacity 0.3 light / 0.42 dark); a larger faint `underGlow` halo sits deeper. No platform, no ground plane, no hard shadow edges to clip.
 - Ambient occlusion by hand: a dark gradient strip (opacity 0.08 to 0.1) along the base of both back walls and under big props.
 
 ## Prop quality rules (this is what separates "game" from "toy")
@@ -106,15 +113,15 @@ Orthographic. Position = target + (1,1,1) x 30. Looks at target. Visible faces: 
 - Screens use CanvasTexture and update at 12 fps at most.
 - Repeated elements (books, LEDs, floor tiles, cables) use InstancedMesh.
 
-## Environment around the stack
-Round platform under the stack, with thin ring markings. CSS background: radial gradient from bgGlow in the center to bg at the edges. 40 to 60 slow dust particles (instanced). Three to five floating shapes in palette colors at different depths for parallax. A faint vignette. Keep it calm.
+## Environment around the stack (T28)
+The tower floats (STACK_BASE_Y = 1.35) above a soft radial contact shadow, an `underGlow` halo and a dim under light; it reads as deliberately suspended, not misplaced. No platform, no ground plane. The page frames the stage with a faint warm radial glow (`.stage-sticky::before`, tokens-driven) and the existing vignette. 18 to 36 slow dust particles (instanced, opacity 0.35) drift around the tower; floating colored shapes were removed. Keep it calm; the environment never competes with the tower.
 
 ## HUD and UI style
 Rounded 14 to 20px corners. Chunky pill buttons: 2px ink border, a hard 4px offset shadow in the layer color. Numeric badges. A pulsing green availability dot. Scroll progress is a bar of six segments, one per layer. No glassmorphism. Cards are white with a colored side tab.
 
 ## Sections
 - HUD header: name, role, links to Stack, Toolkit, About, Contact, availability, progress bar. Small and distinctive, not a SaaS bar.
-- Hero: stack stage plus spatial labels and layer numbers.
+- Hero: full-width stack stage (no max-width wrapper) plus spatial labels and layer numbers. The canvas spans the window so shadows and glow never clip at a container edge.
 - About: two columns. Left: a short statement and a small diagram of the six layers. Right: three color panels.
 - Toolkit: seven tiles, one per layer, each with number, color swatch and tool chips.
 - Contact: an end-of-level panel with a big heading, a mailto button, social links and availability.

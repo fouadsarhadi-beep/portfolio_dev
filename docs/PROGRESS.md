@@ -1,14 +1,13 @@
 # PROGRESS
 
-Current task: none (redesign complete, T27 done)
+Current task: T29 (redesign hover interactions and preview)
 
 ## Handoff note (max 8 lines, rewrite each session)
-Redesign T13-T19 all done and committed (git log: T14 docs, T15 merge c4c537b, T16 migration 881eeca, T17 theme foundations e92aea4, T18 3D theming cf25cb6, T19 QA fab3a5c).
-Six layers: content, translation, seo, web-design-development, cms, infrastructure; 5 scroll steps. Legacy routes /work/design + /work/frontend redirect. Dual theme: CSS data-theme + scene role registry (scene-theme.ts); verified live (shots t17-dark, t18-dark-scene, t19-dark-detail). verify-stack derives N/STEPS from config (PASS). QA: docs/QA.md redesign section.
-T19 QA caught a real regression: T13 left transform:translateY(-50%) on .layer-nav, trapping the pills below the canvas (unclickable). Fixed in labels.ts (clear transform + z-index 4).
-Git policy (user): commit after EVERY task; do not push unless asked.
-Gotchas: labels transform fix must stay; draw fns live in anim.ts when layout hits the 200-line cap; screens are self-lit and intentionally identical in both themes; WebGL context loss under swiftshader is environmental.
-Next: T20 room-by-room visual refinement (all six rooms, both themes, intended camera angle), then T21-T27 (cards in docs/tasks/).
+Redesign batch T28-T32 in progress (user brief 2026-11-05). T28 done: unified plaster/wood slab family (roles slab/slabShade/underGlow in ThemeColors + tokens.css), floating tower (STACK_BASE_Y 1.35, no platform/ground), rebuilt stage environment (contact shadow + underGlow halo + under light, shapes removed), collision dust (stack/dust.ts pool), poster regenerated. verify-stack PASS, check PASS, both themes shot.
+T29 next: hover movement states (top floor right pre-scroll; exposed floor up; first floor included) + full redesign of the right-side hover info card (no "View work" link), component shared with T30's expanded card. Files: pick.ts, preview.ts, bus, Hero/hud.css.
+Gotchas: a stale dev server may hold 4321 — run `URL=http://localhost:4322/ npm run shots`; verify-stack takes URL env too. Astro dev toolbar disabled (screenshot leak). Number textures redraw on theme change (icons.ts returns {tex, redraw}).
+Git policy: one commit per task, exact messages "T28: refine tower materials and environment" etc.; never push.
+Next: T29, then T30 (detached floor 50/50), T31 (page-wide language), T32 (responsive + QA).
 
 ## How to run
 - Open a terminal in the portfolio-kit folder (the one with package.json): `cd "C:\Users\ASUS\OneDrive - sternx.de\Desktop\personal\homepage\GLM 5.3_2\portfolio-kit"`
@@ -72,6 +71,8 @@ Next: T20 room-by-room visual refinement (all six rooms, both themes, intended c
   T26 cleanup also fixed: translation screen swap never advanced (pair argument dropped). |
 | T27 | Final visual consistency and release-readiness pass | done |
   Final sweep (shots/final-*.png): desktop light+dark heroes coherent, mobile dark HUD/copy correct with poster as loading state. Remaining limitations documented in "Not verified yet" + mobile dark shows the light captured poster until the scene is ready (by design; a dark poster could be captured later). |
+| T28 | Tower materials, positioning and environment (redesign batch) | done, verified |
+  Unified plaster/wood slab family, floating tower + contact shadow/under-glow environment, collision dust, full-width shadow fix, poster regenerated, shots tooling fixed (stage selector, dark/slam passes, dev toolbar off). Card: docs/tasks/T28-tower-materials-environment.md. |
 
 ## Blocked
 (none)

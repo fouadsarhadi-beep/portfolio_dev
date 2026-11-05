@@ -1,5 +1,5 @@
 /** @module scene/boot: entry; dynamic-imports three after first paint, mounts the canvas or falls back. @see src/scene/loop.ts, src/main.ts, docs/WIRING.md */
-import type { WebGLRenderer, OrthographicCamera, Scene, ShadowMaterial, Object3D, Mesh } from 'three';
+import type { WebGLRenderer, OrthographicCamera, Scene, Object3D, Mesh, Material } from 'three';
 import type { StackDebugState } from '@/config/types';
 import type { ThemeColors } from '@/config/theme';
 import type { Stage } from './stage';
@@ -76,16 +76,16 @@ export async function boot(): Promise<void> {
 
   // Everything below pulls three.js in, so it all loads dynamically together.
   const [
-    { CAM_DIR, CAM_DISTANCE, SLAB_T }, { LAYERS }, { bus }, { createStack },
+    { CAM_DIR, CAM_DISTANCE, SLAB_T }, { LAYERS }, { bus }, { PALETTE }, { createStack },
     { createState }, { createMotion }, { createLanding }, { createPick },
     { initLabels }, { createFocus }, { bindSceneApi }, { startLoop }, { detectTier },
-    { initSceneTheme },
+    { initSceneTheme }, { createDustPuffs },
   ] = await Promise.all([
-    import('@/config/tuning'), import('@/config/layers'), import('@/lib/bus'),
+    import('@/config/tuning'), import('@/config/layers'), import('@/lib/bus'), import('@/config/palette'),
     import('./stack/stack'), import('./stack/state'), import('./stack/motion'),
     import('./stack/landing'), import('./stack/pick'), import('./stack/labels'),
     import('./focus'), import('./api'), import('./loop'), import('@/lib/quality'),
-    import('./scene-theme'),
+    import('./scene-theme'), import('./stack/dust'),
   ]);
   // The registry applies the active theme to every material registered during build.
   initSceneTheme();
@@ -110,9 +110,10 @@ export async function boot(): Promise<void> {
   camera.zoom = tier === 'low' ? 1.3 : 1;
   camera.updateProjectionMatrix();
 
-  // Scroll state, motion, landing, picking (docs/MOTION.md).
+  // Scroll state, motion, landing (with contact-shadow pulse + dust puffs).
   const state = createState();
-  const landing = createLanding(findGroundMat(stage.group));
+  const puffs = createDustPuffs(stack.group, PALETTE.graphite);
+  const landing = createLanding(findContactShadow(stage.group), puffs);
   const motion = createMotion(state.u, LAYERS.length, {
     onLand: (i) => {
       const room = stack.rooms.find((r) => r.layerIndex === i)?.group;
@@ -174,12 +175,12 @@ function markReady(mount: HTMLElement): void {
   mount.setAttribute('data-live', 'true');
 }
 
-function findGroundMat(group: Object3D): ShadowMaterial | null {
-  let found: ShadowMaterial | null = null;
+/** The soft contact shadow plane under the floating tower takes the landing pulse. */
+function findContactShadow(group: Object3D): Material | null {
+  let found: Material | null = null;
   group.traverse((o) => {
-    if (!found && (o as Mesh).isMesh) {
-      const mat = (o as Mesh).material;
-      if ((mat as ShadowMaterial).isShadowMaterial) found = mat as ShadowMaterial;
+    if (!found && (o as Mesh).isMesh && o.name === 'contact-shadow') {
+      found = (o as Mesh).material as Material;
     }
   });
   return found;

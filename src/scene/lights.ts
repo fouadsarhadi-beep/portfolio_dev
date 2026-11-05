@@ -17,10 +17,10 @@ export function createLights(tier: QualityTier): THREE.Light[] {
   key.shadow.mapSize.set(shadowMapSize(tier), shadowMapSize(tier));
   key.shadow.radius = 4;
   key.shadow.bias = -0.0004;
-  key.shadow.camera.left = -12;
-  key.shadow.camera.right = 12;
-  key.shadow.camera.top = 12;
-  key.shadow.camera.bottom = -12;
+  key.shadow.camera.left = -16;
+  key.shadow.camera.right = 16;
+  key.shadow.camera.top = 16;
+  key.shadow.camera.bottom = -16;
   key.shadow.camera.near = 1;
   key.shadow.camera.far = 60;
   registerLight(key, (c) => c.bgGlow, { light: 2.2, dark: 1.5 });

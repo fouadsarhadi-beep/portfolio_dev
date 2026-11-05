@@ -18,6 +18,12 @@ export interface ThemeColors {
   highlight: string;
   wall: string;
   wallShade: string;
+  /** Unified slab body tone (T28: one material family, no per-floor colors). */
+  slab: string;
+  /** Darker slab detail tone: trims, bottom band, inset panels. */
+  slabShade: string;
+  /** Restrained glow beneath the floating tower. */
+  underGlow: string;
   wood: string;
   woodDark: string;
   white: string;

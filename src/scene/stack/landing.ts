@@ -1,15 +1,18 @@
-/** @module scene/stack/landing: touchdown effects: squash, shadow pulse, impact ring, camera jolt, prop punch. @see docs/MOTION.md (Slam), src/scene/stack/motion.ts */
+/** @module scene/stack/landing: touchdown effects: squash, shadow pulse, impact ring, dust puff, camera jolt, prop punch. @see docs/MOTION.md (Slam), src/scene/stack/motion.ts, src/scene/stack/dust.ts */
 import { gsap } from 'gsap';
 import * as THREE from 'three';
 import { SLAB_T, FOOTPRINT } from '@/config/tuning';
-import { PALETTE, darken, lighten } from '@/config/palette';
-import { LAYERS } from '@/config/layers';
+import { PALETTE, darken } from '@/config/palette';
 import { prefersReducedMotion } from '@/lib/reduced-motion';
+import type { DustPuffs } from './dust';
 
 const JOLT_AMP = 0.08;
 const JOLT_DECAY = 8;
 const JOLT_FREQ = 40;
 const JOLT_DURATION = 0.35;
+
+/** The contact-shadow material under the floating tower (opacity pulse). */
+export interface PulseMat { opacity: number }
 
 export interface Landing {
   onLand(slab: THREE.Object3D, room: THREE.Group | undefined, slabBaseY: number): void;
@@ -17,7 +20,7 @@ export interface Landing {
   jolt(): number;
 }
 
-export function createLanding(groundMat: THREE.ShadowMaterial | null): Landing {
+export function createLanding(pulseMat: PulseMat | null, puffs: DustPuffs | null): Landing {
   let joltStart = -1;
   let lastTime = 0;
   const rings: THREE.Mesh[] = [];
@@ -32,18 +35,16 @@ export function createLanding(groundMat: THREE.ShadowMaterial | null): Landing {
         .to(slab.scale, { y: 1.01, duration: 0.03 })
         .to(slab.scale, { y: 1, duration: 0.12, ease: 'power1.out' });
 
-      // 2. Shadow pulse: +0.12 for 0.25s.
-      if (groundMat) {
-        const base = groundMat.opacity;
+      // 2. Contact-shadow pulse: +0.12 for 0.25s.
+      if (pulseMat) {
+        const base = pulseMat.opacity;
         gsap.timeline()
-          .to(groundMat, { opacity: Math.min(0.5, base + 0.12), duration: 0.125 })
-          .to(groundMat, { opacity: base, duration: 0.125 });
+          .to(pulseMat, { opacity: Math.min(0.6, base + 0.12), duration: 0.125 })
+          .to(pulseMat, { opacity: base, duration: 0.125 });
       }
 
-      // 3. Impact ring at the slab footprint, tinted with the layer accent.
-      const layerId = slab.userData.layerId as string | undefined;
-      const layer = LAYERS.find((l) => l.id === layerId);
-      const ringColor = layer ? lighten(PALETTE[layer.color as keyof typeof PALETTE], 0.15) : darken(PALETTE.graphite, 0.1);
+      // 3. Impact ring at the slab footprint, neutral tone (unified family).
+      const ringColor = darken(PALETTE.graphite, 0.1);
       const ring = new THREE.Mesh(
         new THREE.RingGeometry(FOOTPRINT / 2 - 0.45, FOOTPRINT / 2 - 0.25, 48),
         new THREE.MeshBasicMaterial({ color: ringColor, transparent: true, opacity: 0.5, depthWrite: false }),
@@ -66,6 +67,9 @@ export function createLanding(groundMat: THREE.ShadowMaterial | null): Landing {
         },
       });
 
+      // 3b. Small dust puff around the contact area (fixed size, brief fade).
+      puffs?.puff(slab.position.x, slabBaseY - SLAB_T / 2 + 0.06, slab.position.z);
+
       // 4. Camera jolt (adds to target Y only).
       joltStart = lastTime;
 
@@ -77,6 +81,8 @@ export function createLanding(groundMat: THREE.ShadowMaterial | null): Landing {
     },
 
     update(time: number) {
+      // Advance the pooled dust puffs with the wall-clock delta of this tick.
+      if (puffs) puffs.update(Math.min(Math.max(time - lastTime, 0), 0.1));
       lastTime = time;
     },
 

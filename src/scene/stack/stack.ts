@@ -1,6 +1,6 @@
 /** @module scene/stack/stack: builds the six-slab column from config in locked order. @see src/scene/stack/slab.ts, src/scene/rooms/index.ts, docs/MOTION.md (State) */
 import * as THREE from 'three';
-import { SLAB_T, FOOTPRINT, WALL_H } from '@/config/tuning';
+import { SLAB_T, FOOTPRINT, WALL_H, STACK_BASE_Y } from '@/config/tuning';
 import { LAYERS } from '@/config/layers';
 import { makeSlab } from './slab';
 import { ROOMS } from '../rooms/index';
@@ -10,7 +10,7 @@ import type { LayerConfig, RoomContext, RoomInstance } from '@/config/types';
 
 /** Layer i (0 = top) rests at this height in the closed stack. */
 export function restY(i: number, n: number): number {
-  return (n - 1 - i) * SLAB_T;
+  return STACK_BASE_Y + (n - 1 - i) * SLAB_T;
 }
 
 export interface Stack {

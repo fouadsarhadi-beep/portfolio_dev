@@ -1,11 +1,12 @@
-/** @module scene/stack/slab: builds one chunky slab per LayerConfig. @see docs/DESIGN.md (Slab), src/scene/stack/stack.ts, src/scene/stack/icons.ts */
+/** @module scene/stack/slab: builds one chunky slab per LayerConfig (T28: unified material family). @see docs/DESIGN.md (Slab), src/scene/stack/stack.ts, src/scene/stack/icons.ts */
 import * as THREE from 'three';
 import { RoundedBoxGeometry } from 'three/addons/geometries/RoundedBoxGeometry.js';
 import { FOOTPRINT, SLAB_T, CORNER_R } from '@/config/tuning';
-import { PALETTE, lighten, darken } from '@/config/palette';
+import { PALETTE, lighten } from '@/config/palette';
+import type { ThemeColors } from '@/config/theme';
 import type { LayerConfig } from '@/config/types';
 import { makeIconTexture, makeNumberTexture } from './icons';
-import { registerMaterial } from '../scene-theme';
+import { registerMaterial, registerValue } from '../scene-theme';
 
 const HALF = FOOTPRINT / 2;
 const TOP = SLAB_T / 2;
@@ -21,39 +22,38 @@ function getBodyGeo(): RoundedBoxGeometry {
 export function makeSlab(layer: LayerConfig): THREE.Group {
   const group = new THREE.Group();
   group.name = `slab-${layer.id}`;
-  const color = PALETTE[layer.color as keyof typeof PALETTE];
-  const accent = (c: { layerAccents: Record<string, string> }) => c.layerAccents[layer.id];
 
-  const body = new THREE.Mesh(getBodyGeo(), bodyMaterial(color));
-  registerMaterial(accent, body.material as THREE.MeshStandardMaterial);
+  const body = new THREE.Mesh(getBodyGeo(), bodyMaterial());
+  registerMaterial((c) => c.slab, body.material as THREE.MeshStandardMaterial);
   body.castShadow = true;
   body.receiveShadow = true;
   group.add(body);
 
-  addTop(group, layer.id, color);
-  addBottomBand(group, layer.id, color);
-  addRightBadge(group, layer, color);
-  addLeftNumber(group, layer, color);
+  addTop(group);
+  addBottomBand(group);
+  addRightBadge(group, layer);
+  addLeftNumber(group, layer);
 
   return group;
 }
 
-function bodyMaterial(color: string): THREE.MeshStandardMaterial {
-  return new THREE.MeshStandardMaterial({ color, roughness: 0.6, metalness: 0 });
+/** Warm plaster body; floors are distinguished by number, icon and contents, not color. */
+function bodyMaterial(): THREE.MeshStandardMaterial {
+  return new THREE.MeshStandardMaterial({ color: PALETTE.slab, roughness: 0.55, metalness: 0.04 });
 }
 
-/** Inset floor with a lightened rim running around it. */
-function addTop(group: THREE.Group, accentId: string, color: string): void {
+/** Inset wood deck floor with a quiet shade rim running around it. */
+function addTop(group: THREE.Group): void {
   const floorGeo = new THREE.BoxGeometry((FLAT - 0.12) * 2, 0.04, (FLAT - 0.12) * 2);
-  const floorMat = new THREE.MeshStandardMaterial({ color: lighten(color, 0.06), roughness: 0.65, metalness: 0 });
-  registerMaterial((c) => c.layerAccents[accentId], floorMat, (hex) => lighten(hex, 0.06));
+  const floorMat = new THREE.MeshStandardMaterial({ color: PALETTE.wood, roughness: 0.7, metalness: 0 });
+  registerMaterial((c) => c.wood, floorMat);
   const floor = new THREE.Mesh(floorGeo, floorMat);
   floor.position.y = TOP + 0.015;
   floor.receiveShadow = true;
   group.add(floor);
 
-  const rimMat = new THREE.MeshStandardMaterial({ color: lighten(color, 0.12), roughness: 0.6, metalness: 0 });
-  registerMaterial((c) => c.layerAccents[accentId], rimMat, (hex) => lighten(hex, 0.12));
+  const rimMat = new THREE.MeshStandardMaterial({ color: PALETTE.slabShade, roughness: 0.6, metalness: 0.04 });
+  registerMaterial((c) => c.slabShade, rimMat);
   const long = new THREE.BoxGeometry((FLAT - 0.12) * 2, 0.04, 0.12);
   const deep = new THREE.BoxGeometry(0.12, 0.04, (FLAT - 0.12) * 2);
   for (const side of [-1, 1]) {
@@ -66,10 +66,10 @@ function addTop(group: THREE.Group, accentId: string, color: string): void {
   }
 }
 
-/** Darker band along the four bottom edges. */
-function addBottomBand(group: THREE.Group, accentId: string, color: string): void {
-  const mat = new THREE.MeshStandardMaterial({ color: darken(color, 0.15), roughness: 0.7, metalness: 0 });
-  registerMaterial((c) => c.layerAccents[accentId], mat, (hex) => darken(hex, 0.15));
+/** Slightly darker band along the four bottom edges. */
+function addBottomBand(group: THREE.Group): void {
+  const mat = new THREE.MeshStandardMaterial({ color: PALETTE.slabShade, roughness: 0.75, metalness: 0 });
+  registerMaterial((c) => c.slabShade, mat);
   const alongZ = new THREE.BoxGeometry(FLAT * 2, 0.12, 0.05);
   const alongX = new THREE.BoxGeometry(0.05, 0.12, FLAT * 2);
   for (const side of [-1, 1]) {
@@ -82,13 +82,13 @@ function addBottomBand(group: THREE.Group, accentId: string, color: string): voi
   }
 }
 
-/** Inset panel and round white badge with the layer icon on the +x face. */
-function addRightBadge(group: THREE.Group, layer: LayerConfig, color: string): void {
+/** Inset panel and round plaster badge with the layer icon on the +x face. */
+function addRightBadge(group: THREE.Group, layer: LayerConfig): void {
   const panel = new THREE.Mesh(
     new THREE.BoxGeometry(0.06, SLAB_T - 0.5, FOOTPRINT - 1.4),
-    new THREE.MeshStandardMaterial({ color: darken(color, 0.08), roughness: 0.6, metalness: 0 }),
+    new THREE.MeshStandardMaterial({ color: PALETTE.slabShade, roughness: 0.6, metalness: 0.04 }),
   );
-  registerMaterial((c) => c.layerAccents[layer.id], panel.material as THREE.MeshStandardMaterial, (hex) => darken(hex, 0.08));
+  registerMaterial((c) => c.slabShade, panel.material as THREE.MeshStandardMaterial);
   panel.position.set(HALF + 0.03, 0, 0);
   group.add(panel);
 
@@ -97,11 +97,13 @@ function addRightBadge(group: THREE.Group, layer: LayerConfig, color: string): v
     badgeGeo,
     new THREE.MeshStandardMaterial({ color: PALETTE.white, roughness: 0.5, metalness: 0 }),
   );
+  registerMaterial((c) => c.white, badge.material as THREE.MeshStandardMaterial);
   badge.rotation.z = Math.PI / 2;
   badge.position.set(HALF + 0.09, 0, 0);
   group.add(badge);
 
-  const iconTex = makeIconTexture(layer.icon, PALETTE.ink);
+  // Graphite reads on the plaster badge in both themes.
+  const iconTex = makeIconTexture(layer.icon, PALETTE.graphite);
   const icon = new THREE.Mesh(
     new THREE.PlaneGeometry(1.1, 1.1),
     new THREE.MeshBasicMaterial({ map: iconTex, transparent: true }),
@@ -111,17 +113,21 @@ function addRightBadge(group: THREE.Group, layer: LayerConfig, color: string): v
   group.add(icon);
 }
 
-/** The layer number, engraved look, plus registration crosses, on the +z face. */
-function addLeftNumber(group: THREE.Group, layer: LayerConfig, color: string): void {
-  const tex = makeNumberTexture(layer.number, FLAT * 2, SLAB_T - 0.28, {
-    main: darken(color, 0.28),
-    highlight: lighten(color, 0.22),
-    cross: PALETTE.graphite,
-  });
+/** The layer number, engraved in theme ink, plus registration crosses, on the +z face. */
+function addLeftNumber(group: THREE.Group, layer: LayerConfig): void {
+  const numberTex = makeNumberTexture(layer.number, FLAT * 2, SLAB_T - 0.28, numberColors());
   const face = new THREE.Mesh(
     new THREE.PlaneGeometry(FLAT * 2, SLAB_T - 0.28),
-    new THREE.MeshStandardMaterial({ map: tex, transparent: true, roughness: 0.85, metalness: 0 }),
+    new THREE.MeshStandardMaterial({ map: numberTex.tex, transparent: true, roughness: 0.85, metalness: 0 }),
   );
   face.position.set(0, 0, HALF + 0.004);
   group.add(face);
+  // Theme switches re-ink the engraving in place (canvas texture redraw).
+  registerValue((c) => numberTex.redraw(numberColors(c)));
+}
+
+function numberColors(c?: ThemeColors): { main: string; highlight: string; cross: string } {
+  const ink = c?.ink ?? PALETTE.ink;
+  const slab = c?.slab ?? PALETTE.slab;
+  return { main: ink, highlight: lighten(slab, 0.4), cross: c?.graphite ?? PALETTE.graphite };
 }

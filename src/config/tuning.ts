@@ -9,6 +9,10 @@ export const WALL_THICK = 0.14;
 export const CORNER_R = 0.14;
 export const LIFT = FOOTPRINT + SLAB_T + 0.4; // 8.2: how far a lifted layer rises
 
+// Floating tower (T28): the whole stack is suspended this high above the
+// soft contact shadow; no platform, no ground plane. See docs/DESIGN.md.
+export const STACK_BASE_Y = 1.35;
+
 // Scroll mapping (docs/MOTION.md)
 export const STEP_VH = 80;             // one scroll step, in svh units
 

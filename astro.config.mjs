@@ -8,4 +8,6 @@ export default defineConfig({
     '/work/design': '/work/web-design-development/',
     '/work/frontend': '/work/web-design-development/',
   },
+  // The dev toolbar leaked into automated screenshots (T28); disable it.
+  devToolbar: { enabled: false },
 });

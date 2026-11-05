@@ -18,7 +18,7 @@ Search this file before creating anything.
   exports: ThemeName, ThemeColors, THEMES
   uses: src/config/palette
 - tuning.ts: config/tuning: geometry, scroll step, camera and render tuning constants. @see docs/DESIGN.md, docs/MOTION.md, src/config/types.ts
-  exports: FOOTPRINT, SLAB_T, WALL_H, WALL_THICK, CORNER_R, LIFT, STEP_VH, CAM_DIR, CAM_DISTANCE, CAM_TARGET_OFFSET_Y, CAM_VIEW_HEIGHT, CAM_DAMP_LAMBDA, EXPOSURE, MAX_PIXEL_RATIO, SHADOW_MAP_DESKTOP, SHADOW_MAP_MOBILE
+  exports: FOOTPRINT, SLAB_T, WALL_H, WALL_THICK, CORNER_R, LIFT, STACK_BASE_Y, STEP_VH, CAM_DIR, CAM_DISTANCE, CAM_TARGET_OFFSET_Y, CAM_VIEW_HEIGHT, CAM_DAMP_LAMBDA, EXPOSURE, MAX_PIXEL_RATIO, SHADOW_MAP_DESKTOP, SHADOW_MAP_MOBILE
   uses: src/config/types
 - types.ts: config/types: shared contracts for config, scene and UI. @see docs/WIRING.md, src/config/layers.ts
   exports: PaletteKey, LayerId, Vec3, Sample, LayerConfig, MaterialKit, PropFactory, PropKit, RoomContext, RoomInstance, RoomBuilder, StackEvents, StackDebugState
@@ -79,8 +79,8 @@ Search this file before creating anything.
 - scene-theme.ts: scene/scene-theme: material, light and value registry that applies theme changes in place. @see docs/DESIGN.md (Dual theme), src/config/theme.ts, docs/WIRING.md
   exports: registerColor, registerMaterial, registerEmissive, registerLight, registerValue, initSceneTheme
   uses: src/config/theme, src/lib/bus
-- stage.ts: scene/stage: ground, platform, dust particles and floating shapes around the stack. @see docs/DESIGN.md (Environment around the stack), src/scene/loop.ts, src/scene/scene-theme.ts
-  exports: Stage, createStage
+- stage.ts: scene/stage: the environment around the floating tower (T28): contact shadow, under-glow, under-light, ambient dust. @see docs/DESIGN.md (Environment), src/scene/loop.ts, src/scene/scene-theme.ts
+  exports: CONTACT_Y, Stage, createStage
   uses: src/config/palette, src/lib/reduced-motion, src/scene/scene-theme
 
 ## src/scene/rooms/
@@ -228,24 +228,26 @@ Search this file before creating anything.
   uses: src/config/tuning, src/config/palette, src/config/types, src/scene/rooms/props/screen.ts, src/scene/rooms/web-design-development/anim
 
 ## src/scene/stack/
+- dust.ts: scene/stack/dust: small pooled dust puffs at floor touchdown points (T28). @see docs/MOTION.md (Slam), src/scene/stack/landing.ts
+  exports: DustPuffs, createDustPuffs
+  uses: src/config/tuning
 - icons.ts: scene/stack/icons: draws layer icons, numbers and registration crosses to CanvasTextures. @see docs/DESIGN.md (Slab), src/scene/stack/slab.ts
-  exports: makeIconTexture, makeNumberTexture
-  uses: src/config/palette
+  exports: makeIconTexture, NumberTexture, makeNumberTexture
 - labels.ts: scene/stack/labels: pins each layer-nav button to its slab's right face via getLayerRect. @see docs/MOTION.md (Pick, hover, touch), src/scene/stack/pick.ts
   exports: LabelParts, initLabels
   uses: src/config/layers, src/scene/api
-- landing.ts: scene/stack/landing: touchdown effects: squash, shadow pulse, impact ring, camera jolt, prop punch. @see docs/MOTION.md (Slam), src/scene/stack/motion.ts
-  exports: Landing, createLanding
-  uses: src/config/tuning, src/config/palette, src/config/layers, src/lib/reduced-motion
+- landing.ts: scene/stack/landing: touchdown effects: squash, shadow pulse, impact ring, dust puff, camera jolt, prop punch. @see docs/MOTION.md (Slam), src/scene/stack/motion.ts, src/scene/stack/dust.ts
+  exports: PulseMat, Landing, createLanding
+  uses: src/config/tuning, src/config/palette, src/lib/reduced-motion, src/scene/stack/dust
 - motion.ts: scene/stack/motion: GSAP tweens on the u array; lift and slam timings per MOTION.md. @see docs/MOTION.md (Lift, Slam), src/scene/stack/state.ts, src/scene/stack/landing.ts
   exports: Motion, createMotion
   uses: src/config/tuning, src/lib/reduced-motion
 - pick.ts: scene/stack/pick: raycasts slab sides, hover lift or nudge, dims others, edge highlight. @see docs/MOTION.md (Pick, hover, touch), src/lib/bus.ts, src/scene/stack/labels.ts
   exports: ScreenRect, Pick, createPick
   uses: src/lib/bus, src/config/layers, src/config/tuning, src/config/palette
-- slab.ts: scene/stack/slab: builds one chunky slab per LayerConfig. @see docs/DESIGN.md (Slab), src/scene/stack/stack.ts, src/scene/stack/icons.ts
+- slab.ts: scene/stack/slab: builds one chunky slab per LayerConfig (T28: unified material family). @see docs/DESIGN.md (Slab), src/scene/stack/stack.ts, src/scene/stack/icons.ts
   exports: makeSlab
-  uses: src/config/tuning, src/config/palette, src/config/types, src/scene/stack/icons, src/scene/scene-theme
+  uses: src/config/tuning, src/config/palette, src/config/theme, src/config/types, src/scene/stack/icons, src/scene/scene-theme
 - stack.ts: scene/stack/stack: builds the six-slab column from config in locked order. @see src/scene/stack/slab.ts, src/scene/rooms/index.ts, docs/MOTION.md (State)
   exports: restY, Stack, createStack
   uses: src/config/tuning, src/config/layers, src/scene/stack/slab, src/scene/rooms/index, src/scene/rooms/shell, src/scene/rooms/props/index, src/config/types

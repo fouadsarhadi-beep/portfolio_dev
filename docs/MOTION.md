@@ -11,7 +11,7 @@ Layers are indexed 0 (top) to N-1 (bottom). N = 6, STEPS = N - 1 = 5.
 - Triggered, not scrubbed: a step change starts timed tweens. Scroll never drives the tween position directly.
 
 ## State (src/scene/stack/state.ts)
-- `restY[i] = (N - 1 - i) x SLAB_T`.
+- `restY[i] = STACK_BASE_Y + (N - 1 - i) x SLAB_T` (T28: the whole tower floats, so the bottom floor clears the contact shadow).
 - `u[i]` is the lift of layer i, from 0 to LIFT. It is a plain number array, the single source of truth.
 - Each frame: `position.y = restY[i] + u[i]`. Transforms are derived from state. Never accumulate transforms.
 - Exposure `e[i] = i == 0 ? 1 : clamp((u[i-1] - u[i]) / LIFT, 0, 1)`.
@@ -24,10 +24,11 @@ Layer m-1 lifts to LIFT. Duration 1.1s, `power2.inOut` (slow start). Because eve
 ## Slam (scrolling up)
 Lifted layers drop. Duration 0.42s, `power4.in` (accelerating). The lowest lifted layer starts first; each layer above starts 0.07s later. On touching down:
 1. Squash: scale.y 0.96 for 0.07s, rebound 1.01, settle to 1 (0.12s).
-2. Shadow pulse: contact shadow opacity +0.12 for 0.25s.
-3. Impact ring: a flat ring at the slab footprint, scale 1 to 1.25, opacity 0.5 to 0, 0.35s.
-4. Camera jolt: amplitude 0.08 world units, damped sine, 0.35s.
-5. Props in the landed room scale 1.03 then 1 over 0.2s.
+2. Contact-shadow pulse: the soft shadow under the tower dips opacity +0.12 for 0.25s (T28: no ground plane).
+3. Impact ring: a flat neutral ring at the slab footprint, scale 1 to 1.25, opacity 0.5 to 0, 0.35s.
+4. Dust puff (T28): a small ring of 16 pooled particles around the contact area, drifting outward and up, fading over 0.5s. Fixed size and speed, no impact scaling, no debris; distinct from the slow ambient dust. Pool of 3 systems, reused round-robin.
+5. Camera jolt: amplitude 0.08 world units, damped sine, 0.35s.
+6. Props in the landed room scale 1.03 then 1 over 0.2s.
 Restacking must feel quicker and harder than separating.
 
 ## Camera
@@ -56,7 +57,7 @@ Close: reverse in 0.45s. Back button, Escape and browser Back all close it.
 One ticker (lib/ticker.ts) gives `time` and `dt`. Rooms animate through `update(time, dt, exposure)`. Pause when offscreen or the tab is hidden. Each room has at least four distinct loops (see ROOMS.md).
 
 ## Reduced motion
-Under `prefers-reduced-motion`: lift and drop become 0.2s fades or short moves, no squash, ring, jolt, blur or particles, idle loops stop except a slow LED blink. Every layer stays reachable and readable.
+Under `prefers-reduced-motion`: lift and drop become 0.2s fades or short moves, no squash, ring, dust puff, jolt, blur or particles, ambient dust and idle loops stop except a slow LED blink. Every layer stays reachable and readable.
 
 ## Debug and verification
 `window.__stack = { step, u, e, restY, ids }` refreshed each frame. Checks that need no eyes:

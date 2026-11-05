@@ -12,6 +12,9 @@
   --line: #E3E6D6;
   --wall: #F4F2EA;
   --wall-shade: #E6E3D8;
+  --slab: #EDE9DE;
+  --slab-shade: #D9D4C6;
+  --under-glow: #D8C9A3;
   --wood: #F0D5A8;
   --c-white: #FBFBF6;
   --graphite: #59606B;
@@ -72,6 +75,9 @@
   --ink-soft: #A1A9AE;
   --wall: #1A2029;
   --wall-shade: #161B22;
+  --slab: #232A33;
+  --slab-shade: #1A2029;
+  --under-glow: #31404E;
   --wood: #4A4036;
   --c-white: #DDE1E6;
   --graphite: #6B7480;
