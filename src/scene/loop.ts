@@ -38,6 +38,8 @@ export function startLoop(parts: LoopParts): () => void {
     parts.state.sync();
     parts.state.apply(parts.stack.slabs, parts.stack.rooms);
     parts.pick.update(dt, time);
+    // The expanded floor receives its leftward offset after the base positions are written.
+    parts.focus.applyDetach(parts.stack.slabs);
     parts.labels.update();
     parts.landing.update(time);
 

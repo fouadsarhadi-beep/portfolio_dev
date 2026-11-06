@@ -311,78 +311,238 @@ html[data-theme='dark'] .theme-toggle .icon-moon {
   }
 }
 
-/* --- Detail view panel (docs/MOTION.md Detail view) --- */
-.detail-panel {
+/* --- Expanded floor view (T30; docs/MOTION.md Detail view) ---
+   Two-part composition: the detached floor on the left half, this card on the
+   right half, a compact sample strip beneath. Same surface, radius, hairline
+   border and accent rule as the T29 hover card, so it reads as one component. */
+.detail-view {
   position: absolute;
-  inset-block: 20px;
-  inset-inline-end: 20px;
+  inset: 0;
   z-index: 8;
-  width: min(420px, calc(100vw - 40px));
-  background: var(--surface);
-  border: 2px solid var(--ink);
-  border-radius: var(--radius-l);
-  box-shadow: 6px 6px 0 0 var(--layer-c, var(--c-butter));
-  padding: 20px 24px;
-  overflow-y: auto;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  grid-template-rows: minmax(0, 1fr) auto;
+  gap: clamp(12px, 2vw, 26px);
+  padding: clamp(16px, 2.4vw, 34px);
+  pointer-events: none;
 }
 
-.detail-panel[hidden] {
+.detail-view[hidden] {
   display: none;
 }
 
-.dp-num {
-  font-family: var(--font-display);
-  font-weight: 600;
-  font-size: var(--fs-44);
-  line-height: 1;
-  color: var(--layer-c);
+/* While a floor is expanded the tower chrome leaves the frame. */
+.stage-sticky[data-detail='true'] .layer-nav,
+.stage-sticky[data-detail='true'] .hero-copy {
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+  transition: opacity 0.2s ease;
 }
 
-.dp-title {
-  font-size: var(--fs-28);
+.stage-sticky[data-detail='true'] .layer-card {
+  display: none;
 }
 
-.dp-short {
-  margin-block-start: 6px;
-  color: var(--ink-soft);
+.dv-card {
+  grid-column: 2;
+  grid-row: 1;
+  align-self: center;
+  max-block-size: 100%;
+  overflow-y: auto;
+  pointer-events: auto;
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-m);
+  box-shadow: 0 16px 44px color-mix(in srgb, var(--ink) 12%, transparent);
+  padding: clamp(18px, 2vw, 30px);
 }
 
-.dp-intro {
-  margin-block-start: 10px;
-}
-
-.detail-panel h3 {
-  font-family: var(--font-display);
-  font-weight: 600;
-  font-size: var(--fs-16);
-  margin-block-start: 20px;
-}
-
-.detail-panel .cap-list {
-  grid-template-columns: 1fr 1fr;
-  margin-block-start: 10px;
-}
-
-.detail-panel .samples,
-.detail-panel .chips {
-  margin-block-start: 10px;
-}
-
-.detail-panel .sample-card {
-  padding: 14px 16px;
+.dv-top {
+  margin: 0 0 16px;
 }
 
 .dv-back {
-  margin-block-end: 12px;
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  padding: 0;
+  background: none;
+  border: 0;
+  color: var(--ink-soft);
+  font: inherit;
+  font-size: var(--fs-12);
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  cursor: pointer;
 }
 
-@media (max-width: 760px) {
-  .detail-panel {
-    inset: auto 0 0 0;
-    width: 100%;
-    max-block-size: 62svh;
-    border-inline: none;
-    border-block-end: none;
-    border-radius: var(--radius-l) var(--radius-l) 0 0;
+.dv-back:hover,
+.dv-back:focus-visible {
+  color: var(--ink);
+}
+
+.dv-kicker {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin: 0;
+}
+
+.dv-kicker::after {
+  content: '';
+  inline-size: 28px;
+  block-size: 2px;
+  border-radius: 1px;
+  background: var(--layer-c, var(--c-butter));
+}
+
+.dv-num {
+  font-family: var(--font-display);
+  font-weight: 600;
+  font-size: var(--fs-14);
+  color: var(--ink-soft);
+  font-variant-numeric: tabular-nums;
+}
+
+.dv-title {
+  margin-block-start: 6px;
+  font-size: clamp(var(--fs-28), 3vw, var(--fs-44));
+  line-height: 1.05;
+}
+
+.dv-short {
+  margin-block-start: 10px;
+  font-size: var(--fs-16);
+  color: var(--ink-soft);
+}
+
+.dv-intro {
+  margin-block-start: 10px;
+  max-width: 54ch;
+}
+
+.dv-heading {
+  margin-block-start: 22px;
+  font-family: var(--font-display);
+  font-weight: 600;
+  font-size: var(--fs-12);
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--ink-soft);
+}
+
+.dv-caps {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0 20px;
+  margin-block-start: 8px;
+}
+
+.dv-caps li {
+  padding-block: 7px;
+  border-block-end: 1px solid var(--line);
+  font-size: var(--fs-14);
+}
+
+.dv-tools {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-block-start: 10px;
+}
+
+.dv-tools li {
+  padding: 3px 10px;
+  border: 1px solid var(--line);
+  border-radius: var(--radius-pill);
+  font-size: var(--fs-12);
+  font-weight: 600;
+  color: var(--ink-soft);
+}
+
+/* Compact work samples: secondary to the floor and the card. */
+.dv-samples {
+  grid-column: 1 / -1;
+  grid-row: 2;
+  pointer-events: auto;
+}
+
+.dv-samples-head {
+  margin-block: 0 8px;
+}
+
+.dv-sample-row {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
+  gap: 10px;
+}
+
+.dv-sample {
+  padding: 11px 14px;
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: 10px;
+}
+
+.dv-sample h4 {
+  font-family: var(--font-display);
+  font-weight: 600;
+  font-size: var(--fs-14);
+}
+
+.dv-sample p {
+  margin-block: 3px 7px;
+  font-size: var(--fs-12);
+  line-height: 1.45;
+  color: var(--ink-soft);
+}
+
+.dv-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0 10px;
+}
+
+.dv-tags li {
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--ink-soft);
+}
+
+.dv-tags li + li::before {
+  content: '/ ';
+  opacity: 0.6;
+}
+
+/* Mobile: a deliberate vertical composition, not a squeezed 50/50:
+   floor on top (the camera frames it there), card, then the samples. */
+@media (max-width: 860px) {
+  .detail-view {
+    display: block;
+    overflow-y: auto;
+    overscroll-behavior: contain;
+    pointer-events: auto;
+    padding: 0 14px 28px;
+    padding-block-start: 44svh;
+    background: linear-gradient(to bottom, transparent 0 38svh, var(--bg) 46svh, var(--bg) 100%);
+  }
+
+  .dv-card {
+    max-block-size: none;
+    overflow: visible;
+  }
+
+  .dv-caps {
+    grid-template-columns: 1fr;
+  }
+
+  .dv-samples {
+    margin-block-start: 22px;
+  }
+
+  .dv-sample-row {
+    grid-template-columns: 1fr;
   }
 }

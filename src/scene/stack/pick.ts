@@ -11,6 +11,8 @@ export interface ScreenRect { left: number; top: number; width: number; height: 
 export interface Pick {
   update(dt: number, time: number): void;
   setHover(id: string | null): void;
+  /** Picking is paused while a floor is expanded (no hover state behind the card). */
+  setEnabled(on: boolean): void;
   getLayerRect(id: string): ScreenRect | null;
   dispose(): void;
 }
@@ -35,6 +37,7 @@ export function createPick(opts: {
   const nudgeX = new Array<number>(n).fill(0);
   const nudgeZ = new Array<number>(n).fill(0);
   let hovered: string | null = null;
+  let enabled = true;
 
   const bodies = slabs.map((slab) => {
     const mesh = slab.children.find((c) => (c as THREE.Mesh).isMesh) as THREE.Mesh;
@@ -84,7 +87,7 @@ export function createPick(opts: {
     bus.emit('layer:hover', { id });
   }
 
-  const onMove = (e: PointerEvent): void => setHover(raycast(e));
+  const onMove = (e: PointerEvent): void => { if (enabled) setHover(raycast(e)); };
   // Touch pointers fire pointerleave right after pointerup; touch dismisses via tap-elsewhere.
   const onLeave = (e: PointerEvent): void => {
     if (e.pointerType === 'mouse') setHover(null);
@@ -93,6 +96,7 @@ export function createPick(opts: {
   let downY = 0;
   const onDown = (e: PointerEvent): void => { downX = e.clientX; downY = e.clientY; };
   const onUp = (e: PointerEvent): void => {
+    if (!enabled) return;
     if (Math.hypot(e.clientX - downX, e.clientY - downY) > 8) return; // drag, not a tap
     const id = raycast(e);
     if (e.pointerType === 'mouse') {
@@ -138,6 +142,11 @@ export function createPick(opts: {
     },
 
     setHover,
+
+    setEnabled(on: boolean): void {
+      enabled = on;
+      if (!on) setHover(null);
+    },
 
     getLayerRect(id): ScreenRect | null {
       const i = LAYERS.findIndex((l) => l.id === id);

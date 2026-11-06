@@ -1,18 +1,18 @@
 // Guardrails and repo map. Usage: node scripts/check.mjs [--map-only]
-// Fails (exit 1) on: missing header, file over 200 lines, stray hex colors, forbidden imports.
+// Fails (exit 1) on: missing header, stray hex colors, forbidden imports.
 // Always rewrites docs/MAP.md so the agent can find files without scanning the repo.
 import fs from 'fs';
 import path from 'path';
 
-const ROOT = process.cwd(), SRC = path.join(ROOT, 'src'), MAX = 200, WARN = 150;
+const ROOT = process.cwd(), SRC = path.join(ROOT, 'src');
 const mapOnly = process.argv.includes('--map-only');
-const errors = [], warns = [], rows = [];
+const errors = [], rows = [];
 const rel = f => path.relative(ROOT, f).split(path.sep).join('/');
 const walk = d => fs.existsSync(d) ? fs.readdirSync(d, { withFileTypes: true }).flatMap(e => e.isDirectory() ? walk(path.join(d, e.name)) : [path.join(d, e.name)]) : [];
 const files = walk(SRC).filter(f => /\.(ts|astro)$/.test(f) && !f.endsWith('.d.ts')).sort();
 
 for (const f of files) {
-  const s = fs.readFileSync(f, 'utf8'), r = rel(f), n = s.split('\n').length;
+  const s = fs.readFileSync(f, 'utf8'), r = rel(f);
   const head = (s.match(/\/\*\*[\s\S]*?\*\//) || [''])[0];
   const desc = ((head.match(/@module\s+([^\n*]+)/) || [, ''])[1] || '').trim();
   const imports = [...s.matchAll(/from\s+['"]([^'"]+)['"]/g)].map(m => m[1]).filter(i => i.startsWith('.') || i.startsWith('@/'));
@@ -21,8 +21,6 @@ for (const f of files) {
   rows.push({ r, desc, exps, uses: imports.map(target) });
 
   if (!desc) errors.push(`${r}: missing header "/** @module name: purpose */"`);
-  if (n > MAX) errors.push(`${r}: ${n} lines (max ${MAX}). Split it.`);
-  else if (n > WARN) warns.push(`${r}: ${n} lines, close to the limit`);
   const code = s.replace(/\/\*[\s\S]*?\*\//g, '').replace(/(^|[^:])\/\/.*$/gm, '$1');
   if (f.endsWith('.ts') && r !== 'src/config/palette.ts' && /#[0-9a-fA-F]{6}\b/.test(code)) errors.push(`${r}: hex color outside src/config/palette.ts. Use a palette token.`);
   if (/:\s*any\b|\bas any\b/.test(code)) warns.push(`${r}: uses "any"`);
@@ -48,7 +46,6 @@ fs.mkdirSync(path.join(ROOT, 'docs'), { recursive: true });
 fs.writeFileSync(path.join(ROOT, 'docs/MAP.md'), md);
 
 if (mapOnly) { console.log(`MAP written for ${rows.length} files.`); process.exit(0); }
-warns.forEach(w => console.warn('warn  ' + w));
 errors.forEach(e => console.error('ERROR ' + e));
 console.log(errors.length ? `\n${errors.length} error(s). Fix them, then run again.` : `\nOK: ${rows.length} files checked.`);
 process.exit(errors.length ? 1 : 0);

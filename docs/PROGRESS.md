@@ -1,13 +1,14 @@
 # PROGRESS
 
-Current task: T30 (implement separated floor detail view)
+Current task: T31 (unify portfolio visual language)
 
 ## Handoff note (max 8 lines, rewrite each session)
-Redesign batch T28-T32 (user brief 2026-11-05). T28 done (8140bc1): unified plaster/wood slab family, floating tower (STACK_BASE_Y 1.35, no platform/ground), contact shadow + underGlow environment, collision dust (stack/dust.ts), poster regenerated. T29 done: right-edge .layer-card hover card (hud.css, no View work link, no pill overlap at any step, mobile docked variant), neutral hover edge, keyboard tab-away clearing. Hover movement rule unchanged (gap above -> up, closed -> right) and verified for floors 0/exposed/lower.
-T30 next: selected floor must physically separate and move left; ~50/50 desktop composition (floor left, explanatory card right, work samples beneath); card evolves from .layer-card; mobile stacks vertically. Inspect focus.ts (camera-only today), detail.ts, dialog.ts, stack.ts (room is child of slab).
-Gotchas: stale dev server may hold 4321 (use URL=4322 for shots/verify-stack). Number textures redraw on theme change. Astro dev toolbar disabled.
+Redesign batch T28-T32 (user brief 2026-11-05). T28 done (8140bc1): unified plaster/wood slab family, floating tower, contact shadow + underGlow environment, collision dust. T29 done (697c68b): right-edge .layer-card hover card, neutral hover edge, no pill overlap.
+T30 done: the selected slab leaves the tower to the left half (per-frame offset in scene/focus.ts applyDetach, never re-parented), the rest fades, `.detail-view` grid = floor left + `.dv-card` right + `.dv-samples` strip beneath, mobile column with 44svh reserved for the floor, picking paused while expanded. 200-line cap removed from scripts/check.mjs (user request: keep files cohesive).
+T31 next: extend the T29/T30 surface language to HUD, nav, About, Toolkit, Contact, footer, buttons, pills (kill remaining thick ink outlines / hard offset shadows / per-floor color coding). Then T32 responsive 360/390/768/desktop + QA + final report.
+Gotchas: number textures redraw on theme change; stale dev servers hold 4321 (use --port); `npm run preview -- --port XXXX` for verification against dist. Astro dev toolbar disabled.
 Git policy: one commit per task, exact messages; never push.
-Next: T30, T31 (page-wide language), T32 (responsive + QA).
+Next: T31, then T32.
 
 ## How to run
 - Open a terminal in the portfolio-kit folder (the one with package.json): `cd "C:\Users\ASUS\OneDrive - sternx.de\Desktop\personal\homepage\GLM 5.3_2\portfolio-kit"`
@@ -75,6 +76,8 @@ Next: T30, T31 (page-wide language), T32 (responsive + QA).
   Unified plaster/wood slab family, floating tower + contact shadow/under-glow environment, collision dust, full-width shadow fix, poster regenerated, shots tooling fixed (stage selector, dark/slam passes, dev toolbar off). Card: docs/tasks/T28-tower-materials-environment.md. |
 | T29 | Redesign hover interactions and preview (redesign batch) | done, verified |
   Right-edge .layer-card hover card (no link, zero pill overlap steps 0-5, mobile docked variant), neutral hover edge, tab-away clearing; movement rule verified for first/exposed/lower floors. Card: docs/tasks/T29-hover-card.md. |
+| T30 | Detached floor and expanded detail experience (redesign batch) | done, verified |
+  Selected slab leaves the tower to the left half (offset, never re-parented), rest of the tower fades, stage-wide 50/50 grid (floor left, card right) with a compact sample strip beneath, card is the T29 hover card grown up, mobile vertical composition, picking paused while expanded. Card: docs/tasks/T30-separated-floor-detail.md. |
 
 ## Blocked
 (none)

@@ -137,8 +137,9 @@ export async function boot(): Promise<void> {
     setHover: (id) => pick.setHover(id),
     getLayerRect: (id) => pick.getLayerRect(id),
     getState: () => ((window as unknown as Record<string, unknown>).__stack as StackDebugState) ?? null,
-    focus: (id) => focus.open(id),
-    release: () => focus.close(),
+    // While a floor is expanded the tower is not a hover/click target (T30).
+    focus: (id) => { pick.setEnabled(false); focus.open(id); },
+    release: () => { focus.close(); pick.setEnabled(true); },
   });
 
   const stageEl = document.querySelector<HTMLElement>('.stage');

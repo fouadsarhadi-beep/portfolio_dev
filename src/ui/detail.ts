@@ -1,4 +1,4 @@
-/** @module ui/detail: the detail panel: content from config, staggered entrance, history and scroll freeze. @see docs/MOTION.md (Detail view), docs/WIRING.md (Routes), src/scene/api.ts, src/ui/dialog.ts */
+/** @module ui/detail: expanded floor view: card on the right half, compact sample strip beneath. @see docs/MOTION.md (Detail view), docs/WIRING.md (Routes), src/ui/dialog.ts, src/scene/focus.ts */
 import { gsap } from 'gsap';
 import { bus } from '@/lib/bus';
 import { LAYERS } from '@/config/layers';
@@ -28,20 +28,25 @@ export function initDetail(): void {
 }
 
 function buildPanel(panel: HTMLElement): void {
-  panel.className = 'detail-panel';
+  panel.className = 'detail-view';
   panel.style.setProperty('--layer-c', 'var(--c-butter)');
   panel.innerHTML = `
-    <p><button type="button" class="btn dv-back" data-dv-back>${t('detail.back')}</button></p>
-    <p class="dp-num" data-dv-num aria-hidden="true"></p>
-    <h2 id="detail-title" class="dp-title" data-dv-title></h2>
-    <p class="dp-short" data-dv-short></p>
-    <p class="dp-intro" data-dv-intro></p>
-    <h3>${t('detail.capabilitiesHeading')}</h3>
-    <ul class="cap-list" data-dv-caps></ul>
-    <h3>${t('detail.samplesHeading')}</h3>
-    <div class="samples" data-dv-samples></div>
-    <h3>${t('detail.toolkitHeading')}</h3>
-    <ul class="chips" data-dv-toolkit></ul>`;
+    <div class="dv-card">
+      <p class="dv-top"><button type="button" class="dv-back" data-dv-back>
+        <span aria-hidden="true">&#8592;</span> ${t('detail.back')}</button></p>
+      <p class="dv-kicker" aria-hidden="true"><span class="dv-num" data-dv-num></span></p>
+      <h2 id="detail-title" class="dv-title" data-dv-title></h2>
+      <p class="dv-short" data-dv-short></p>
+      <p class="dv-intro" data-dv-intro></p>
+      <h3 class="dv-heading">${t('detail.capabilitiesHeading')}</h3>
+      <ul class="dv-caps" data-dv-caps></ul>
+      <h3 class="dv-heading">${t('detail.toolkitHeading')}</h3>
+      <ul class="dv-tools" data-dv-toolkit></ul>
+    </div>
+    <div class="dv-samples">
+      <h3 class="dv-heading dv-samples-head">${t('detail.samplesHeading')}</h3>
+      <div class="dv-sample-row" data-dv-samples></div>
+    </div>`;
   panel.querySelector('[data-dv-back]')?.addEventListener('click', () => close());
 }
 
@@ -56,12 +61,13 @@ function fillPanel(id: string): void {
   (panel.querySelector('[data-dv-intro]') as HTMLElement).textContent = layer.intro;
   (panel.querySelector('[data-dv-caps]') as HTMLElement).innerHTML = layer.capabilities
     .map((c) => `<li>${c}</li>`).join('');
-  (panel.querySelector('[data-dv-samples]') as HTMLElement).innerHTML = layer.samples
-    .map((s) => `<article class="sample-card"><h3>${s.title}</h3><p>${s.blurb}</p>
-      <ul class="chips">${s.tags.map((tag) => `<li class="chip">${tag}</li>`).join('')}</ul></article>`)
-    .join('');
   (panel.querySelector('[data-dv-toolkit]') as HTMLElement).innerHTML = layer.toolkit
-    .map((tool) => `<li class="chip">${tool}</li>`).join('');
+    .map((tool) => `<li>${tool}</li>`).join('');
+  // Compact sample cards under the main composition; no links, no invented claims.
+  (panel.querySelector('[data-dv-samples]') as HTMLElement).innerHTML = layer.samples
+    .map((s) => `<article class="dv-sample"><h4>${s.title}</h4><p>${s.blurb}</p>
+      <ul class="dv-tags">${s.tags.map((tag) => `<li>${tag}</li>`).join('')}</ul></article>`)
+    .join('');
 }
 
 function open(id: string): void {
@@ -82,13 +88,24 @@ function open(id: string): void {
   focusLayer(id);
   history.pushState({ stackDetail: id }, '', `/work/${id}/`);
 
-  // Panel entrance: staggered, rising 24px, power3.out (docs/MOTION.md).
+  // The card keeps the hover card's surface and accent rule and grows into the
+  // right half while the floor travels left: one component, two states.
   const reduced = prefersReducedMotion();
   const panel = dialog.panel;
-  const items = [...panel.querySelectorAll<HTMLElement>(':scope > p, :scope > h2, :scope > h3, :scope > ul, :scope > div')];
-  gsap.fromTo(items,
-    { opacity: 0, y: reduced ? 0 : 24 },
-    { opacity: 1, y: 0, duration: reduced ? 0.2 : 0.5, ease: 'power3.out', stagger: reduced ? 0 : 0.06 });
+  const card = panel.querySelector<HTMLElement>('.dv-card');
+  const samples = [...panel.querySelectorAll<HTMLElement>('.dv-sample')];
+  const head = panel.querySelector<HTMLElement>('.dv-samples');
+  if (card) {
+    gsap.fromTo(card,
+      { opacity: 0, x: reduced ? 0 : 22 },
+      { opacity: 1, x: 0, duration: reduced ? 0.2 : 0.42, ease: 'power3.out', delay: reduced ? 0 : 0.08 });
+  }
+  if (head) gsap.fromTo(head, { opacity: 0 }, { opacity: 1, duration: 0.3, delay: reduced ? 0 : 0.2 });
+  if (samples.length) {
+    gsap.fromTo(samples,
+      { opacity: 0, y: reduced ? 0 : 12 },
+      { opacity: 1, y: 0, duration: reduced ? 0.2 : 0.34, ease: 'power2.out', stagger: reduced ? 0 : 0.05, delay: reduced ? 0 : 0.24 });
+  }
 }
 
 function close(opts: { fromPop?: boolean; quick?: boolean } = {}): void {
@@ -97,7 +114,6 @@ function close(opts: { fromPop?: boolean; quick?: boolean } = {}): void {
   currentId = null;
 
   releaseFocus();
-  dialog.close();
 
   // Restore scroll exactly, then a scroll event recomputes the step from scrollY.
   document.documentElement.style.overflow = '';
@@ -105,15 +121,18 @@ function close(opts: { fromPop?: boolean; quick?: boolean } = {}): void {
 
   if (!opts.fromPop && history.state?.stackDetail) history.back();
 
+  // The card leaves first; the tower fades back in underneath it.
   const panel = dialog.panel;
-  const items = [...panel.querySelectorAll<HTMLElement>(':scope > *')];
-  gsap.to(items, {
+  const targets = [...panel.querySelectorAll<HTMLElement>('.dv-card, .dv-samples')];
+  gsap.to(targets, {
     opacity: 0,
-    duration: prefersReducedMotion() ? 0.15 : opts.quick ? 0.18 : 0.3,
+    duration: prefersReducedMotion() ? 0.12 : opts.quick ? 0.14 : 0.24,
     ease: 'power1.in',
+    overwrite: true,
     onComplete: () => {
-      panel.hidden = true;
-      items.forEach((el) => (el.style.opacity = ''));
+      dialog?.close();
+      targets.forEach((el) => (el.style.opacity = ''));
+      panel.querySelectorAll<HTMLElement>('.dv-sample').forEach((el) => (el.style.opacity = ''));
     },
   });
 }

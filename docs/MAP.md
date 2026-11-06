@@ -64,7 +64,7 @@ Search this file before creating anything.
 - camera.ts: scene/camera: orthographic camera locked to the (1,1,1) isometric view, with damped follow. @see docs/DESIGN.md (Camera), docs/MOTION.md (Camera), src/config/tuning.ts
   exports: createCamera, resizeCamera, followCamera
   uses: src/config/tuning
-- focus.ts: scene/focus: camera whoosh onto one layer, blur, fade of the other slabs. @see docs/MOTION.md (Detail view), src/ui/detail.ts, src/scene/loop.ts
+- focus.ts: scene/focus: the selected floor leaves the stack and moves to the left half, the rest fades. @see docs/MOTION.md (Detail view), src/ui/detail.ts, src/scene/loop.ts
   exports: Focus, createFocus
   uses: src/config/tuning, src/lib/reduced-motion
 - lights.ts: scene/lights: hemisphere, warm key with soft shadows, weak cool fill. @see docs/DESIGN.md (Light and render), src/scene/renderer.ts, src/scene/scene-theme.ts
@@ -270,7 +270,7 @@ Search this file before creating anything.
   uses: src/config/layers, src/lib/i18n
 
 ## src/ui/
-- detail.ts: ui/detail: the detail panel: content from config, staggered entrance, history and scroll freeze. @see docs/MOTION.md (Detail view), docs/WIRING.md (Routes), src/scene/api.ts, src/ui/dialog.ts
+- detail.ts: ui/detail: expanded floor view: card on the right half, compact sample strip beneath. @see docs/MOTION.md (Detail view), docs/WIRING.md (Routes), src/ui/dialog.ts, src/scene/focus.ts
   exports: initDetail
   uses: src/lib/bus, src/config/layers, src/scene/api, src/lib/reduced-motion, src/lib/i18n, src/ui/dialog
 - dialog.ts: ui/dialog: dialog semantics: aria, focus in and out, Tab trap, Escape. @see docs/MOTION.md (Detail view), src/ui/detail.ts

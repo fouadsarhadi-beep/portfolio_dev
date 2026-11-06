@@ -117,7 +117,14 @@ Orthographic. Position = target + (1,1,1) x 30. Looks at target. Visible faces: 
 The tower floats (STACK_BASE_Y = 1.35) above a soft radial contact shadow, an `underGlow` halo and a dim under light; it reads as deliberately suspended, not misplaced. No platform, no ground plane. The page frames the stage with a faint warm radial glow (`.stage-sticky::before`, tokens-driven) and the existing vignette. 18 to 36 slow dust particles (instanced, opacity 0.35) drift around the tower; floating colored shapes were removed. Keep it calm; the environment never competes with the tower.
 
 ## HUD and UI style (T29/T31 direction)
-Restrained surfaces: cards are `surface` with a 1px `line` border, 14px radius and one soft shadow (no hard offset shadows, no 2px ink outlines). A short 2px accent rule in the layer color is the only per-floor color echo, used once per card. The hover info card (`.layer-card` in hud.css) defines this language; the T30 expanded card and, in T31, buttons, pills and panels follow it. Layer accents remain in text, number chips and accent rules, never as thick colored tabs or side borders. Numeric badges stay small. A quiet availability dot. Scroll progress is a bar of six segments, one per layer. No glassmorphism.
+Restrained surfaces: cards are `surface` with a 1px `line` border, 14px radius and one soft shadow (no hard offset shadows, no 2px ink outlines). A short 2px accent rule in the layer color is the only per-floor color echo, used once per card. The hover info card (`.layer-card` in hud.css) defines this language; the expanded card (`.dv-card`, T30) is its second state, and in T31 buttons, pills and panels follow it. Layer accents remain in text, number chips and accent rules, never as thick colored tabs or side borders. Numeric badges stay small. A quiet availability dot. Scroll progress is a bar of six segments, one per layer. No glassmorphism.
+
+## Expanded floor view (T30; `ui/detail.ts`, `styles/hud.css`)
+One component, two states: the hover card grows into the expanded card (same surface, hairline border, radius, small number kicker, accent rule), so the click transition reads as a change of size and position, not a different panel.
+- Desktop: `.detail-view` is a stage-wide grid, two equal columns and two rows. The detached 3D floor occupies the left half (camera target centred, floor offset 0.21 of the visible width to screen-left). `.dv-card` fills the right half, vertically centred, scrollable if needed; the compact sample strip (`.dv-samples`, small cards with title, one-line blurb, slash-separated tags) spans the full width beneath both.
+- Card content order: back control, number kicker, title, short line, intro, "What I do" as a two-column hairline list, Toolkit as small pills. No colored side tabs, no badges, no links out.
+- Mobile (max-width 860px): the panel becomes one scrollable column with 44svh reserved at the top for the floor (the camera frames it there), then the card, then the samples. A gradient fades the reserved band into `--bg` so text stays readable without covering the room.
+- While open, the layer pills, hero copy and hover card are hidden (`[data-detail='true']` on `.stage-sticky`), so nothing competes with the expanded composition.
 
 ## Sections
 - HUD header: name, role, links to Stack, Toolkit, About, Contact, availability, progress bar. Small and distinctive, not a SaaS bar.
@@ -128,4 +135,4 @@ Restrained surfaces: cards are `surface` with a 1px `line` border, 14px radius a
 - Footer: compact.
 
 ## Responsive
-Minimum width 360px. Mobile gets its own camera framing (zoomed in on the exposed room), shadow map 1024, pixel ratio 1.25, fewer particles. Detail view stacks vertically: room on top, text below.
+Minimum width 360px. Mobile gets its own camera framing (zoomed in on the exposed room), shadow map 1024, pixel ratio 1.25, fewer particles. The expanded view is a deliberate vertical composition (floor on top, card, samples), never a squeezed 50/50 split.

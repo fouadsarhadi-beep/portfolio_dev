@@ -45,15 +45,17 @@ Restacking must feel quicker and harder than separating.
 - Keyboard: layer-nav buttons are in the Tab order; focusing one shows the card. ArrowUp and ArrowDown move the selection. Enter opens. Escape closes the card or detail. Tabbing out of the nav clears the card. Focus returns to the originating button.
 
 ## Detail view (ui/detail.ts, scene/focus.ts)
-Open (0.9s total):
-1. Camera whoosh onto the layer, 0.5s, `expo.out`. Zoom x1.5. The slab ends in the left third of the screen (desktop) or the top third (mobile).
-2. During the whoosh: a brief blur on the canvas wrapper (0 to 3px to 0). Skip it for reduced motion.
-3. Other slabs fade to opacity 0 in 0.25s. The selected room shows at e = 1.
-4. Panel enters on the right (below on mobile). Title, intro, two sample cards, capabilities, tags enter with 0.06s stagger, `power3.out`, rising 24px.
-Close: reverse in 0.45s. Back button, Escape and browser Back all close it.
+Open (about 0.9s total):
+1. Camera whoosh onto the selected floor, 0.5s, `expo.out`. Zoom x1.45 desktop, x1.35 mobile. The camera target starts at its current follow height, so there is no jump.
+2. Detach: the selected slab travels to the left half of the stage (0.21 of the visible width along the view-left axis, `expo.out`, same 0.5s) while the tower stays in place. It is not re-parented: `state.apply` and `pick` write base positions, then `focus.applyDetach` writes the x/z offset every frame, so slab/room association and the restore path stay intact. On mobile the floor travels to the top band instead (no lateral move).
+3. During the whoosh: a brief blur on the canvas wrapper (0 to 3px to 0). Skip it for reduced motion.
+4. Other slabs and their rooms fade to opacity 0 in 0.25s. The selected room shows at e = 1. The layer pills, hero copy and hover card leave the frame (`[data-detail]` on the stage).
+5. The card enters on the right half (0.42s, rises 22px, `power3.out`, 0.08s delay), then the sample strip (heading 0.3s, cards 0.34s, 0.05s stagger). Surface, radius, border and accent rule match the T29 hover card, so it reads as the same component in a second state.
+Close: 0.42s reverse. The card fades out in 0.24s while the camera whooshes back and the floor returns to its slot; back button, Escape and browser Back all close it.
 - pushState to `/work/<id>` on open and back on close.
 - While open: `document.documentElement.style.overflow = 'hidden'`. Remember scrollY. On close, restore it and recompute the step from scrollY. The state never gets stuck.
-- Dialog semantics: role="dialog", aria-modal, focus moves in on open and returns on close.
+- Picking is paused while a floor is expanded (`pick.setEnabled(false)`), so no hover state survives behind the card.
+- Dialog semantics: role="dialog", aria-modal, focus moves to the back button on open and returns to the originating control on close.
 
 ## Idle animation
 One ticker (lib/ticker.ts) gives `time` and `dt`. Rooms animate through `update(time, dt, exposure)`. Pause when offscreen or the tab is hidden. Each room has at least four distinct loops (see ROOMS.md).
