@@ -181,7 +181,9 @@ export function createFocus(opts: {
     },
 
     applyDetach(list: Object3D[]): void {
-      if (!detached || state === 'closing') return;
+      // Keep applying while closing too: the detach tween eases the offset back
+      // to 0, and pick has already rewritten the base x/z this frame.
+      if (!detached) return;
       const slab = list.find((s) => s === detached);
       if (!slab) return;
       // Only the screen-x travel; y stays the stack's height so the room keeps its framing.
