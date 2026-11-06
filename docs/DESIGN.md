@@ -133,6 +133,14 @@ One component, two states: the hover card grows into the expanded card (same sur
 - Mobile (max-width 860px): the panel becomes one scrollable column with 44svh reserved at the top for the floor (the camera frames it there), then the card, then the tiles (two across, and the card drops its square aspect). A gradient fades the reserved band into `--bg` so text stays readable without covering the room.
 - While open, the layer pills, hero copy and hover card are hidden (`[data-detail='true']` on `.stage-sticky`), so nothing competes with the expanded composition.
 
+## Document reader (src/ui/doc-viewer.ts, styles/doc.css)
+Every sample points at a document: `Sample.doc` keys into `src/config/documents.ts`. `kind` is `pdf`, `doc` or `sheet`; the body is prose (`text`) or a sheet (`rows`, first row is the header). All three render as text, because that is what they hold: no PDF plugin, no `iframe`, no library, and it works offline in both themes.
+- Opening: a tile with a document is a real `button` (`aria-haspopup="dialog"`); a tile without one stays a plain `article` and does nothing. Click opens `.doc-backdrop` (fixed, z-index 60, above the HUD) with `.doc-view`: kind chip, title, meta, body, close.
+- Body: `sheet` renders a real `<table>` with a quiet uppercase header and tabular numerals; `pdf` and `doc` render paragraphs at `--fs-14`. Text is escaped on the way in.
+- Close: the round × button, the footer button, a click on the backdrop, or Escape. Escape closes the reader first: `detail.ts` routes its dialog's `onEscape` through `closeDocument()`, and closing the detail view closes the reader too.
+- Focus: focus moves to the close button on open and returns to the tile on close. Tab stays inside the reader.
+- `doc.src` is empty for now. When a real file exists, the footer shows "Open the original file" and links to it, so the reader always has an exit to the source document.
+
 ## Sections
 - HUD header: name, role, links to Stack, Toolkit, About, Contact, availability, progress bar. Small and distinctive, not a SaaS bar.
 - Hero: full-width stack stage (no max-width wrapper) plus spatial labels and layer numbers. The canvas spans the window so shadows and glow never clip at a container edge.

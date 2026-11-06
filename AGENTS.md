@@ -36,7 +36,7 @@ Stuck after 3 attempts? Write it under "Blocked" in docs/PROGRESS.md and report 
 src/config      content and tuning data only. Imports nothing.
 src/content     UI strings (en.ts).
 src/pages, layouts, sections   Astro pages and DOM sections.
-src/styles      tokens.css, base.css, hud.css, sections.css.
+src/styles      tokens.css, base.css, hud.css, doc.css, sections.css.
 src/scene       all Three.js code. boot.ts is the entry. api.ts is the only door for the UI.
 src/scene/stack slab.ts, stack.ts, state.ts, motion.ts, landing.ts, pick.ts, labels.ts
 src/scene/rooms one folder per room id, plus props/ (shared kit) and shell.ts

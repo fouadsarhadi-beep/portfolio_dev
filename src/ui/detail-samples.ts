@@ -2,6 +2,8 @@
 import { SAMPLE_PAGE } from '@/config/detail';
 import { SAMPLE_ICONS } from '@/config/sample-icons';
 import type { LayerConfig, Sample } from '@/config/types';
+import { t } from '@/lib/i18n';
+import { openDocument } from './doc-viewer';
 
 export interface SamplesView {
   /** Draws page one for this layer and sets up the pager if there is more than one page. */
@@ -25,11 +27,18 @@ function glyph(sample: Sample, fallback: string): string {
 }
 
 function tile(sample: Sample, fallbackIcon: string): string {
-  return `<article class="dv-sample">
+  // A sample with a document is a button: it opens the reader. Spans, not
+  // block elements, so the markup stays valid inside a button.
+  const openable = Boolean(sample.doc);
+  const tag = openable ? 'button' : 'article';
+  const attrs = openable
+    ? ` type="button" data-doc="${sample.doc}" data-doc-title="${sample.title.replace(/"/g, '&quot;')}" aria-haspopup="dialog" aria-label="${t('detail.docOpen')}: ${sample.title}"`
+    : '';
+  return `<${tag} class="dv-sample"${attrs}>
     <span class="dv-sample-icon" aria-hidden="true">${glyph(sample, fallbackIcon)}</span>
-    <h4>${sample.title}</h4>
-    <p>${sample.blurb}</p>
-  </article>`;
+    <span class="dv-sample-title">${sample.title}</span>
+    <span class="dv-sample-blurb">${sample.blurb}</span>
+  </${tag}>`;
 }
 
 export function createSamplesView(panel: HTMLElement): SamplesView {
@@ -93,6 +102,13 @@ export function createSamplesView(panel: HTMLElement): SamplesView {
   slider?.addEventListener('change', () => void go(Number(slider.value)));
   prev?.addEventListener('click', () => void go(page - 1));
   next?.addEventListener('click', () => void go(page + 1));
+
+  // One delegated listener, because the grid is re-rendered on every page change.
+  row?.addEventListener('click', (e) => {
+    const el = (e.target as Element).closest<HTMLElement>('[data-doc]');
+    if (!el?.dataset.doc) return;
+    openDocument(el.dataset.doc, el.dataset.docTitle ?? '', el);
+  });
 
   return {
     show(nextLayer: LayerConfig): void {

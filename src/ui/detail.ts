@@ -7,6 +7,7 @@ import { prefersReducedMotion } from '@/lib/reduced-motion';
 import { t } from '@/lib/i18n';
 import { createSamplesView, type SamplesView } from './detail-samples';
 import { createDialog, type DialogHandle } from './dialog';
+import { closeDocument } from './doc-viewer';
 
 let dialog: DialogHandle | null = null;
 let samplesView: SamplesView | null = null;
@@ -19,7 +20,13 @@ export function initDetail(): void {
   const host = document.querySelector<HTMLElement>('.stage-sticky');
   if (!host) return;
 
-  dialog = createDialog(buildPanel, { labelledBy: 'detail-title', onEscape: () => close() });
+  dialog = createDialog(buildPanel, {
+    labelledBy: 'detail-title',
+    // The document reader opens on top of this panel, so Escape closes it first.
+    onEscape: () => {
+      if (!closeDocument()) close();
+    },
+  });
   host.appendChild(dialog.panel);
 
   bus.on('layer:open', ({ id }) => open(id));
@@ -118,6 +125,7 @@ function close(opts: { fromPop?: boolean; quick?: boolean } = {}): void {
   if (!isOpen || !dialog) return;
   isOpen = false;
   currentId = null;
+  closeDocument(); // never leave the reader behind the closing panel
 
   releaseFocus();
 

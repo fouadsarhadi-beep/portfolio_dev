@@ -1,0 +1,156 @@
+/* @module styles/doc: the sample document reader overlay. @see src/ui/doc-viewer.ts, src/styles/hud.css (.dv-card), docs/DESIGN.md (Document reader) */
+
+/* A text reader above the expanded floor. Same surface, border, radius and
+   accent as the card, so it reads as part of the same system, not a plugin. */
+.doc-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 60;
+  display: grid;
+  place-items: center;
+  padding: clamp(14px, 4vw, 48px);
+  background: color-mix(in srgb, var(--ink) 38%, transparent);
+  backdrop-filter: blur(3px);
+  pointer-events: auto;
+}
+
+/* Author display wins over the UA sheet, so [hidden] needs saying out loud. */
+.doc-backdrop[hidden] {
+  display: none;
+}
+
+.doc-view {
+  display: flex;
+  flex-direction: column;
+  inline-size: min(680px, 100%);
+  max-block-size: min(760px, 86svh);
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-l);
+  box-shadow: var(--shadow-lift);
+  overflow: hidden;
+}
+
+.doc-head {
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  align-items: center;
+  gap: 4px 12px;
+  padding: 14px clamp(14px, 2vw, 22px);
+  border-block-end: 1px solid var(--line);
+}
+
+.doc-kind {
+  padding: 3px 8px;
+  border-radius: 5px;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  color: var(--layer-c, var(--ink));
+  background: color-mix(in srgb, var(--layer-c, var(--ink)) 16%, var(--surface));
+}
+
+.doc-title {
+  font-size: var(--fs-16);
+  line-height: 1.2;
+}
+
+.doc-meta {
+  grid-column: 2;
+  margin: 0;
+  font-size: var(--fs-12);
+  color: var(--ink-soft);
+}
+
+.doc-close {
+  grid-column: 3;
+  grid-row: 1 / span 2;
+  inline-size: 32px;
+  block-size: 32px;
+  border: 1px solid var(--line);
+  border-radius: 50%;
+  background: var(--bg);
+  color: var(--ink-soft);
+  font-size: 18px;
+  line-height: 1;
+  cursor: pointer;
+}
+
+.doc-close:hover,
+.doc-close:focus-visible {
+  color: var(--ink);
+  border-color: color-mix(in srgb, var(--ink) 28%, var(--line));
+}
+
+.doc-body {
+  display: grid;
+  gap: 12px;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  padding: clamp(16px, 2vw, 26px);
+  font-size: var(--fs-14);
+  line-height: 1.65;
+}
+
+.doc-body p {
+  margin: 0;
+}
+
+/* Sheets read as tables: hairline rows, tabular numbers, quiet header. */
+.doc-table {
+  inline-size: 100%;
+  border-collapse: collapse;
+  font-size: var(--fs-12);
+}
+
+.doc-table th,
+.doc-table td {
+  padding: 7px 10px;
+  text-align: start;
+  border-block-end: 1px solid var(--line);
+}
+
+.doc-table th {
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--ink-soft);
+}
+
+.doc-table td {
+  color: var(--ink);
+  font-variant-numeric: tabular-nums;
+}
+
+.doc-foot {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+  padding: 12px clamp(14px, 2vw, 22px);
+  border-block-start: 1px solid var(--line);
+  background: var(--bg);
+}
+
+.doc-original {
+  align-self: center;
+  margin-inline-end: auto;
+  font-size: var(--fs-12);
+  font-weight: 600;
+  color: var(--ink-soft);
+}
+
+.doc-original[hidden] {
+  display: none;
+}
+
+@media (max-width: 480px) {
+  .doc-view {
+    max-block-size: 90svh;
+  }
+
+  .doc-head {
+    grid-template-columns: auto 1fr auto;
+    gap: 6px 8px;
+  }
+}

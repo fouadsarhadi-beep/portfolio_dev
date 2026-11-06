@@ -6,11 +6,29 @@ export type LayerId = string;
 
 export interface Vec3 { x: number; y: number; z: number }
 
+export type DocKind = 'pdf' | 'doc' | 'sheet';
+
+/**
+ * The text of one sample document, read in the doc viewer (src/ui/doc-viewer.ts).
+ * `text` is prose for pdf/doc; `rows` is a sheet (first row is the header).
+ * `src` is optional: when the real file exists, the reader offers it.
+ */
+export interface SampleDocument {
+  kind: DocKind;
+  meta?: string;
+  text?: string[];
+  rows?: string[][];
+  src?: string;
+}
+
 /**
  * A work sample. `icon` names a glyph in src/config/sample-icons.ts; without it
- * the tile falls back to the layer icon. `href` is unused for now.
+ * the tile falls back to the layer icon. `doc` keys into src/config/documents.ts;
+ * a sample without one opens nothing. `href` is unused for now.
  */
-export interface Sample { title: string; blurb: string; tags: string[]; href?: string; icon?: string }
+export interface Sample {
+  title: string; blurb: string; tags: string[]; href?: string; icon?: string; doc?: string;
+}
 
 export interface LayerConfig {
   id: string; number: string; title: string; short: string; intro: string;

@@ -8,6 +8,9 @@ Search this file before creating anything.
 ## src/config/
 - detail.ts: config/detail: shared constants for the expanded floor view. @see src/ui/detail.ts, src/ui/detail-samples.ts, src/pages/work/[id]/samples/[page].json.ts
   exports: SAMPLE_PAGE
+- documents.ts: config/documents: text of each sample document, keyed by Sample.doc. @see src/config/layers.ts, src/ui/doc-viewer.ts, docs/DESIGN.md (Document reader)
+  exports: DOCUMENTS
+  uses: src/config/types
 - layers.ts: config/layers: the six layer configs in locked top-to-bottom order. @see docs/COPY.md, src/config/types.ts
   exports: LAYERS
   uses: src/config/types
@@ -25,7 +28,7 @@ Search this file before creating anything.
   exports: FOOTPRINT, SLAB_T, WALL_H, WALL_THICK, CORNER_R, LIFT, STACK_BASE_Y, STEP_VH, CAM_DIR, CAM_DISTANCE, CAM_TARGET_OFFSET_Y, CAM_VIEW_HEIGHT, CAM_DAMP_LAMBDA, CAM_FRAME_OFFSET_Y, EXPOSURE, MAX_PIXEL_RATIO, SHADOW_MAP_DESKTOP, SHADOW_MAP_MOBILE
   uses: src/config/types
 - types.ts: config/types: shared contracts for config, scene and UI. @see docs/WIRING.md, src/config/layers.ts
-  exports: PaletteKey, LayerId, Vec3, Sample, LayerConfig, MaterialKit, PropFactory, PropKit, RoomContext, RoomInstance, RoomBuilder, StackEvents, StackDebugState
+  exports: PaletteKey, LayerId, Vec3, DocKind, SampleDocument, Sample, LayerConfig, MaterialKit, PropFactory, PropKit, RoomContext, RoomInstance, RoomBuilder, StackEvents, StackDebugState
 
 ## src/content/
 - en.ts: content/en: every English UI string, read through t(). @see src/lib/i18n.ts, docs/COPY.md
@@ -281,12 +284,15 @@ Search this file before creating anything.
 ## src/ui/
 - detail-samples.ts: ui/detail-samples: work tiles for the expanded view: 3 across, 9 per page, slider pager. @see src/ui/detail.ts, src/config/detail.ts, src/config/sample-icons.ts, src/pages/work/[id]/samples/[page].json.ts
   exports: SamplesView, createSamplesView
-  uses: src/config/detail, src/config/sample-icons, src/config/types
+  uses: src/config/detail, src/config/sample-icons, src/config/types, src/lib/i18n, src/ui/doc-viewer
 - detail.ts: ui/detail: expanded floor view: square text card on the right, work tiles beneath. @see docs/MOTION.md (Detail view), docs/WIRING.md (Routes), src/ui/detail-samples.ts, src/ui/dialog.ts, src/scene/focus.ts
   exports: initDetail
-  uses: src/lib/bus, src/config/layers, src/scene/api, src/lib/reduced-motion, src/lib/i18n, src/ui/detail-samples, src/ui/dialog
+  uses: src/lib/bus, src/config/layers, src/scene/api, src/lib/reduced-motion, src/lib/i18n, src/ui/detail-samples, src/ui/dialog, src/ui/doc-viewer
 - dialog.ts: ui/dialog: dialog semantics: aria, focus in and out, Tab trap, Escape. @see docs/MOTION.md (Detail view), src/ui/detail.ts
   exports: DialogHandle, createDialog
+- doc-viewer.ts: ui/doc-viewer: text reader for a sample document, opened over the expanded floor. @see src/config/documents.ts, src/ui/detail-samples.ts, src/ui/detail.ts, docs/DESIGN.md (Document reader)
+  exports: openDocument, closeDocument
+  uses: src/config/documents, src/lib/reduced-motion, src/lib/i18n, src/config/types
 - keyboard.ts: ui/keyboard: layer-nav focus, ArrowUp/ArrowDown selection, Enter via native click, Escape. @see docs/MOTION.md (Pick, hover, touch), src/lib/bus.ts
   exports: initKeyboard
   uses: src/lib/bus, src/config/layers

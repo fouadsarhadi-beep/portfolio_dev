@@ -39,6 +39,10 @@ export const en = {
     samplesPage: 'Sample work page',
     samplesPrev: 'Previous samples',
     samplesNext: 'More samples',
+    docOpen: 'Read the document',
+    docClose: 'Close document',
+    docOriginal: 'Open the original file',
+    docEmpty: 'This document has no text yet.',
     toolkitHeading: 'Toolkit',
   },
   hud: {
