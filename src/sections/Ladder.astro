@@ -1,0 +1,71 @@
+---
+/** @module sections/Ladder: the scroll ladder: one rung per floor, click to jump. @see src/styles/ladder.css, docs/MOTION.md (Scroll mapping), src/pages/index.astro */
+import { LAYERS } from '@/config/layers';
+import { t } from '@/lib/i18n';
+---
+
+<nav class="ladder" aria-label={t('ladder.label')}>
+  <span class="ladder-track" aria-hidden="true"><span class="ladder-fill" data-ladder-fill></span></span>
+  <ol class="ladder-list">
+    {LAYERS.map((l, i) => (
+      <li>
+        <button type="button" class="ladder-rung" data-step={i} style={`--layer-c: var(--c-${l.color})`}>
+          <span class="ladder-dot" aria-hidden="true"></span>
+          <span class="ladder-num" aria-hidden="true">{l.number}</span>
+          <span class="ladder-label">{l.title}</span>
+        </button>
+      </li>
+    ))}
+  </ol>
+</nav>
+
+<script>
+  import { bus } from '@/lib/bus';
+
+  // Mirrors STEP_PX_FACTOR in scene/stack/state.ts (0.8 x innerHeight). Kept
+  // local on purpose: importing that module would pull three.js into this script.
+  const STEP_PX_FACTOR = 0.8;
+
+  const nav = document.querySelector<HTMLElement>('.ladder');
+  const rungs = [...document.querySelectorAll<HTMLButtonElement>('.ladder-rung')];
+  const fill = document.querySelector<HTMLElement>('[data-ladder-fill]');
+  const stage = document.querySelector<HTMLElement>('.stage');
+  const last = rungs.length - 1;
+
+  function markStep(step: number): void {
+    rungs.forEach((rung, i) => {
+      if (i === step) rung.setAttribute('aria-current', 'step');
+      else rung.removeAttribute('aria-current');
+    });
+  }
+
+  if (nav && rungs.length) {
+    // The floor index lives in one place (the stack state); the ladder listens.
+    bus.on('step:change', ({ step }) => markStep(Math.min(step, last)));
+    markStep(0);
+
+    // The fill follows raw scroll, so the ladder also shows the pull-back after
+    // the last floor without needing a second source of step truth.
+    const paint = (): void => {
+      if (!stage) return;
+      const top = stage.getBoundingClientRect().top + window.scrollY;
+      const s = (window.scrollY - top) / (STEP_PX_FACTOR * window.innerHeight);
+      const k = Math.min(1, Math.max(0, s / last));
+      fill?.style.setProperty('height', `${(k * 100).toFixed(2)}%`);
+    };
+    paint();
+    window.addEventListener('scroll', paint, { passive: true });
+    window.addEventListener('resize', paint, { passive: true });
+
+    for (const rung of rungs) {
+      rung.addEventListener('click', () => {
+        if (!stage) return;
+        const top = stage.getBoundingClientRect().top + window.scrollY;
+        const i = Number(rung.dataset.step ?? 0);
+        // Mid-dwell of that floor: past the open threshold, before the next one.
+        const y = top + (i + 0.5) * STEP_PX_FACTOR * window.innerHeight;
+        window.scrollTo({ top: y, behavior: 'smooth' });
+      });
+    }
+  }
+</script>

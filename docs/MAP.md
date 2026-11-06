@@ -57,7 +57,7 @@ Search this file before creating anything.
 
 ## src/pages/
 - index.astro: pages/index: the one-page experience, sections in order. @see src/layouts/Base.astro, src/sections/
-  uses: src/layouts/Base.astro, src/sections/Hud.astro, src/sections/Hero.astro, src/sections/About.astro, src/sections/Toolkit.astro, src/sections/Contact.astro, src/sections/Footer.astro, src/config/site
+  uses: src/layouts/Base.astro, src/sections/Hud.astro, src/sections/Ladder.astro, src/sections/Hero.astro, src/sections/About.astro, src/sections/Toolkit.astro, src/sections/Contact.astro, src/sections/Footer.astro, src/config/site
 
 ## src/pages/work/
 - [layer].astro: pages/work/[layer]: static page per layer; the SEO page and no-JS detail. @see docs/WIRING.md (Routes), src/config/layers.ts
@@ -280,7 +280,9 @@ Search this file before creating anything.
 - Hero.astro: sections/Hero: tall scroll stage, sticky canvas mount, layer nav, hero copy, no-JS fallback. @see docs/MOTION.md, src/styles/hud.css, src/styles/sections.css
   uses: src/config/layers, src/lib/i18n
 - Hud.astro: sections/Hud: sticky header with name, role, nav links, availability, progress bar. @see src/styles/hud.css, docs/DESIGN.md (HUD and UI style)
-  uses: src/config/site, src/config/layers, src/lib/i18n, src/lib/bus, src/ui/theme
+  uses: src/config/site, src/lib/i18n, src/ui/theme
+- Ladder.astro: sections/Ladder: the scroll ladder: one rung per floor, click to jump. @see src/styles/ladder.css, docs/MOTION.md (Scroll mapping), src/pages/index.astro
+  uses: src/config/layers, src/lib/i18n, src/lib/bus
 - Toolkit.astro: sections/Toolkit: six tiles, one per layer, with tool chips. @see docs/DESIGN.md (Sections), src/config/layers.ts
   uses: src/config/layers, src/lib/i18n
 

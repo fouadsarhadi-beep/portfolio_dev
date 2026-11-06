@@ -9,6 +9,9 @@ export const en = {
     about: 'About',
     contact: 'Contact',
   },
+  ladder: {
+    label: 'Floors',
+  },
   hero: {
     h1: 'I build websites from the server up to the sentence.',
     sub: 'Alex Morgan is a web generalist. Scroll to take the stack apart and see each layer.',

@@ -1,0 +1,108 @@
+/* @module styles/ladder: the scroll ladder down the left of the stage. @see src/sections/Ladder.astro, docs/MOTION.md (Scroll mapping) */
+
+.ladder {
+  position: fixed;
+  inset-inline-start: clamp(14px, 2.2vw, 34px);
+  top: 50%;
+  translate: 0 -50%;
+  z-index: 40;
+  display: grid;
+  grid-template-columns: 2px auto;
+  align-items: center;
+  gap: 10px;
+}
+
+/* Track and its fill: raw scroll progress, so the pull-back reads too. */
+.ladder-track {
+  position: relative;
+  inline-size: 2px;
+  block-size: 100%;
+  min-block-size: 120px;
+  border-radius: 1px;
+  background: color-mix(in srgb, var(--ink) 14%, transparent);
+}
+
+.ladder-fill {
+  position: absolute;
+  inset-block-start: 0;
+  inset-inline: 0;
+  block-size: 0;
+  border-radius: 1px;
+  background: var(--ink);
+  transition: block-size 0.12s linear;
+}
+
+.ladder-list {
+  display: grid;
+  gap: 14px;
+}
+
+.ladder-rung {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 2px 0;
+  background: none;
+  border: 0;
+  color: var(--ink-soft);
+  cursor: pointer;
+  text-align: start;
+}
+
+.ladder-dot {
+  inline-size: 9px;
+  block-size: 9px;
+  border-radius: 50%;
+  border: 1.5px solid currentColor;
+  background: var(--bg);
+  transition: background-color 0.2s, border-color 0.2s, box-shadow 0.2s;
+}
+
+.ladder-num {
+  font-size: 10px;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+  letter-spacing: 0.06em;
+}
+
+/* The floor title is a helper, not chrome: it appears on hover and focus. */
+.ladder-label {
+  font-size: var(--fs-12);
+  font-weight: 600;
+  white-space: nowrap;
+  opacity: 0;
+  translate: -4px 0;
+  transition: opacity 0.18s, translate 0.18s;
+}
+
+.ladder-rung:hover,
+.ladder-rung:focus-visible {
+  color: var(--ink);
+}
+
+.ladder-rung:hover .ladder-label,
+.ladder-rung:focus-visible .ladder-label {
+  opacity: 1;
+  translate: 0 0;
+}
+
+.ladder-rung[aria-current='step'] {
+  color: var(--ink);
+}
+
+.ladder-rung[aria-current='step'] .ladder-dot {
+  border-color: var(--layer-c, var(--ink));
+  background: var(--layer-c, var(--ink));
+  box-shadow: 0 0 0 4px color-mix(in srgb, var(--layer-c, var(--ink)) 22%, transparent);
+}
+
+.ladder-rung[aria-current='step'] .ladder-label {
+  opacity: 1;
+  translate: 0 0;
+}
+
+@media (max-width: 860px) {
+  .ladder {
+    display: none;
+  }
+}
