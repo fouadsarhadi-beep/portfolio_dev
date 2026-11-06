@@ -22,7 +22,6 @@ export interface Stack {
 export function createStack(layers: LayerConfig[] = LAYERS): Stack {
   const group = new THREE.Group();
   group.name = 'stack';
-  const mat = createMaterialKit();
   const slabs: THREE.Object3D[] = [];
   const rooms: Array<RoomInstance & { layerIndex: number }> = [];
   layers.forEach((layer, i) => {
@@ -32,9 +31,13 @@ export function createStack(layers: LayerConfig[] = LAYERS): Stack {
     group.add(slab);
     slabs.push(slab);
 
-    // Mount the room on the slab top when the registry has one for it.
+    // Mount the room on the slab top when the registry has one for it. Each room
+    // gets its own material kit: a floor's materials must be its own, or the
+    // detail view cannot fade the other floors without also fading the one it
+    // keeps (src/scene/focus.ts, docs/MOTION.md Detail view).
     const build = ROOMS[layer.room];
     if (build) {
+      const mat = createMaterialKit();
       const ctx: RoomContext = { footprint: FOOTPRINT, wallH: WALL_H, mat, props: PROPS };
       const room = build(ctx);
       room.group.position.y = SLAB_T / 2 + 0.036;

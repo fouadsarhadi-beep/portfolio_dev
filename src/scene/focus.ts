@@ -77,6 +77,15 @@ export function createFocus(opts: {
     });
   }
 
+  /** A floor faded to nothing leaves the scene; restored the moment it returns. */
+  const hidden = slabs.map(() => false);
+
+  function setHidden(i: number, on: boolean): void {
+    if (hidden[i] === on) return;
+    hidden[i] = on;
+    slabs[i].visible = !on;
+  }
+
   function setOpacity(slabIndex: number, o: number): void {
     for (const m of matsBySlab[slabIndex]) {
       m.opacity = o;
@@ -201,7 +210,11 @@ export function createFocus(opts: {
       }
       activeIdx = -1;
       markDetail(false);
-      for (let i = 0; i < slabs.length; i++) fadeTarget[i] = 1;
+      // Every floor returns to the scene at once; the material fade does the rest.
+      for (let i = 0; i < slabs.length; i++) {
+        fadeTarget[i] = 1;
+        setHidden(i, false);
+      }
     },
 
     active(): boolean {
@@ -223,10 +236,14 @@ export function createFocus(opts: {
     update(dt: number): void {
       const step = FADE_RATE * Math.min(Math.max(dt, 0), 0.1);
       for (let i = 0; i < slabs.length; i++) {
-        if (fade[i] === fadeTarget[i]) continue;
-        if (fade[i] < fadeTarget[i]) fade[i] = Math.min(fadeTarget[i], fade[i] + step);
-        else fade[i] = Math.max(fadeTarget[i], fade[i] - step);
-        setOpacity(i, fade[i]);
+        if (fade[i] !== fadeTarget[i]) {
+          if (fade[i] < fadeTarget[i]) fade[i] = Math.min(fadeTarget[i], fade[i] + step);
+          else fade[i] = Math.max(fadeTarget[i], fade[i] - step);
+          setOpacity(i, fade[i]);
+        }
+        // Invisible geometry still casts shadows and writes depth, so a floor
+        // that has faded to nothing is taken out of the scene outright.
+        setHidden(i, state === 'on' && i !== activeIdx && fade[i] === 0);
       }
     },
 
