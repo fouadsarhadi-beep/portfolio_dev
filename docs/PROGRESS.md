@@ -3,12 +3,12 @@
 Current task: T31 (unify portfolio visual language)
 
 ## Handoff note (max 8 lines, rewrite each session)
-Redesign batch T28-T32 (user brief 2026-11-05). T28 done (8140bc1): unified plaster/wood slab family, floating tower, contact shadow + underGlow environment, collision dust. T29 done (697c68b): right-edge .layer-card hover card, neutral hover edge, no pill overlap.
-T30 done: the selected slab leaves the tower to the left half (per-frame offset in scene/focus.ts applyDetach, never re-parented), the rest fades, `.detail-view` grid = floor left + `.dv-card` right + `.dv-samples` strip beneath, mobile column with 44svh reserved for the floor, picking paused while expanded. 200-line cap removed from scripts/check.mjs (user request: keep files cohesive).
-T31 next: extend the T29/T30 surface language to HUD, nav, About, Toolkit, Contact, footer, buttons, pills (kill remaining thick ink outlines / hard offset shadows / per-floor color coding). Then T32 responsive 360/390/768/desktop + QA + final report.
-Gotchas: number textures redraw on theme change; stale dev servers hold 4321 (use --port); `npm run preview -- --port XXXX` for verification against dist. Astro dev toolbar disabled.
-Git policy: one commit per task, exact messages; never push.
-Next: T31, then T32.
+Redesign batch T28-T32 (user brief 2026-11-05). T28 done (8140bc1): unified plaster/wood slab family, floating tower, contact shadow + underGlow, collision dust. T29 done (697c68b): right-edge .layer-card hover card, neutral hover edge, movement rule kept.
+T30 done (4345d8a): selected slab leaves the tower to the left half (per-frame offset in scene/focus.ts applyDetach, never re-parented), rest fades, `.detail-view` grid = floor left + `.dv-card` right + `.dv-samples` beneath, mobile column with 44svh reserved, picking paused while expanded.
+T31 done: one surface system everywhere (`--shadow-card`/`--shadow-lift`, 1px `--line` borders, 14px radii, accent rule = only per-floor color, icons instead of swatches, neutral progress, kicker instead of 120px numeral). The 200-line guardrail cap was removed earlier in the batch.
+T32 next: responsive refinement (360/390/768/desktop), HUD-height anchor offset, then final QA docs. The user runs the live browser/visual pass themselves — do not automate screenshots.
+Gotchas: number textures redraw on theme change; labels.ts keeps pills absolutely positioned (the CSS mobile dock does not apply); stale dev servers hold 4321; use `npm run preview -- --port XXXX` when checking dist.
+Git policy: one commit per task, exact messages; never push. Next: T32, then the handoff report.
 
 ## How to run
 - Open a terminal in the portfolio-kit folder (the one with package.json): `cd "C:\Users\ASUS\OneDrive - sternx.de\Desktop\personal\homepage\GLM 5.3_2\portfolio-kit"`
@@ -76,8 +76,10 @@ Next: T31, then T32.
   Unified plaster/wood slab family, floating tower + contact shadow/under-glow environment, collision dust, full-width shadow fix, poster regenerated, shots tooling fixed (stage selector, dark/slam passes, dev toolbar off). Card: docs/tasks/T28-tower-materials-environment.md. |
 | T29 | Redesign hover interactions and preview (redesign batch) | done, verified |
   Right-edge .layer-card hover card (no link, zero pill overlap steps 0-5, mobile docked variant), neutral hover edge, tab-away clearing; movement rule verified for first/exposed/lower floors. Card: docs/tasks/T29-hover-card.md. |
-| T30 | Detached floor and expanded detail experience (redesign batch) | done, verified |
+| T30 | Detached floor and expanded detail experience (redesign batch) | done, verified (4345d8a) |
   Selected slab leaves the tower to the left half (offset, never re-parented), rest of the tower fades, stage-wide 50/50 grid (floor left, card right) with a compact sample strip beneath, card is the T29 hover card grown up, mobile vertical composition, picking paused while expanded. Card: docs/tasks/T30-separated-floor-detail.md. |
+| T31 | Unify portfolio visual language (redesign batch) | done, code-verified |
+  Shared surface system across HUD, pills, buttons, chips, About panels/diagram, Toolkit tiles (icon replaces swatch), Contact, footer, work pages: 1px hairlines, 14px radii, two soft shadow tokens, accent rule as the only per-floor color, neutral progress bar, no oversized numerals. Card: docs/tasks/T31-visual-language.md. |
 
 ## Blocked
 (none)

@@ -116,8 +116,14 @@ Orthographic. Position = target + (1,1,1) x 30. Looks at target. Visible faces: 
 ## Environment around the stack (T28)
 The tower floats (STACK_BASE_Y = 1.35) above a soft radial contact shadow, an `underGlow` halo and a dim under light; it reads as deliberately suspended, not misplaced. No platform, no ground plane. The page frames the stage with a faint warm radial glow (`.stage-sticky::before`, tokens-driven) and the existing vignette. 18 to 36 slow dust particles (instanced, opacity 0.35) drift around the tower; floating colored shapes were removed. Keep it calm; the environment never competes with the tower.
 
-## HUD and UI style (T29/T31 direction)
-Restrained surfaces: cards are `surface` with a 1px `line` border, 14px radius and one soft shadow (no hard offset shadows, no 2px ink outlines). A short 2px accent rule in the layer color is the only per-floor color echo, used once per card. The hover info card (`.layer-card` in hud.css) defines this language; the expanded card (`.dv-card`, T30) is its second state, and in T31 buttons, pills and panels follow it. Layer accents remain in text, number chips and accent rules, never as thick colored tabs or side borders. Numeric badges stay small. A quiet availability dot. Scroll progress is a bar of six segments, one per layer. No glassmorphism.
+## HUD and UI style (T29/T30/T31 system)
+One surface language across the whole page. Implemented in `tokens.css` (`--shadow-card`, `--shadow-lift`), `sections.css`, `hud.css`:
+- Surfaces: `--surface`, a 1px `--line` border, radius 14px (`--radius-m`) for cards/tiles/panels or a pill for controls, one soft two-layer shadow (`--shadow-card`; `--shadow-lift` on hover). No 2px ink outlines, no hard offset shadows, no 10px colored side bars — all removed in T31.
+- Controls: `.btn` is one solid ink pill with `--bg` text and a soft shadow; it lifts 1px on hover. Layer pills (`.layer-nav button`) are surface pills with a hairline border that lift 1px and deepen their border on hover. The theme toggle follows the same rule. Chips are 1px hairlines with `--ink-soft` text, weight 500.
+- Color: the only per-layer echo is a 2px accent rule or a small number tint (hover card, expanded card, About panels, no-WebGL cards, work pages). Floors are told apart by number, title and icon — the Toolkit swatch was replaced by the layer icon; the HUD progress bar is neutral (`--line` → `--ink`).
+- Type: display font for headings, no oversized decorative numerals (the work page number is a 14px kicker with an accent rule). Section headings carry a 28x2 hairline rule above them.
+- Focus: the global 3px ink focus ring stays; hover states never rely on color alone.
+- Dark theme uses the same rules through tokens; nothing in the system is hard-coded to a theme.
 
 ## Expanded floor view (T30; `ui/detail.ts`, `styles/hud.css`)
 One component, two states: the hover card grows into the expanded card (same surface, hairline border, radius, small number kicker, accent rule), so the click transition reads as a change of size and position, not a different panel.

@@ -48,11 +48,14 @@
   --fs-72: 72px;
   --fs-120: 120px;
 
-  /* Radii and hard shadows (docs/DESIGN.md HUD style) */
+  /* Radii and card shadows (docs/DESIGN.md HUD style; T31 unified language) */
   --radius-m: 14px;
   --radius-l: 20px;
   --radius-pill: 999px;
-  --hard-offset: 4px;
+  --shadow-card: 0 1px 2px color-mix(in srgb, var(--ink) 6%, transparent),
+    0 10px 26px color-mix(in srgb, var(--ink) 7%, transparent);
+  --shadow-lift: 0 2px 5px color-mix(in srgb, var(--ink) 8%, transparent),
+    0 16px 34px color-mix(in srgb, var(--ink) 11%, transparent);
 
   /* Scroll mapping (docs/MOTION.md); --steps mirrors LAYERS.length - 1 */
   --step-vh: 80svh;

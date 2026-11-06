@@ -153,17 +153,28 @@ html:not(.js) .layer-nav {
 
 .stack-fallback article {
   background: var(--surface);
-  border: 2px solid var(--line);
-  border-inline-start: 10px solid var(--layer-c);
-  border-radius: var(--radius-l);
-  padding: 20px;
+  border: 1px solid var(--line);
+  border-radius: var(--radius-m);
+  box-shadow: var(--shadow-card);
+  padding: 20px 22px;
+}
+
+.stack-fallback article::before {
+  content: '';
+  display: block;
+  inline-size: 22px;
+  block-size: 2px;
+  border-radius: 1px;
+  margin-block-end: 12px;
+  background: var(--layer-c, var(--ink-soft));
 }
 
 .sf-num {
   font-family: var(--font-display);
   font-weight: 600;
-  font-size: var(--fs-28);
-  color: var(--layer-c);
+  font-size: var(--fs-12);
+  color: var(--ink-soft);
+  font-variant-numeric: tabular-nums;
 }
 
 .stack-fallback h2 {
@@ -175,33 +186,34 @@ html:not(.js) .layer-nav {
   color: var(--ink-soft);
 }
 
-/* --- Shared pill button (docs/DESIGN.md HUD style) --- */
+/* --- Shared button (docs/DESIGN.md HUD style): one solid pill, one soft shadow --- */
 .btn {
   display: inline-flex;
   align-items: center;
   gap: 8px;
-  padding: 10px 18px;
-  background: var(--surface);
-  border: 2px solid var(--ink);
+  padding: 10px 20px;
+  background: var(--ink);
+  border: 1px solid var(--ink);
   border-radius: var(--radius-pill);
-  box-shadow: var(--hard-offset) var(--hard-offset) 0 0 var(--layer-c, var(--c-butter));
+  box-shadow: var(--shadow-card);
   font-size: var(--fs-14);
   font-weight: 600;
-  color: var(--ink);
+  color: var(--bg);
   text-decoration: none;
   cursor: pointer;
-  transition: transform 0.15s, box-shadow 0.15s;
+  transition: transform 0.15s, box-shadow 0.15s, background-color 0.15s;
 }
 
 .btn:hover,
 .btn:focus-visible {
-  transform: translate(-1px, -1px);
-  box-shadow: 5px 5px 0 0 var(--layer-c, var(--c-butter));
+  transform: translateY(-1px);
+  background: color-mix(in srgb, var(--ink) 88%, var(--bg));
+  box-shadow: var(--shadow-lift);
 }
 
 .btn:active {
-  transform: translate(2px, 2px);
-  box-shadow: 1px 1px 0 0 var(--layer-c, var(--c-butter));
+  transform: translateY(0);
+  box-shadow: var(--shadow-card);
 }
 
 /* --- Sections --- */
@@ -211,6 +223,17 @@ html:not(.js) .layer-nav {
 
 .section-head {
   font-size: clamp(var(--fs-28), 4vw, var(--fs-44));
+}
+
+/* A quiet rule above every section heading ties the page to the card language. */
+.section-head::before {
+  content: '';
+  display: block;
+  inline-size: 28px;
+  block-size: 2px;
+  border-radius: 1px;
+  margin-block-end: 14px;
+  background: color-mix(in srgb, var(--ink) 24%, transparent);
 }
 
 .section-intro {
@@ -234,39 +257,55 @@ html:not(.js) .layer-nav {
 .layer-diagram {
   display: flex;
   flex-direction: column;
-  gap: 6px;
-  margin-block-start: 28px;
+  margin-block-start: 24px;
 }
 
 .layer-diagram li {
   display: flex;
   align-items: center;
-  gap: 10px;
+  gap: 12px;
+  padding-block: 9px;
+  border-block-end: 1px solid var(--line);
   font-size: var(--fs-14);
   font-weight: 600;
+}
+
+.layer-diagram li:first-child {
+  border-block-start: 1px solid var(--line);
 }
 
 .ld-num {
   font-family: var(--font-display);
   font-weight: 600;
   font-size: var(--fs-12);
-  padding: 2px 8px;
-  border-radius: 8px;
-  background: var(--layer-c);
+  color: var(--ink-soft);
+  font-variant-numeric: tabular-nums;
+  min-inline-size: 1.8ch;
 }
 
 .about-panels {
   display: grid;
-  gap: 16px;
+  gap: 12px;
   align-content: start;
 }
 
 .panel {
   background: var(--surface);
-  border: 2px solid var(--line);
-  border-inline-start: 10px solid var(--layer-c);
-  border-radius: var(--radius-l);
-  padding: 20px;
+  border: 1px solid var(--line);
+  border-radius: var(--radius-m);
+  box-shadow: var(--shadow-card);
+  padding: 20px 22px;
+}
+
+/* Same accent rule as the hover and expanded cards (T29/T30). */
+.panel::before {
+  content: '';
+  display: block;
+  inline-size: 22px;
+  block-size: 2px;
+  border-radius: 1px;
+  margin-block-end: 12px;
+  background: var(--layer-c, var(--ink-soft));
 }
 
 .panel h3 {
@@ -283,15 +322,22 @@ html:not(.js) .layer-nav {
 .tiles {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
-  gap: 16px;
+  gap: 12px;
   margin-block-start: 32px;
 }
 
 .tile {
   background: var(--surface);
-  border: 2px solid var(--line);
-  border-radius: var(--radius-l);
-  padding: 18px;
+  border: 1px solid var(--line);
+  border-radius: var(--radius-m);
+  box-shadow: var(--shadow-card);
+  padding: 18px 20px;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.tile:hover {
+  border-color: color-mix(in srgb, var(--ink) 20%, var(--line));
+  box-shadow: var(--shadow-lift);
 }
 
 .tile-head {
@@ -303,17 +349,21 @@ html:not(.js) .layer-nav {
 .tile-num {
   font-family: var(--font-display);
   font-weight: 600;
-  font-size: var(--fs-28);
-  color: var(--layer-c);
+  font-size: var(--fs-12);
+  color: var(--ink-soft);
+  font-variant-numeric: tabular-nums;
 }
 
-.swatch {
+/* Icon instead of a colored swatch: floors differ by number, title and icon. */
+.tile-icon {
   width: 18px;
   height: 18px;
-  border-radius: 50%;
-  background: var(--layer-c);
-  border: 2px solid var(--ink);
   margin-inline-start: auto;
+  fill: none;
+  stroke: var(--ink-soft);
+  stroke-width: 1.6;
+  stroke-linecap: round;
+  stroke-linejoin: round;
 }
 
 .tile h3 {
@@ -329,10 +379,11 @@ html:not(.js) .layer-nav {
 
 .chip {
   font-size: var(--fs-12);
-  font-weight: 600;
+  font-weight: 500;
   padding: 3px 10px;
-  border: 1.5px solid var(--line);
+  border: 1px solid var(--line);
   border-radius: var(--radius-pill);
+  color: var(--ink-soft);
   background: var(--bg);
 }
 
@@ -342,10 +393,10 @@ html:not(.js) .layer-nav {
   margin-inline: auto;
   text-align: center;
   background: var(--surface);
-  border: 2px solid var(--ink);
+  border: 1px solid var(--line);
   border-radius: var(--radius-l);
+  box-shadow: var(--shadow-card);
   padding: clamp(28px, 6vw, 56px);
-  box-shadow: 6px 6px 0 0 var(--c-butter);
 }
 
 .contact-panel h2 {
@@ -377,16 +428,19 @@ html:not(.js) .layer-nav {
 
 .socials a {
   padding: 6px 14px;
-  border: 1.5px solid var(--line);
+  border: 1px solid var(--line);
   border-radius: var(--radius-pill);
   font-size: var(--fs-14);
-  font-weight: 600;
+  font-weight: 500;
+  color: var(--ink-soft);
   text-decoration: none;
+  transition: color 0.15s, border-color 0.15s;
 }
 
 .socials a:hover,
 .socials a:focus-visible {
-  border-color: var(--ink);
+  color: var(--ink);
+  border-color: color-mix(in srgb, var(--ink) 28%, var(--line));
 }
 
 /* Footer */
@@ -412,14 +466,25 @@ html:not(.js) .layer-nav {
 .work-num {
   font-family: var(--font-display);
   font-weight: 600;
-  font-size: var(--fs-120);
-  line-height: 0.9;
-  color: var(--layer-c);
+  font-size: var(--fs-14);
+  color: var(--ink-soft);
+  font-variant-numeric: tabular-nums;
+}
+
+/* Small accent rule under the number instead of a huge decorative numeral (T31). */
+.work-num::after {
+  content: '';
+  display: block;
+  inline-size: 28px;
+  block-size: 2px;
+  border-radius: 1px;
+  margin-block-start: 8px;
+  background: var(--layer-c, var(--ink-soft));
 }
 
 .work h1 {
   font-size: clamp(var(--fs-44), 7vw, var(--fs-72));
-  margin-block-start: 8px;
+  margin-block-start: 14px;
 }
 
 .work-short {
@@ -447,30 +512,31 @@ html:not(.js) .layer-nav {
 
 .cap-list li {
   background: var(--surface);
-  border: 2px solid var(--line);
+  border: 1px solid var(--line);
   border-radius: var(--radius-m);
   padding: 12px 16px;
-  font-weight: 600;
+  font-weight: 500;
   font-size: var(--fs-14);
+  color: var(--ink-soft);
 }
 
 .samples {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
-  gap: 16px;
+  gap: 12px;
   margin-block-start: 16px;
 }
 
 .sample-card {
   background: var(--surface);
-  border: 2px solid var(--line);
-  border-inline-start: 10px solid var(--layer-c);
-  border-radius: var(--radius-l);
-  padding: 20px;
+  border: 1px solid var(--line);
+  border-radius: var(--radius-m);
+  box-shadow: var(--shadow-card);
+  padding: 18px 20px;
 }
 
 .sample-card h3 {
-  font-size: var(--fs-20);
+  font-size: var(--fs-16);
 }
 
 .sample-card p {

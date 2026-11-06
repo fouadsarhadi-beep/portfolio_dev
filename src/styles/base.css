@@ -84,8 +84,9 @@ button {
   z-index: 100;
   padding: 8px 16px;
   background: var(--surface);
-  border: 2px solid var(--ink);
+  border: 1px solid var(--line);
   border-radius: var(--radius-pill);
+  box-shadow: var(--shadow-card);
   font-weight: 600;
   font-size: var(--fs-14);
   text-decoration: none;
