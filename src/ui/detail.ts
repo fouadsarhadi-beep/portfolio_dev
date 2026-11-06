@@ -34,6 +34,12 @@ export function initDetail(): void {
   window.addEventListener('popstate', () => {
     if (isOpen) close({ fromPop: true });
   });
+
+  // A cold load of /work/<id>/ opens that floor. The route is written by
+  // pushState below, so the link and the history entry agree.
+  const deep = window.location.pathname.match(/^\/work\/([^/]+)\/?$/);
+  const deepId = deep?.[1];
+  if (deepId && LAYERS.some((l) => l.id === deepId)) open(deepId);
 }
 
 function buildPanel(panel: HTMLElement): void {
@@ -99,7 +105,9 @@ function open(id: string): void {
   document.documentElement.style.overflow = 'hidden';
 
   focusLayer(id);
-  history.pushState({ stackDetail: id }, '', `/work/${id}/`);
+  // Skip the push when this URL is already the current one (a cold deep link).
+  const url = `/work/${id}/`;
+  if (window.location.pathname !== url) history.pushState({ stackDetail: id }, '', url);
 
   // The card keeps the hover card's surface and accent rule and grows into the
   // right half while the floor travels left: one component, two states.
