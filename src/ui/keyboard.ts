@@ -33,4 +33,28 @@ export function initKeyboard(): void {
   document.addEventListener('keydown', (e) => {
     if (e.key === 'Escape') bus.emit('layer:hover', { id: null });
   });
+
+  // Floors from the keyboard: 1..6 open a floor, [ and ] step the stack by one
+  // scroll step. Ignored while the reader is typing or a modifier is held.
+  document.addEventListener('keydown', (e) => {
+    if (e.metaKey || e.ctrlKey || e.altKey) return;
+    const el = e.target as HTMLElement | null;
+    if (el && (el.isContentEditable || /^(INPUT|TEXTAREA|SELECT)$/.test(el.tagName))) return;
+
+    const n = Number(e.key);
+    if (Number.isInteger(n) && n >= 1 && n <= LAYERS.length) {
+      e.preventDefault();
+      bus.emit('layer:open', { id: LAYERS[n - 1].id });
+      return;
+    }
+
+    if (e.key === '[' || e.key === ']') {
+      const stage = document.querySelector<HTMLElement>('.stage');
+      if (!stage) return;
+      e.preventDefault();
+      // One step is 0.8 x the viewport (docs/MOTION.md Scroll mapping).
+      const px = 0.8 * window.innerHeight * (e.key === ']' ? 1 : -1);
+      window.scrollBy({ top: px, behavior: 'smooth' });
+    }
+  });
 }
