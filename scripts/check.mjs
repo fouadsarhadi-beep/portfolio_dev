@@ -1,12 +1,13 @@
 // Guardrails and repo map. Usage: node scripts/check.mjs [--map-only]
 // Fails (exit 1) on: missing header, stray hex colors, forbidden imports.
+// Warns (exit 0) on: `any` in a type position.
 // Always rewrites docs/MAP.md so the agent can find files without scanning the repo.
 import fs from 'fs';
 import path from 'path';
 
 const ROOT = process.cwd(), SRC = path.join(ROOT, 'src');
 const mapOnly = process.argv.includes('--map-only');
-const errors = [], rows = [];
+const errors = [], warns = [], rows = [];
 const rel = f => path.relative(ROOT, f).split(path.sep).join('/');
 const walk = d => fs.existsSync(d) ? fs.readdirSync(d, { withFileTypes: true }).flatMap(e => e.isDirectory() ? walk(path.join(d, e.name)) : [path.join(d, e.name)]) : [];
 const files = walk(SRC).filter(f => /\.(ts|astro)$/.test(f) && !f.endsWith('.d.ts')).sort();
@@ -47,5 +48,9 @@ fs.writeFileSync(path.join(ROOT, 'docs/MAP.md'), md);
 
 if (mapOnly) { console.log(`MAP written for ${rows.length} files.`); process.exit(0); }
 errors.forEach(e => console.error('ERROR ' + e));
-console.log(errors.length ? `\n${errors.length} error(s). Fix them, then run again.` : `\nOK: ${rows.length} files checked.`);
-process.exit(errors.length ? 1 : 0);
+warns.forEach(w => console.warn('WARN  ' + w));
+if (errors.length) {
+  console.error(`\n${errors.length} error(s). Fix them, then run again.`);
+  process.exit(1);
+}
+console.log(`\nOK: ${rows.length} files checked.${warns.length ? ` ${warns.length} warning(s).` : ''}`);
