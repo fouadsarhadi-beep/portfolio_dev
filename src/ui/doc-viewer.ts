@@ -1,5 +1,6 @@
 /** @module ui/doc-viewer: text reader for a sample document, opened over the expanded floor. @see src/config/documents.ts, src/ui/detail-samples.ts, src/ui/detail.ts, docs/DESIGN.md (Document reader) */
 import { gsap } from 'gsap';
+import { ARTICLES } from '@/config/articles';
 import { DOCUMENTS } from '@/config/documents';
 import { prefersReducedMotion } from '@/lib/reduced-motion';
 import { t } from '@/lib/i18n';
@@ -16,8 +17,13 @@ function escapeHtml(value: string): string {
   return value.replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' })[c] as string);
 }
 
-/** A sheet renders as a real table (first row is the header); prose as paragraphs. */
+/**
+ * Authored HTML goes in as written (it lives in the repo, never comes from a
+ * reader); plain prose and sheet cells are escaped. A sheet renders as a real
+ * table; prose renders as paragraphs.
+ */
 function bodyMarkup(doc: SampleDocument): string {
+  if (doc.html) return doc.html;
   if (doc.rows?.length) {
     const [head, ...rest] = doc.rows;
     const cells = (tag: 'th' | 'td', row: string[]): string =>
@@ -76,7 +82,8 @@ function build(): void {
 
 /** Opens the document for a sample. Returns false when nothing is attached. */
 export function openDocument(key: string | undefined, fallbackTitle: string, from: HTMLElement): boolean {
-  const doc = key ? DOCUMENTS[key] : undefined;
+  // Long-form bodies live in ARTICLES, the rest in DOCUMENTS.
+  const doc = key ? (ARTICLES[key] ?? DOCUMENTS[key]) : undefined;
   if (!doc) return false;
   build();
   if (!backdrop || !view) return false;

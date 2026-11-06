@@ -7,22 +7,8 @@ import type { SampleDocument } from './types';
  * shows an "open the original" link.
  */
 export const DOCUMENTS: Record<string, SampleDocument> = {
-  'content-1': {
-    kind: 'pdf',
-    meta: '9 pages · 2026',
-    text: [
-      'A service site answers the questions customers ask before they buy. This series turns the six most common ones into guides of 800 words each.',
-      'Every guide opens with the answer, then the steps, then the proof. A glossary at the end defines the terms the site uses.',
-    ],
-  },
-  'content-2': {
-    kind: 'doc',
-    meta: '6 pages',
-    text: [
-      'The old pages listed features in the order the team built them. The new pages follow the decision the customer makes: what it does, what it costs, what changes after signup.',
-      'Each page keeps four blocks and one call to action. The tone stays flat and concrete, with the price on the first screen.',
-    ],
-  },
+  // Long-form bodies live in src/config/articles.ts, so both data files stay
+  // small. The reader resolves a key against that map first (src/ui/doc-viewer.ts).
   'content-3': {
     kind: 'sheet',
     meta: 'Sheet · 5 rows',

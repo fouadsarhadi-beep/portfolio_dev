@@ -6,6 +6,9 @@ Search this file before creating anything.
 - main.ts: main: page entry; boots the scene, then wires the UI layer to it. @see src/scene/boot.ts, src/ui/preview.ts, src/ui/detail.ts, src/ui/keyboard.ts
 
 ## src/config/
+- articles.ts: config/articles: long-form sample documents (articles), keyed by Sample.doc. @see src/config/documents.ts, src/ui/doc-viewer.ts, docs/DESIGN.md (Document reader)
+  exports: ARTICLES
+  uses: src/config/types
 - detail.ts: config/detail: shared constants for the expanded floor view. @see src/ui/detail.ts, src/ui/detail-samples.ts, src/pages/work/[id]/samples/[page].json.ts
   exports: SAMPLE_PAGE
 - documents.ts: config/documents: text of each sample document, keyed by Sample.doc. @see src/config/layers.ts, src/ui/doc-viewer.ts, docs/DESIGN.md (Document reader)
@@ -292,7 +295,7 @@ Search this file before creating anything.
   exports: DialogHandle, createDialog
 - doc-viewer.ts: ui/doc-viewer: text reader for a sample document, opened over the expanded floor. @see src/config/documents.ts, src/ui/detail-samples.ts, src/ui/detail.ts, docs/DESIGN.md (Document reader)
   exports: openDocument, closeDocument
-  uses: src/config/documents, src/lib/reduced-motion, src/lib/i18n, src/config/types
+  uses: src/config/articles, src/config/documents, src/lib/reduced-motion, src/lib/i18n, src/config/types
 - keyboard.ts: ui/keyboard: layer-nav focus, ArrowUp/ArrowDown selection, Enter via native click, Escape. @see docs/MOTION.md (Pick, hover, touch), src/lib/bus.ts
   exports: initKeyboard
   uses: src/lib/bus, src/config/layers

@@ -9,13 +9,16 @@ export interface Vec3 { x: number; y: number; z: number }
 export type DocKind = 'pdf' | 'doc' | 'sheet';
 
 /**
- * The text of one sample document, read in the doc viewer (src/ui/doc-viewer.ts).
- * `text` is prose for pdf/doc; `rows` is a sheet (first row is the header).
- * `src` is optional: when the real file exists, the reader offers it.
+ * One sample document, read in the doc viewer (src/ui/doc-viewer.ts).
+ * `html` is authored markup: headings, paragraphs, lists, emphasis, tables. It
+ * is inserted as-is, so it is trusted repo content, never user input.
+ * `text` is plain prose, escaped on the way in. `rows` is a sheet (first row is
+ * the header). `src` is optional: when the real file exists, the reader offers it.
  */
 export interface SampleDocument {
   kind: DocKind;
   meta?: string;
+  html?: string;
   text?: string[];
   rows?: string[][];
   src?: string;
