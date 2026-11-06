@@ -307,15 +307,18 @@ html[data-theme='dark'] .theme-toggle .icon-moon {
 }
 
 /* --- Expanded floor view (T30; docs/MOTION.md Detail view) ---
-   Two-part composition: the detached floor on the left half, this card on the
-   right half, a compact sample strip beneath. Same surface, radius, hairline
-   border and accent rule as the T29 hover card, so it reads as one component. */
+   Two-part composition: the detached floor on the left 45%, this card on the
+   right 55%, a compact sample strip beneath. Same surface, radius, hairline
+   border and accent rule as the T29 hover card, so it reads as one component.
+   fr units, not percentages, so the gap comes out of the shared space and the
+   split stays exactly 45 / 55. The scene frames the floor in that left column
+   (LEFT_COL in src/scene/focus.ts). */
 .detail-view {
   position: absolute;
   inset: 0;
   z-index: 8;
   display: grid;
-  grid-template-columns: 1fr 1fr;
+  grid-template-columns: 45fr 55fr;
   grid-template-rows: minmax(0, 1fr) auto;
   gap: clamp(12px, 2vw, 26px);
   padding: clamp(16px, 2.4vw, 34px);

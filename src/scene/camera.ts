@@ -15,18 +15,29 @@ export function createCamera(width: number, height: number): THREE.OrthographicC
   return camera;
 }
 
+/**
+ * Sets the vertical framing offset and rebuilds the frustum. The offset keeps
+ * the lift in pixels at any zoom, so the detail view has to neutralise it
+ * rather than inherit it (src/scene/focus.ts).
+ */
+export function applyFraming(camera: THREE.OrthographicCamera, offsetY: number): void {
+  const halfH = CAM_VIEW_HEIGHT / 2;
+  camera.userData.frameOffset = offsetY;
+  camera.top = halfH - offsetY;
+  camera.bottom = -halfH - offsetY;
+  camera.updateProjectionMatrix();
+}
+
 export function resizeCamera(camera: THREE.OrthographicCamera, width: number, height: number): void {
   const halfH = CAM_VIEW_HEIGHT / 2;
   const halfW = (halfH * Math.max(width, 1)) / Math.max(height, 1);
   camera.left = -halfW;
   camera.right = halfW;
-  // Framing: the frustum centre sits CAM_FRAME_OFFSET_Y below the camera
-  // target, which draws the whole scene that much higher on screen. The offset
-  // survives the focus zoom, so the lift is the same number of pixels at any
-  // zoom (src/config/tuning.ts).
-  camera.top = halfH - CAM_FRAME_OFFSET_Y;
-  camera.bottom = -halfH - CAM_FRAME_OFFSET_Y;
-  camera.updateProjectionMatrix();
+  // Re-apply whatever offset is current: the hero lift, or the value the detail
+  // view tweened to while it owns the framing.
+  const offset =
+    typeof camera.userData.frameOffset === 'number' ? camera.userData.frameOffset : CAM_FRAME_OFFSET_Y;
+  applyFraming(camera, offset);
 }
 
 /**

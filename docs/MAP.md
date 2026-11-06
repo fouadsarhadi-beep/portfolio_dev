@@ -62,11 +62,11 @@ Search this file before creating anything.
   exports: boot
   uses: src/config/types, src/config/theme, src/scene/stage
 - camera.ts: scene/camera: orthographic camera locked to the (1,1,1) isometric view, with damped follow. @see docs/DESIGN.md (Camera), docs/MOTION.md (Camera), src/config/tuning.ts
-  exports: createCamera, resizeCamera, followCamera
+  exports: createCamera, applyFraming, resizeCamera, followCamera
   uses: src/config/tuning
-- focus.ts: scene/focus: the selected floor leaves the stack and moves to the left half, the rest fades. @see docs/MOTION.md (Detail view), src/ui/detail.ts, src/scene/loop.ts
+- focus.ts: scene/focus: the selected floor leaves the stack into the left 45% column, the rest fades. @see docs/MOTION.md (Detail view), src/ui/detail.ts, src/scene/loop.ts
   exports: Focus, createFocus
-  uses: src/config/tuning, src/lib/reduced-motion
+  uses: src/config/tuning, src/scene/camera, src/lib/reduced-motion
 - lights.ts: scene/lights: hemisphere, warm key with soft shadows, weak cool fill. @see docs/DESIGN.md (Light and render), src/scene/renderer.ts, src/scene/scene-theme.ts
   exports: createLights
   uses: src/config/palette, src/lib/quality, src/scene/renderer, src/scene/scene-theme

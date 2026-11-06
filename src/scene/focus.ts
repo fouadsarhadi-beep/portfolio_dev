@@ -1,8 +1,9 @@
-/** @module scene/focus: the selected floor leaves the stack and moves to the left half, the rest fades. @see docs/MOTION.md (Detail view), src/ui/detail.ts, src/scene/loop.ts */
+/** @module scene/focus: the selected floor leaves the stack into the left 45% column, the rest fades. @see docs/MOTION.md (Detail view), src/ui/detail.ts, src/scene/loop.ts */
 import { gsap } from 'gsap';
 import * as THREE from 'three';
 import type { Object3D, OrthographicCamera } from 'three';
-import { CAM_DIR, CAM_DISTANCE, CAM_VIEW_HEIGHT } from '@/config/tuning';
+import { CAM_DIR, CAM_DISTANCE, CAM_VIEW_HEIGHT, CAM_FRAME_OFFSET_Y, FOOTPRINT } from '@/config/tuning';
+import { applyFraming } from './camera';
 import { prefersReducedMotion } from '@/lib/reduced-motion';
 
 const DUR_OPEN = 0.5;
@@ -11,8 +12,9 @@ const ZOOM_DESKTOP = 1.45;
 const ZOOM_MOBILE = 1.35;
 // Screen-left in world space; screen-right is (SQRT1_2, 0, -SQRT1_2) (src/scene/stack/pick.ts).
 const VIEW_LEFT = { x: -Math.SQRT1_2, z: Math.SQRT1_2 };
-const LEFT_SHARE = 0.21;      // how far the floor travels, as a share of the visible width
-const UP_BIAS_DESKTOP = 0.05; // lift the floor into the centre of the left half
+const LEFT_COL = 0.45;        // the floor owns this share of the width; the card owns the rest
+const COL_FILL = 0.86;        // the floor fills most of, not all of, its column
+const FLOOR_W = FOOTPRINT * Math.SQRT2; // 8.49: projected slab width in the isometric view
 const UP_BIAS_MOBILE = 0.16;  // lift it into the top band on mobile
 const FADE_RATE = 1 / 0.25;   // full fade in 0.25s (docs/MOTION.md Detail view)
 
@@ -58,6 +60,23 @@ export function createFocus(opts: {
   const fadeTarget = slabs.map(() => 1);
   // Full fade in 0.25s (docs/MOTION.md Detail view); the constant lives above.
 
+  /** The framing offset currently applied: the hero lift, or a value mid-tween. */
+  function currentOffset(): number {
+    return typeof camera.userData.frameOffset === 'number' ? camera.userData.frameOffset : CAM_FRAME_OFFSET_Y;
+  }
+
+  /** Eases the frustum framing offset to `to`; the floor stays put in view space. */
+  function tweenFraming(to: number, duration: number, ease: string): void {
+    const framing = { off: currentOffset() };
+    gsap.to(framing, {
+      off: to,
+      duration,
+      ease,
+      overwrite: true,
+      onUpdate: () => applyFraming(camera, framing.off),
+    });
+  }
+
   function setOpacity(slabIndex: number, o: number): void {
     for (const m of matsBySlab[slabIndex]) {
       m.opacity = o;
@@ -92,12 +111,15 @@ export function createFocus(opts: {
       const z0 = slab.position.z;
       const mobile = opts.isMobile();
 
-      // Visible world box at the detail zoom, used to place the floor in the left half.
-      const zoom = mobile ? ZOOM_MOBILE : ZOOM_DESKTOP;
-      const effH = CAM_VIEW_HEIGHT / zoom;
+      // Visible world box at the detail zoom. The desktop zoom is capped so the
+      // floor always fits its 45% column, whatever the aspect ratio.
       const aspect = (camera.right - camera.left) / (camera.top - camera.bottom);
-      const shift = mobile ? 0 : effH * aspect * LEFT_SHARE;
-      const bias = effH * (mobile ? UP_BIAS_MOBILE : UP_BIAS_DESKTOP);
+      const fit = (CAM_VIEW_HEIGHT * aspect * LEFT_COL * COL_FILL) / FLOOR_W;
+      const zoom = mobile ? ZOOM_MOBILE : Math.min(ZOOM_DESKTOP, fit);
+      const effH = CAM_VIEW_HEIGHT / zoom;
+      // Travel needed to put the floor's centre in the middle of the left column.
+      const shift = mobile ? 0 : effH * aspect * (0.5 - LEFT_COL / 2);
+      const bias = mobile ? effH * UP_BIAS_MOBILE : 0; // 0 = vertically centred
 
       // Whoosh from wherever the follow camera left the target, never a jump.
       want.x = 0;
@@ -112,6 +134,10 @@ export function createFocus(opts: {
         overwrite: true,
         onUpdate: () => camera.updateProjectionMatrix(),
       });
+
+      // The hero lift is a fixed pixel offset, so at this zoom it would push the
+      // floor into the ceiling. The detail view owns the framing instead.
+      tweenFraming(0, dur, 'expo.out');
 
       // Detach: the selected floor travels to the left half while the tower stays put.
       detached = slab;
@@ -155,6 +181,8 @@ export function createFocus(opts: {
         overwrite: true,
         onUpdate: () => camera.updateProjectionMatrix(),
       });
+      // Hand the framing back to the hero lift as the floor returns to the stack.
+      tweenFraming(CAM_FRAME_OFFSET_Y, dur, 'power2.inOut');
       gsap.to(want, {
         x: 0, y: opts.getFollowY(), z: 0,
         duration: dur,

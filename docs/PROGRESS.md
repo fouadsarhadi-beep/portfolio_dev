@@ -4,7 +4,7 @@ Current task: T31 (unify portfolio visual language)
 
 ## Handoff note (max 8 lines, rewrite each session)
 Redesign batch T28-T32 complete: T28 8140bc1, T29 697c68b, T30 4345d8a, T31 a09f73c, T32 (see git log). All local, nothing pushed.
-Result: unified plaster/wood floating tower + contact shadow/under-glow, right-side hover card, detached left-half floor with a 50/50 expanded composition and a sample strip, one page-wide surface system, responsive passes at 860/480 plus a measured HUD offset.
+Result: unified plaster/wood floating tower + contact shadow/under-glow, right-side hover card, detached floor in a 45/55 expanded composition (floor left, card right) with a sample strip, one page-wide surface system, responsive passes at 860/480 plus a measured HUD offset.
 Verified in-session: npm run check, npm run build, and T30 numeric probes (detach/fade/zoom/URL/focus/scroll, desktop + 390px geometry). Everything visual, touch and reduced-motion is left to the user's live pass.
 Open questions for the user: taste on the new surface language; whether the 860px single-column expanded view should move to 900px; whether mobile pills should keep hugging the slabs.
 Gotchas: labels.ts pins pills absolutely (the CSS mobile dock is a no-scene fallback only); `--hud-h` is the bar minimum, never feed the measurement into it; number textures redraw on theme change.
@@ -18,6 +18,7 @@ Next (postponed by the user): day/night theme redesign, explanatory onboarding p
 - `npm run check` — TypeScript strict + repo guardrails (also regenerates docs/MAP.md)
 
 ## Needs (changes requested outside a task's files)
+- Detail view re-framed (user review 2026-11-06): the hero framing lift (CAM_FRAME_OFFSET_Y) is absolute pixels, so at the 1.45 detail zoom it pushed the clicked floor to the ceiling. focus.ts now neutralises the lift (camera.applyFraming tween), centres the floor on its own Y, centres it in the left 45% column, and caps the zoom so the floor fits that column at any aspect ratio; hud.css `.detail-view` is `45fr 55fr`. Predicted placement, desktop 1425x900: centre 22.5% / 50%, span 3.1-41.8% (was 29% / 14%, span to 51%).
 - Poster removed (user review 2026-11-06): poster.png was a 1280x801 screenshot of the old stage, so it painted the previous version's header, h1 and copy as a ghost layer over the live scene while the canvas loaded. Removed the `<img>` (Hero.astro), `.poster` rules (hud.css 203-212, sections.css not(.js) and no-webgl blocks), the boot.ts fade, and public/poster.png. no-webgl now relies on the stack-fallback cards alone. Regenerate a scene-only render if the loading state needs an image back.
 - Framing fix (user review 2026-11-06): the opening view left a tall empty band above the tower and the hero copy sat low. Added `CAM_FRAME_OFFSET_Y` (tuning.ts) applied in camera.ts resizeCamera, and `--hero-lift` in sections.css (all three breakpoints). Both are 22% of the visible height, ≈200px at 900px tall. docs/DESIGN.md (Camera) updated.
 - T03: index.astro gained `<script> import '@/main';</script>`.
