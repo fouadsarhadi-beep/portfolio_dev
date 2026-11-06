@@ -23,3 +23,6 @@ pnpm-debug.log*
 # jetbrains setting folder
 .idea/
 shots/
+
+# local backups (zips and old project copies)
+bk/
