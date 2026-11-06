@@ -4,12 +4,13 @@
   color-scheme: light;
 
   /* Palette mirrors src/config/palette.ts (hex may live here and there only) */
-  --bg: #F8F9EF;
-  --bg-glow: #FEFFF8;
+  --bg: #F4F6F0;
+  --bg-glow: #FFFFFF;
   --surface: #FFFFFF;
-  --ink: #3D4339;
-  --ink-soft: #6B7566;
-  --line: #E3E6D6;
+  --surface-2: #FAFBF6;
+  --ink: #1F251C;
+  --ink-soft: #59624F;
+  --line: #DDE2D3;
   --wall: #F4F2EA;
   --wall-shade: #E6E3D8;
   --slab: #EDE9DE;
@@ -17,7 +18,7 @@
   --under-glow: #D8C9A3;
   --wood: #F0D5A8;
   --c-white: #FBFBF6;
-  --graphite: #59606B;
+  --graphite: #4B545F;
   --glow: #BFE3FF;
   --led-green: #7BE0A4;
   --led-amber: #FFC857;
@@ -33,7 +34,10 @@
   --c-steel: #A9B8CC;
 
   /* Type: local fonts through Fontsource; *-alt reserved for Persian fonts later */
-  --font-display: 'Fredoka Variable', 'Fredoka', sans-serif;
+  /* UI display face: DM Sans at 650 with tight tracking reads sharper than the
+     rounded Fredoka. The 3D engraving keeps Fredoka (src/scene/stack/icons.ts),
+     so the slabs keep their character while the page reads professional. */
+  --font-display: 'DM Sans Variable', 'DM Sans', sans-serif;
   --font-body: 'DM Sans Variable', 'DM Sans', sans-serif;
   --font-display-alt: '__reserved-display-alt';
   --font-body-alt: '__reserved-body-alt';
@@ -48,14 +52,28 @@
   --fs-72: 72px;
   --fs-120: 120px;
 
-  /* Radii and card shadows (docs/DESIGN.md HUD style; T31 unified language) */
+  /* Radii, surfaces and shadows (docs/DESIGN.md HUD style; T31 unified language).
+     Cards share one recipe: a vertical surface gradient, a 1px hairline, an inset
+     top highlight and a two-step shadow. That is what makes them read as panels
+     rather than white boxes. */
+  --radius-s: 10px;
   --radius-m: 14px;
   --radius-l: 20px;
   --radius-pill: 999px;
+  --surface-grad: linear-gradient(
+    180deg,
+    color-mix(in srgb, var(--surface) 100%, transparent),
+    color-mix(in srgb, var(--surface) 93%, var(--bg))
+  );
+  --edge-highlight: inset 0 1px 0 color-mix(in srgb, var(--c-white) 60%, transparent);
   --shadow-card: 0 1px 2px color-mix(in srgb, var(--ink) 6%, transparent),
     0 10px 26px color-mix(in srgb, var(--ink) 7%, transparent);
   --shadow-lift: 0 2px 5px color-mix(in srgb, var(--ink) 8%, transparent),
     0 16px 34px color-mix(in srgb, var(--ink) 11%, transparent);
+  --shadow-hover: 0 3px 8px color-mix(in srgb, var(--ink) 8%, transparent),
+    0 22px 46px color-mix(in srgb, var(--ink) 12%, transparent);
+  --tracking-tight: -0.02em;
+  --tracking-wide: 0.09em;
 
   /* Scroll mapping (docs/MOTION.md): 5 steps open the floors, 3 more pull the
      camera back for the overview. Mirrors LAYER_STEPS + OVERVIEW_STEPS. */
@@ -71,12 +89,13 @@
 [data-theme='dark'] {
   color-scheme: dark;
 
-  --bg: #090B0E;
-  --bg-glow: #10151C;
-  --surface: #11151A;
-  --line: #303943;
-  --ink: #E7E9E8;
-  --ink-soft: #A1A9AE;
+  --bg: #06080B;
+  --bg-glow: #0D1218;
+  --surface: #0F141A;
+  --surface-2: #151C23;
+  --line: #28313B;
+  --ink: #EDEFEC;
+  --ink-soft: #98A2AA;
   --wall: #1A2029;
   --wall-shade: #161B22;
   --slab: #232A33;

@@ -227,8 +227,8 @@ html:not(.js) .layer-nav {
   inline-size: 28px;
   block-size: 2px;
   border-radius: 1px;
-  margin-block-end: 14px;
-  background: color-mix(in srgb, var(--ink) 24%, transparent);
+  margin-block-end: 16px;
+  background: linear-gradient(90deg, var(--c-butter), color-mix(in srgb, var(--c-butter) 10%, transparent));
 }
 
 .section-intro {
@@ -285,10 +285,10 @@ html:not(.js) .layer-nav {
 }
 
 .panel {
-  background: var(--surface);
+  background: var(--surface-grad);
   border: 1px solid var(--line);
-  border-radius: var(--radius-m);
-  box-shadow: var(--shadow-card);
+  border-radius: var(--radius-l);
+  box-shadow: var(--edge-highlight), var(--shadow-card);
   padding: 20px 22px;
 }
 
@@ -322,17 +322,18 @@ html:not(.js) .layer-nav {
 }
 
 .tile {
-  background: var(--surface);
+  background: var(--surface-grad);
   border: 1px solid var(--line);
   border-radius: var(--radius-m);
-  box-shadow: var(--shadow-card);
+  box-shadow: var(--edge-highlight), var(--shadow-card);
   padding: 18px 20px;
-  transition: border-color 0.2s, box-shadow 0.2s;
+  transition: border-color 0.2s, box-shadow 0.2s, transform 0.2s;
 }
 
 .tile:hover {
-  border-color: color-mix(in srgb, var(--ink) 20%, var(--line));
-  box-shadow: var(--shadow-lift);
+  border-color: color-mix(in srgb, var(--ink) 18%, var(--line));
+  box-shadow: var(--edge-highlight), var(--shadow-hover);
+  transform: translateY(-2px);
 }
 
 .tile-head {
@@ -387,10 +388,10 @@ html:not(.js) .layer-nav {
   max-width: 720px;
   margin-inline: auto;
   text-align: center;
-  background: var(--surface);
+  background: var(--surface-grad);
   border: 1px solid var(--line);
   border-radius: var(--radius-l);
-  box-shadow: var(--shadow-card);
+  box-shadow: var(--edge-highlight), var(--shadow-lift);
   padding: clamp(28px, 6vw, 56px);
 }
 
