@@ -53,6 +53,12 @@ export function registerValue(apply: (c: ThemeColors, name: ThemeName) => void):
   apply(themeColors(), active);
 }
 
+/** The active theme's colors, so a caller can derive a shade from a role without
+ *  snapshotting a value that a later theme switch would invalidate. */
+export function currentTheme(): ThemeColors {
+  return themeColors();
+}
+
 function applyAll(name: ThemeName): void {
   active = name;
   const c = themeColors();

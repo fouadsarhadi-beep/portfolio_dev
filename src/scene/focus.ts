@@ -54,6 +54,10 @@ export function createFocus(opts: {
     });
     return [...set];
   });
+  // Which materials ship transparent (the number engraving, the icon decal, the
+  // AO strips). They must stay transparent: alpha blending off renders the empty
+  // pixels of their canvas textures black, which blacks out a whole slab face.
+  const baseTransparent = matsBySlab.map((list) => list.map((m) => m.transparent));
   // Fade state driven per frame by update(dt): a persistent value, not a
   // transient tween, so slow frames can never skip or restore it.
   const fade = slabs.map(() => 1);
@@ -87,9 +91,14 @@ export function createFocus(opts: {
   }
 
   function setOpacity(slabIndex: number, o: number): void {
-    for (const m of matsBySlab[slabIndex]) {
+    const list = matsBySlab[slabIndex];
+    const wasTransparent = baseTransparent[slabIndex];
+    for (let i = 0; i < list.length; i++) {
+      const m = list[i];
       m.opacity = o;
-      m.transparent = o < 1;
+      // Restore the material's own transparency, never force it off: the
+      // engraving and decal materials are transparent by design.
+      m.transparent = o < 1 || wasTransparent[i];
     }
   }
 

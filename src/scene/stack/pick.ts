@@ -5,6 +5,8 @@ import { bus } from '@/lib/bus';
 import { LAYERS } from '@/config/layers';
 import { FOOTPRINT, SLAB_T } from '@/config/tuning';
 import { PALETTE } from '@/config/palette';
+import type { ThemeColors } from '@/config/theme';
+import { currentTheme } from '../scene-theme';
 
 export interface ScreenRect { left: number; top: number; width: number; height: number }
 
@@ -20,6 +22,7 @@ export interface Pick {
 const HALF = FOOTPRINT / 2;
 const HOVER_LIFT = 0.35;
 const NUDGE = 0.25;
+const DIM = 0.94; // other floors lose 6 percent while one is hovered
 const VIEW_RIGHT = { x: Math.SQRT1_2, z: -Math.SQRT1_2 }; // screen-right in world space
 
 export function createPick(opts: {
@@ -39,10 +42,14 @@ export function createPick(opts: {
   let hovered: string | null = null;
   let enabled = true;
 
+  // Colors come from the theme role on every repaint. A snapshot would go stale
+  // at the first theme switch, and because hovering repaints on every pointer
+  // move it would then overwrite the registry everywhere, for every floor.
   const bodies = slabs.map((slab) => {
     const mesh = slab.children.find((c) => (c as THREE.Mesh).isMesh) as THREE.Mesh;
     const mat = mesh.material as THREE.MeshStandardMaterial;
-    return { mesh, mat, base: mat.color.clone() };
+    const role = mat.userData.role as ((c: ThemeColors) => string) | undefined;
+    return { mesh, mat, role };
   });
   const edgeGeo = new THREE.EdgesGeometry(bodies[0].mesh.geometry);
   // Neutral edge: the unified family keeps per-floor color out of the scene (T28/T29).
@@ -67,14 +74,26 @@ export function createPick(opts: {
     return hits.length ? idOfSlab(hits[0].object) : null;
   }
 
+  /** Repaints every body from its theme role, dimming the ones that are not hovered. */
+  function repaint(): void {
+    const hoverIdx = hovered ? LAYERS.findIndex((l) => l.id === hovered) : -1;
+    bodies.forEach((b, i) => {
+      const hex = b.role ? b.role(currentTheme()) : null;
+      if (!hex) return;
+      b.mat.color.set(hex);
+      if (hoverIdx >= 0 && i !== hoverIdx) b.mat.color.multiplyScalar(DIM);
+    });
+  }
+
+  // The registry registers its appliers at boot, before this one, so it writes
+  // the theme color first and the dim is applied on top of it.
+  const offTheme = bus.on('theme:change', repaint);
+
   function setHover(id: string | null): void {
     if (id === hovered) return;
     hovered = id;
     const hoverIdx = id ? LAYERS.findIndex((l) => l.id === id) : -1;
-    bodies.forEach((b, i) => {
-      b.mat.color.copy(b.base);
-      if (hoverIdx >= 0 && i !== hoverIdx) b.mat.color.multiplyScalar(0.94); // others lose 6 percent
-    });
+    repaint();
     if (edges) {
       edges.removeFromParent();
       edges = null;
@@ -175,6 +194,7 @@ export function createPick(opts: {
       canvas.removeEventListener('pointerleave', onLeave);
       canvas.removeEventListener('pointerdown', onDown);
       canvas.removeEventListener('pointerup', onUp);
+      offTheme();
       edgeGeo.dispose();
       edgeMat.dispose();
     },

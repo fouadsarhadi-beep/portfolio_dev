@@ -95,6 +95,7 @@ Framing: the frustum is shifted down by `CAM_FRAME_OFFSET_Y` (22% of the visible
 - Left face (+z): the layer number engraved in theme ink (light floors get dark ink, dark floors light ink; the CanvasTexture redraws on theme change). Registration crosses in graphite in two corners.
 - Thin `slabShade` band along the four bottom edges.
 - Floors are told apart by number, icon, layer-nav pill and room contents, never by side color.
+- Transparency is part of a material's identity, not a fade flag: the number engraving, the icon decal and the room AO strips are canvas textures with transparent backgrounds. Nothing may force `transparent = false` on them, because alpha blending off renders the empty pixels of those canvases black (src/scene/focus.ts).
 
 ## Light and render
 - ACESFilmic tone mapping, exposure 1.05, sRGB output.

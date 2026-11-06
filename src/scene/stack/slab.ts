@@ -23,8 +23,12 @@ export function makeSlab(layer: LayerConfig): THREE.Group {
   const group = new THREE.Group();
   group.name = `slab-${layer.id}`;
 
-  const body = new THREE.Mesh(getBodyGeo(), bodyMaterial());
-  registerMaterial((c) => c.slab, body.material as THREE.MeshStandardMaterial);
+  const bodyMat = bodyMaterial();
+  // Hover dimming reads this role instead of snapshotting a color, so a theme
+  // switch is never overwritten (src/scene/stack/pick.ts).
+  bodyMat.userData.role = (c: ThemeColors) => c.slab;
+  registerMaterial((c) => c.slab, bodyMat);
+  const body = new THREE.Mesh(getBodyGeo(), bodyMat);
   body.castShadow = true;
   body.receiveShadow = true;
   group.add(body);

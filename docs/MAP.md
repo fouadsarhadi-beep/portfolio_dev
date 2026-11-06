@@ -92,7 +92,7 @@ Search this file before creating anything.
   exports: createRenderer, shadowMapSize
   uses: src/config/tuning, src/lib/quality
 - scene-theme.ts: scene/scene-theme: material, light and value registry that applies theme changes in place. @see docs/DESIGN.md (Dual theme), src/config/theme.ts, docs/WIRING.md
-  exports: registerColor, registerMaterial, registerEmissive, registerLight, registerValue, initSceneTheme
+  exports: registerColor, registerMaterial, registerEmissive, registerLight, registerValue, currentTheme, initSceneTheme
   uses: src/config/theme, src/lib/bus
 - stage.ts: scene/stage: the environment around the floating tower (T28): contact shadow, under-glow, under-light, ambient dust. @see docs/DESIGN.md (Environment), src/scene/loop.ts, src/scene/scene-theme.ts
   exports: CONTACT_Y, Stage, createStage
@@ -259,7 +259,7 @@ Search this file before creating anything.
   uses: src/config/tuning, src/lib/reduced-motion
 - pick.ts: scene/stack/pick: raycasts slab sides, hover lift or nudge, dims others, edge highlight. @see docs/MOTION.md (Pick, hover, touch), src/lib/bus.ts, src/scene/stack/labels.ts
   exports: ScreenRect, Pick, createPick
-  uses: src/lib/bus, src/config/layers, src/config/tuning, src/config/palette
+  uses: src/lib/bus, src/config/layers, src/config/tuning, src/config/palette, src/config/theme, src/scene/scene-theme
 - slab.ts: scene/stack/slab: builds one chunky slab per LayerConfig (T28: unified material family). @see docs/DESIGN.md (Slab), src/scene/stack/stack.ts, src/scene/stack/icons.ts
   exports: makeSlab
   uses: src/config/tuning, src/config/palette, src/config/theme, src/config/types, src/scene/stack/icons, src/scene/scene-theme
