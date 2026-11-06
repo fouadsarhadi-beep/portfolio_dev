@@ -18,6 +18,7 @@ Next (postponed by the user): day/night theme redesign, explanatory onboarding p
 - `npm run check` — TypeScript strict + repo guardrails (also regenerates docs/MAP.md)
 
 ## Needs (changes requested outside a task's files)
+- Framing fix (user review 2026-11-06): the opening view left a tall empty band above the tower and the hero copy sat low. Added `CAM_FRAME_OFFSET_Y` (tuning.ts) applied in camera.ts resizeCamera, and `--hero-lift` in sections.css (all three breakpoints). Both are 22% of the visible height, ≈200px at 900px tall. docs/DESIGN.md (Camera) updated.
 - T03: index.astro gained `<script> import '@/main';</script>`.
 - T04: stage.ts edits (removed test cube, fixed ring y).
 - T05: boot.ts runs room idle loops per tick.

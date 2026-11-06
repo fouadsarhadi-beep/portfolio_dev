@@ -113,9 +113,13 @@ html:not(.js) .layer-nav {
 }
 
 .hero-copy {
+  /* Opening framing (user review 2026-11-06): the copy sat low, under a tall
+     empty band. Raised by a share of the visible height so it stays in step
+     with the tower lift (CAM_FRAME_OFFSET_Y in src/config/tuning.ts). */
+  --hero-lift: 22svh;
   position: absolute;
   inset-inline-start: clamp(16px, 5vw, 56px);
-  bottom: clamp(20px, 9vh, 72px);
+  bottom: calc(clamp(20px, 9vh, 72px) + var(--hero-lift));
   z-index: 3;
   pointer-events: none;
 }
@@ -560,7 +564,7 @@ html:not(.js) .layer-nav {
   }
 
   .hero-copy {
-    bottom: 88px;
+    bottom: calc(88px + var(--hero-lift));
   }
 }
 
@@ -590,7 +594,7 @@ html:not(.js) .layer-nav {
 
   .hero-copy {
     inset-inline-end: 16px;
-    bottom: 72px;
+    bottom: calc(72px + var(--hero-lift));
   }
 
   .hero-copy .sub {

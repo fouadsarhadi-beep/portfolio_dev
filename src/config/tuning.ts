@@ -23,6 +23,12 @@ export const CAM_TARGET_OFFSET_Y = 0.9;                  // above the exposed fl
 export const CAM_VIEW_HEIGHT = LIFT + 3 * SLAB_T + 4;    // 17.6
 export const CAM_DAMP_LAMBDA = 6;                        // target Y damping
 
+// Framing (user review 2026-11-06): the opening view sat low, leaving a tall
+// empty band above the tower. The whole view is drawn this much higher.
+// Expressed as a share of the visible height so the composition holds at any
+// viewport; mirrors --hero-lift in src/styles/sections.css.
+export const CAM_FRAME_OFFSET_Y = CAM_VIEW_HEIGHT * 0.22; // ≈ 200px at 900px tall
+
 // Render
 export const EXPOSURE = 1.05;
 export const MAX_PIXEL_RATIO = 1.75;

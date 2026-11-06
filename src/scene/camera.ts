@@ -1,6 +1,6 @@
 /** @module scene/camera: orthographic camera locked to the (1,1,1) isometric view, with damped follow. @see docs/DESIGN.md (Camera), docs/MOTION.md (Camera), src/config/tuning.ts */
 import * as THREE from 'three';
-import { CAM_DIR, CAM_DISTANCE, CAM_VIEW_HEIGHT, CAM_DAMP_LAMBDA } from '@/config/tuning';
+import { CAM_DIR, CAM_DISTANCE, CAM_VIEW_HEIGHT, CAM_DAMP_LAMBDA, CAM_FRAME_OFFSET_Y } from '@/config/tuning';
 
 const NEAR = 0.1;
 const FAR = 100;
@@ -20,8 +20,12 @@ export function resizeCamera(camera: THREE.OrthographicCamera, width: number, he
   const halfW = (halfH * Math.max(width, 1)) / Math.max(height, 1);
   camera.left = -halfW;
   camera.right = halfW;
-  camera.top = halfH;
-  camera.bottom = -halfH;
+  // Framing: the frustum centre sits CAM_FRAME_OFFSET_Y below the camera
+  // target, which draws the whole scene that much higher on screen. The offset
+  // survives the focus zoom, so the lift is the same number of pixels at any
+  // zoom (src/config/tuning.ts).
+  camera.top = halfH - CAM_FRAME_OFFSET_Y;
+  camera.bottom = -halfH - CAM_FRAME_OFFSET_Y;
   camera.updateProjectionMatrix();
 }
 
