@@ -3,12 +3,12 @@
 Current task: T31 (unify portfolio visual language)
 
 ## Handoff note (max 8 lines, rewrite each session)
-Redesign batch T28-T32 (user brief 2026-11-05). T28 done (8140bc1): unified plaster/wood slab family, floating tower, contact shadow + underGlow, collision dust. T29 done (697c68b): right-edge .layer-card hover card, neutral hover edge, movement rule kept.
-T30 done (4345d8a): selected slab leaves the tower to the left half (per-frame offset in scene/focus.ts applyDetach, never re-parented), rest fades, `.detail-view` grid = floor left + `.dv-card` right + `.dv-samples` beneath, mobile column with 44svh reserved, picking paused while expanded.
-T31 done: one surface system everywhere (`--shadow-card`/`--shadow-lift`, 1px `--line` borders, 14px radii, accent rule = only per-floor color, icons instead of swatches, neutral progress, kicker instead of 120px numeral). The 200-line guardrail cap was removed earlier in the batch.
-T32 next: responsive refinement (360/390/768/desktop), HUD-height anchor offset, then final QA docs. The user runs the live browser/visual pass themselves — do not automate screenshots.
-Gotchas: number textures redraw on theme change; labels.ts keeps pills absolutely positioned (the CSS mobile dock does not apply); stale dev servers hold 4321; use `npm run preview -- --port XXXX` when checking dist.
-Git policy: one commit per task, exact messages; never push. Next: T32, then the handoff report.
+Redesign batch T28-T32 complete: T28 8140bc1, T29 697c68b, T30 4345d8a, T31 a09f73c, T32 (see git log). All local, nothing pushed.
+Result: unified plaster/wood floating tower + contact shadow/under-glow, right-side hover card, detached left-half floor with a 50/50 expanded composition and a sample strip, one page-wide surface system, responsive passes at 860/480 plus a measured HUD offset.
+Verified in-session: npm run check, npm run build, and T30 numeric probes (detach/fade/zoom/URL/focus/scroll, desktop + 390px geometry). Everything visual, touch and reduced-motion is left to the user's live pass.
+Open questions for the user: taste on the new surface language; whether the 860px single-column expanded view should move to 900px; whether mobile pills should keep hugging the slabs.
+Gotchas: labels.ts pins pills absolutely (the CSS mobile dock is a no-scene fallback only); `--hud-h` is the bar minimum, never feed the measurement into it; number textures redraw on theme change.
+Next (postponed by the user): day/night theme redesign, explanatory onboarding popups.
 
 ## How to run
 - Open a terminal in the portfolio-kit folder (the one with package.json): `cd "C:\Users\ASUS\OneDrive - sternx.de\Desktop\personal\homepage\GLM 5.3_2\portfolio-kit"`
@@ -78,8 +78,10 @@ Git policy: one commit per task, exact messages; never push. Next: T32, then the
   Right-edge .layer-card hover card (no link, zero pill overlap steps 0-5, mobile docked variant), neutral hover edge, tab-away clearing; movement rule verified for first/exposed/lower floors. Card: docs/tasks/T29-hover-card.md. |
 | T30 | Detached floor and expanded detail experience (redesign batch) | done, verified (4345d8a) |
   Selected slab leaves the tower to the left half (offset, never re-parented), rest of the tower fades, stage-wide 50/50 grid (floor left, card right) with a compact sample strip beneath, card is the T29 hover card grown up, mobile vertical composition, picking paused while expanded. Card: docs/tasks/T30-separated-floor-detail.md. |
-| T31 | Unify portfolio visual language (redesign batch) | done, code-verified |
+| T31 | Unify portfolio visual language (redesign batch) | done, code-verified (a09f73c) |
   Shared surface system across HUD, pills, buttons, chips, About panels/diagram, Toolkit tiles (icon replaces swatch), Contact, footer, work pages: 1px hairlines, 14px radii, two soft shadow tokens, accent rule as the only per-floor color, neutral progress bar, no oversized numerals. Card: docs/tasks/T31-visual-language.md. |
+| T32 | Refine responsive layouts and complete QA (redesign batch) | done, code-verified; live pass by user |
+  Camera/CSS breakpoint aligned at 860px, measured HUD height for anchor offsets, 480px small-phone pass, reduced-motion guard on the detail chrome fade. check + build pass; visual/touch/reduced-motion pass handed to the user (no automated screenshots this session). Card: docs/tasks/T32-responsive-qa.md. |
 
 ## Blocked
 (none)

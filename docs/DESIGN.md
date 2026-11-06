@@ -141,4 +141,8 @@ One component, two states: the hover card grows into the expanded card (same sur
 - Footer: compact.
 
 ## Responsive
-Minimum width 360px. Mobile gets its own camera framing (zoomed in on the exposed room), shadow map 1024, pixel ratio 1.25, fewer particles. The expanded view is a deliberate vertical composition (floor on top, card, samples), never a squeezed 50/50 split.
+Minimum width 360px. Breakpoints: 860px switches the expanded view and About to one column; 480px tightens small-phone rhythm; 760px hides the HUD progress bar and docks the hover card (and keeps a usable no-scene pill row).
+- Mobile keeps its own camera framing (zoomed in on the exposed room), shadow map 1024, pixel ratio 1.25, fewer particles.
+- The expanded view is a deliberate vertical composition (floor on top, card, samples), never a squeezed 50/50 split. `focus.ts` uses the same 860px breakpoint as the CSS.
+- The sticky HUD wraps on narrow screens; `Hud.astro` publishes its measured height as `--hud-offset`, and anchor `scroll-margin-top` uses it, so section links never land under the bar. `--hud-h` (56px) stays the row minimum and must not be fed from the measurement (feedback loop).
+- Small phones tighten section padding (56px), card padding, HUD gaps and the hero copy position; no element is allowed to exceed the viewport width.

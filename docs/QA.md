@@ -53,3 +53,26 @@ Six-layer + dual-theme verification. Run against the dev server with the Playwri
 | No material/texture leaks on theme switch | verified | registry mutates colors in place; renderer program count stable across toggles |
 | Reduced motion respected | verified | unchanged from T11; theme transitions gated behind no-preference |
 | Pill clickability after T13 | verified | T19 regression: T13's nav position:static kept a stray transform that trapped pills below the canvas; fixed (labels.ts clears transform + sets z-index). Strict Playwright click still reports the preview-card/canvas overlap, but the click works through the canvas path beneath — testing artifact |
+
+---
+
+# Redesign QA (T28-T32)
+
+Run by the assistant in-session: `npm run check`, `npm run build`, and numeric probes through `window.__stack` / `window.__scene` (slab world positions, material opacity, camera zoom, URL, focus target, scroll freeze, DOM geometry). Screenshots were NOT used after the user's instruction to stop browser automation; the visual pass below is left to the user.
+
+| Check | Result | Note |
+|---|---|---|
+| `npm run check` | verified | 88 files, no errors. |
+| `npm run build` | verified | 7 pages + legacy redirects. |
+| T28 materials/environment | code-verified | One plaster body material for all six slabs, no per-floor side colors, floating tower with contact shadow + under-glow, dust puffs on landing. Visual tone: user pass. |
+| T29 hover card position | verified numerically (pre-stop) | Card rect vs six pill rects: no intersection at any step; no "View work" link. |
+| T30 selected floor detaches | verified numerically (pre-stop) | Slab `seo` moved x 0 -> -3.83, z 0 -> +3.83 (screen-left), y unchanged; other slabs faded to 0 and restored to 1. |
+| T30 desktop composition | verified numerically (pre-stop) | Floor centre 29.2% width / 45.9% height; card 50.7% -> 98.3% width; sample strip full width beneath; no overlap with the card. |
+| T30 close/restore | verified numerically (pre-stop) | Escape: panel hidden, URL `/`, zoom 1, slab back to origin, opacities 1, `data-detail` cleared, page overflow cleared. |
+| T30 mobile 390px | verified numerically (pre-stop) | No horizontal overflow, floor at 50%/37%, card under the reserved band, panel scrolls internally, card before samples. |
+| T31 surface unification | code-verified | Computed styles: 1px `--line` borders, 14px radii or pills, `--shadow-card`; `.swatch` gone, tile icons render. |
+| T32 breakpoint alignment | code-verified | `focus.ts` mobile test now 860px, matching the CSS column switch. |
+| T32 anchor offsets | code-verified | `--hud-offset` measured by ResizeObserver, used by `scroll-margin-top`. |
+| Visual composition 360/390/768/desktop, both themes | not verified | User live pass. |
+| Touch tap flow, reduced-motion feel, shadow clipping | not verified | User live pass (environment-specific). |
+| No-JS / no-WebGL fallbacks after T31 | code-verified | Markup unchanged; cards now use the shared surface + accent rule. |

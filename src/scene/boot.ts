@@ -131,7 +131,8 @@ export async function boot(): Promise<void> {
     slabs: stack.slabs,
     canvasWrap: mount,
     getFollowY: () => state.restY[state.step] + SLAB_T / 2 + 0.9,
-    isMobile: () => matchMedia('(max-width: 760px)').matches,
+    // Must match the expanded-layout breakpoint in hud.css (max-width: 860px).
+    isMobile: () => matchMedia('(max-width: 860px)').matches,
   });
   bindSceneApi({
     setHover: (id) => pick.setHover(id),

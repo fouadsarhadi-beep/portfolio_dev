@@ -211,6 +211,9 @@ html[data-theme='dark'] .theme-toggle .icon-moon {
   z-index: 1;
 }
 
+/* These dock rules only apply when JS has not pinned the pills to the slabs
+   (labels.ts does that once the scene boots); they keep the no-WebGL/no-scene
+   case usable on narrow screens. */
 @media (max-width: 760px) {
   .progress {
     display: none;
@@ -345,6 +348,13 @@ html[data-theme='dark'] .theme-toggle .icon-moon {
 
 .stage-sticky[data-detail='true'] .layer-card {
   display: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .stage-sticky[data-detail='true'] .layer-nav,
+  .stage-sticky[data-detail='true'] .hero-copy {
+    transition: none;
+  }
 }
 
 .dv-card {
@@ -547,5 +557,34 @@ html[data-theme='dark'] .theme-toggle .icon-moon {
 
   .dv-sample-row {
     grid-template-columns: 1fr;
+  }
+}
+
+/* Small phones (360-480): tighter chrome, same composition. */
+@media (max-width: 480px) {
+  .hud-row {
+    gap: 6px 14px;
+  }
+
+  .hud-nav {
+    gap: 14px;
+  }
+
+  .detail-view {
+    padding-inline: 12px;
+    padding-block-start: 40svh;
+    padding-block-end: 20px;
+  }
+
+  .dv-card {
+    padding: 16px;
+  }
+
+  .dv-caps {
+    gap: 0;
+  }
+
+  .dv-samples {
+    margin-block-start: 18px;
   }
 }

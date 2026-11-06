@@ -563,3 +563,45 @@ html:not(.js) .layer-nav {
     bottom: 88px;
   }
 }
+
+/* Small phones (360-480): tighter rhythm, nothing allowed to overflow. */
+@media (max-width: 480px) {
+  #about,
+  #toolkit,
+  #contact {
+    padding-block: 56px;
+  }
+
+  .about-cols {
+    margin-block-start: 24px;
+    gap: 24px;
+  }
+
+  .panel,
+  .tile,
+  .sample-card,
+  .stack-fallback article {
+    padding: 16px 18px;
+  }
+
+  .contact-panel {
+    padding: 24px 20px;
+  }
+
+  .hero-copy {
+    inset-inline-end: 16px;
+    bottom: 72px;
+  }
+
+  .hero-copy .sub {
+    font-size: var(--fs-14);
+  }
+
+  .work {
+    padding-block: 24px 72px;
+  }
+
+  .socials {
+    gap: 8px;
+  }
+}

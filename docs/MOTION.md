@@ -45,6 +45,7 @@ Restacking must feel quicker and harder than separating.
 - Keyboard: layer-nav buttons are in the Tab order; focusing one shows the card. ArrowUp and ArrowDown move the selection. Enter opens. Escape closes the card or detail. Tabbing out of the nav clears the card. Focus returns to the originating button.
 
 ## Detail view (ui/detail.ts, scene/focus.ts)
+The expanded layout switches to the mobile column at 860px, and `focus.ts` uses the same breakpoint for its framing, so the camera and the CSS never disagree.
 Open (about 0.9s total):
 1. Camera whoosh onto the selected floor, 0.5s, `expo.out`. Zoom x1.45 desktop, x1.35 mobile. The camera target starts at its current follow height, so there is no jump.
 2. Detach: the selected slab travels to the left half of the stage (0.21 of the visible width along the view-left axis, `expo.out`, same 0.5s) while the tower stays in place. It is not re-parented: `state.apply` and `pick` write base positions, then `focus.applyDetach` writes the x/z offset every frame, so slab/room association and the restore path stay intact. On mobile the floor travels to the top band instead (no lateral move).
