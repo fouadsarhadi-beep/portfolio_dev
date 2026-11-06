@@ -57,9 +57,10 @@
   --shadow-lift: 0 2px 5px color-mix(in srgb, var(--ink) 8%, transparent),
     0 16px 34px color-mix(in srgb, var(--ink) 11%, transparent);
 
-  /* Scroll mapping (docs/MOTION.md); --steps mirrors LAYERS.length - 1 */
+  /* Scroll mapping (docs/MOTION.md): 5 steps open the floors, 3 more pull the
+     camera back for the overview. Mirrors LAYER_STEPS + OVERVIEW_STEPS. */
   --step-vh: 80svh;
-  --steps: 5;
+  --steps: 8;
 
   /* Layout */
   --content-max: 68rem;

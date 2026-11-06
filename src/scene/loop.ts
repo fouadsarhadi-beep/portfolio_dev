@@ -1,5 +1,5 @@
 /** @module scene/loop: the per-frame update: state, pick, labels, camera follow, rooms, render. @see src/scene/boot.ts, docs/MOTION.md (Camera), src/lib/ticker.ts */
-import { SLAB_T } from '@/config/tuning';
+import { LIFT, OVERVIEW_ZOOM, SLAB_T } from '@/config/tuning';
 import { ticker } from '@/lib/ticker';
 import { prefersReducedMotion } from '@/lib/reduced-motion';
 import { followCamera } from './camera';
@@ -32,6 +32,12 @@ export interface LoopParts {
  */
 export function startLoop(parts: LoopParts): () => void {
   const wantY = (): number => parts.state.restY[parts.state.step] + SLAB_T / 2 + 0.9;
+  // Middle of the fully fanned column: the top slab is lifted, the bottom is not.
+  const overviewY = (): number => {
+    const rest = parts.state.restY;
+    return (rest[0] + LIFT + SLAB_T + rest[rest.length - 1]) / 2;
+  };
+  const baseZoom = parts.camera.zoom; // tier zoom from boot (1, or 1.3 on the low tier)
   parts.camera.userData.targetY = wantY(); // start settled, no fly-in
 
   return ticker.add((time, dt) => {
@@ -48,8 +54,17 @@ export function startLoop(parts: LoopParts): () => void {
     if (parts.focus.active()) {
       parts.focus.updateCamera(dt);
     } else {
-      const t = followCamera(parts.camera, wantY(), dt);
+      // The overview blends the follow target toward the middle of the fanned
+      // column and pulls the camera back, so all six floors read at once.
+      const o = parts.state.overview;
+      const target = wantY() + (overviewY() - wantY()) * o;
+      const t = followCamera(parts.camera, target, dt);
       parts.camera.lookAt(0, t + parts.landing.jolt(), 0);
+      const zoom = baseZoom * (1 + (OVERVIEW_ZOOM - 1) * o);
+      if (Math.abs(parts.camera.zoom - zoom) > 0.0005) {
+        parts.camera.zoom = zoom;
+        parts.camera.updateProjectionMatrix();
+      }
     }
 
     // Under prefers-reduced-motion the room idle loops stop entirely

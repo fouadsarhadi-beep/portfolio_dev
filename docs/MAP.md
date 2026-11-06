@@ -28,7 +28,7 @@ Search this file before creating anything.
   exports: ThemeName, ThemeColors, THEMES
   uses: src/config/palette
 - tuning.ts: config/tuning: geometry, scroll step, camera and render tuning constants. @see docs/DESIGN.md, docs/MOTION.md, src/config/types.ts
-  exports: FOOTPRINT, SLAB_T, WALL_H, WALL_THICK, CORNER_R, LIFT, STACK_BASE_Y, STEP_VH, CAM_DIR, CAM_DISTANCE, CAM_TARGET_OFFSET_Y, CAM_VIEW_HEIGHT, CAM_DAMP_LAMBDA, CAM_FRAME_OFFSET_Y, EXPOSURE, MAX_PIXEL_RATIO, SHADOW_MAP_DESKTOP, SHADOW_MAP_MOBILE
+  exports: FOOTPRINT, SLAB_T, WALL_H, WALL_THICK, CORNER_R, LIFT, STACK_BASE_Y, STEP_VH, CAM_DIR, CAM_DISTANCE, CAM_TARGET_OFFSET_Y, CAM_VIEW_HEIGHT, CAM_DAMP_LAMBDA, CAM_FRAME_OFFSET_Y, OVERVIEW_STEPS, OVERVIEW_ZOOM, EXPOSURE, MAX_PIXEL_RATIO, SHADOW_MAP_DESKTOP, SHADOW_MAP_MOBILE
   uses: src/config/types
 - types.ts: config/types: shared contracts for config, scene and UI. @see docs/WIRING.md, src/config/layers.ts
   exports: PaletteKey, LayerId, Vec3, DocKind, SampleDocument, Sample, LayerConfig, MaterialKit, PropFactory, PropKit, RoomContext, RoomInstance, RoomBuilder, StackEvents, StackDebugState
@@ -267,7 +267,7 @@ Search this file before creating anything.
   exports: restY, Stack, createStack
   uses: src/config/tuning, src/config/layers, src/scene/stack/slab, src/scene/rooms/index, src/scene/rooms/shell, src/scene/rooms/props/index, src/config/types
 - state.ts: scene/stack/state: scroll-derived step, the u and e arrays, the invariant, window.__stack. @see docs/MOTION.md (Scroll mapping, State, Debug), src/scene/stack/motion.ts
-  exports: N, STEPS, STEP_PX_FACTOR, StackState, createState
+  exports: N, LAYER_STEPS, STEPS, STEP_PX_FACTOR, StackState, createState
   uses: src/config/tuning, src/config/layers
 
 ## src/sections/

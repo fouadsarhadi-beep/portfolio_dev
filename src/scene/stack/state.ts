@@ -1,10 +1,13 @@
 /** @module scene/stack/state: scroll-derived step, the u and e arrays, the invariant, window.__stack. @see docs/MOTION.md (Scroll mapping, State, Debug), src/scene/stack/motion.ts */
-import { LIFT, SLAB_T, STACK_BASE_Y } from '@/config/tuning';
+import { LIFT, OVERVIEW_STEPS, SLAB_T, STACK_BASE_Y } from '@/config/tuning';
 import { LAYERS } from '@/config/layers';
 import * as THREE from 'three';
 
 export const N = LAYERS.length;
-export const STEPS = N - 1;
+/** Scroll steps that open one floor each. */
+export const LAYER_STEPS = N - 1;
+/** The scroll range also covers the overview pull-back after the last floor. */
+export const STEPS = LAYER_STEPS + OVERVIEW_STEPS;
 export const STEP_PX_FACTOR = 0.8; // STEP_PX = 0.8 x innerHeight (docs/MOTION.md)
 
 const OPEN_AT = 0.35;  // open to m+1 when s >= m + 0.35
@@ -19,6 +22,8 @@ export interface StackState {
   u: number[];
   e: number[];
   step: number;
+  /** 0..1 pull-back after the last floor; the step itself stays put. */
+  overview: number;
   s: number;
   onChange: ((from: number, to: number) => void) | null;
   updateFromScroll(scrollY: number, viewportH: number, stageTop: number): void;
@@ -38,14 +43,18 @@ export function createState(): StackState {
     u,
     e,
     step: 0,
+    overview: 0,
     s: 0,
     onChange: null,
 
     updateFromScroll(scrollY, viewportH, stageTop) {
       const stepPx = STEP_PX_FACTOR * viewportH;
       state.s = Math.min(STEPS, Math.max(0, (scrollY - stageTop) / stepPx));
+      // Past the last floor the step holds and the camera pulls back instead, so
+      // the sixth floor keeps the frame for a few steps of scroll.
+      state.overview = clamp01((state.s - LAYER_STEPS) / OVERVIEW_STEPS);
       let m = state.step;
-      while (m < STEPS && state.s >= m + OPEN_AT) m++;
+      while (m < LAYER_STEPS && state.s >= m + OPEN_AT) m++;
       while (m > 0 && state.s < m - 1 + CLOSE_AT) m--;
       if (m !== state.step) {
         const from = state.step;
@@ -81,6 +90,7 @@ export function createState(): StackState {
     publish() {
       (window as unknown as Record<string, unknown>).__stack = {
         step: state.step,
+        overview: state.overview,
         u: [...u],
         e: [...e],
         restY: [...restY],

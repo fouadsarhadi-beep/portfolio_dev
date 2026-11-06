@@ -29,6 +29,12 @@ export const CAM_DAMP_LAMBDA = 6;                        // target Y damping
 // viewport; mirrors --hero-lift in src/styles/sections.css.
 export const CAM_FRAME_OFFSET_Y = CAM_VIEW_HEIGHT * 0.22; // ≈ 200px at 900px tall
 
+// End of the scroll (user review 2026-11-06): after the last floor opens, the
+// camera pulls back over a few extra steps so the six separated floors read as
+// one column. The step itself stays on the last layer.
+export const OVERVIEW_STEPS = 3;
+export const OVERVIEW_ZOOM = 0.82;
+
 // Render
 export const EXPOSURE = 1.05;
 export const MAX_PIXEL_RATIO = 1.75;

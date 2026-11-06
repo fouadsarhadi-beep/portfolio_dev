@@ -1,13 +1,14 @@
 # MOTION: scroll, lift, slam, camera, interaction
 
-Layers are indexed 0 (top) to N-1 (bottom). N = 6, STEPS = N - 1 = 5.
+Layers are indexed 0 (top) to N-1 (bottom). N = 6. LAYER_STEPS = N - 1 = 5 open one floor each; OVERVIEW_STEPS = 3 more pull the camera back, so the scroll range is STEPS = 8.
 
 ## Scroll mapping
-- `#stage` height = 100svh + STEPS x STEP_VH (STEP_VH = 80svh). Total about 500svh.
+- `#stage` height = 100svh + STEPS x STEP_VH (STEP_VH = 80svh). Total about 800svh.
 - Its child is `position: sticky; top: 0; height: 100svh` and holds the canvas, labels and HUD.
 - progress s = (scrollY - stageTop) / STEP_PX, where STEP_PX = 0.8 x innerHeight. Clamp to 0..STEPS.
-- Wanted step m uses hysteresis so edges do not flicker: open to m+1 when s >= m + 0.35. Close to m-1 when s < m - 1 + 0.15.
+- Wanted step m uses hysteresis so edges do not flicker: open to m+1 when s >= m + 0.35. Close to m-1 when s < m - 1 + 0.15. The step only ever runs 0..LAYER_STEPS.
 - Step m means layers 0..m-1 are lifted. Layer m is exposed. Layers below it stay closed.
+- Past the last floor the step holds and `overview` ramps 0 to 1 across OVERVIEW_STEPS: the camera target blends to the middle of the fanned column and the zoom pulls back to OVERVIEW_ZOOM, so the six separated floors read as one stack before the page moves on.
 - Triggered, not scrubbed: a step change starts timed tweens. Scroll never drives the tween position directly.
 
 ## State (src/scene/stack/state.ts)
