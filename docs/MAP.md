@@ -278,9 +278,9 @@ Search this file before creating anything.
 - keyboard.ts: ui/keyboard: layer-nav focus, ArrowUp/ArrowDown selection, Enter via native click, Escape. @see docs/MOTION.md (Pick, hover, touch), src/lib/bus.ts
   exports: initKeyboard
   uses: src/lib/bus, src/config/layers
-- preview.ts: ui/preview: the preview card; follows the hovered or selected slab. @see docs/MOTION.md (Pick, hover, touch), src/scene/api.ts, src/lib/bus.ts
+- preview.ts: ui/preview: the hover info card; fixed spot on the right edge of the stage (T29). @see docs/MOTION.md (Pick, hover, touch), src/lib/bus.ts, src/styles/hud.css (.layer-card)
   exports: initPreview
-  uses: src/lib/bus, src/config/layers, src/scene/api, src/lib/ticker, src/lib/i18n
+  uses: src/lib/bus, src/config/layers
 - theme.ts: ui/theme: the theme toggle; flips data-theme, persists the choice, emits on the bus. @see docs/DESIGN.md (Dual theme), src/config/theme.ts, src/sections/Hud.astro
   exports: initThemeToggle
   uses: src/lib/bus, src/config/theme

@@ -4,7 +4,7 @@ import type { OrthographicCamera } from 'three';
 import { bus } from '@/lib/bus';
 import { LAYERS } from '@/config/layers';
 import { FOOTPRINT, SLAB_T } from '@/config/tuning';
-import { PALETTE, lighten } from '@/config/palette';
+import { PALETTE } from '@/config/palette';
 
 export interface ScreenRect { left: number; top: number; width: number; height: number }
 
@@ -42,6 +42,7 @@ export function createPick(opts: {
     return { mesh, mat, base: mat.color.clone() };
   });
   const edgeGeo = new THREE.EdgesGeometry(bodies[0].mesh.geometry);
+  // Neutral edge: the unified family keeps per-floor color out of the scene (T28/T29).
   const edgeMat = new THREE.LineBasicMaterial({ color: PALETTE.white, transparent: true, opacity: 0.6 });
   let edges: THREE.LineSegments | null = null;
 
@@ -76,8 +77,6 @@ export function createPick(opts: {
       edges = null;
     }
     if (hoverIdx >= 0) {
-      const layerColor = PALETTE[LAYERS[hoverIdx].color as keyof typeof PALETTE];
-      edgeMat.color.set(lighten(layerColor, 0.2));
       edges = new THREE.LineSegments(edgeGeo, edgeMat);
       edges.scale.setScalar(1.002);
       slabs[hoverIdx].add(edges);

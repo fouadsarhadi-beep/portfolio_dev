@@ -116,8 +116,8 @@ Orthographic. Position = target + (1,1,1) x 30. Looks at target. Visible faces: 
 ## Environment around the stack (T28)
 The tower floats (STACK_BASE_Y = 1.35) above a soft radial contact shadow, an `underGlow` halo and a dim under light; it reads as deliberately suspended, not misplaced. No platform, no ground plane. The page frames the stage with a faint warm radial glow (`.stage-sticky::before`, tokens-driven) and the existing vignette. 18 to 36 slow dust particles (instanced, opacity 0.35) drift around the tower; floating colored shapes were removed. Keep it calm; the environment never competes with the tower.
 
-## HUD and UI style
-Rounded 14 to 20px corners. Chunky pill buttons: 2px ink border, a hard 4px offset shadow in the layer color. Numeric badges. A pulsing green availability dot. Scroll progress is a bar of six segments, one per layer. No glassmorphism. Cards are white with a colored side tab.
+## HUD and UI style (T29/T31 direction)
+Restrained surfaces: cards are `surface` with a 1px `line` border, 14px radius and one soft shadow (no hard offset shadows, no 2px ink outlines). A short 2px accent rule in the layer color is the only per-floor color echo, used once per card. The hover info card (`.layer-card` in hud.css) defines this language; the T30 expanded card and, in T31, buttons, pills and panels follow it. Layer accents remain in text, number chips and accent rules, never as thick colored tabs or side borders. Numeric badges stay small. A quiet availability dot. Scroll progress is a bar of six segments, one per layer. No glassmorphism.
 
 ## Sections
 - HUD header: name, role, links to Stack, Toolkit, About, Contact, availability, progress bar. Small and distinctive, not a SaaS bar.

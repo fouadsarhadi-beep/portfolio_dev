@@ -3,6 +3,7 @@ import { bus } from '@/lib/bus';
 import { LAYERS } from '@/config/layers';
 
 export function initKeyboard(): void {
+  const nav = document.querySelector<HTMLElement>('.layer-nav');
   const buttons = [...document.querySelectorAll<HTMLButtonElement>('.layer-nav button')];
   buttons.forEach((btn, i) => {
     const id = LAYERS[i]?.id;
@@ -19,6 +20,13 @@ export function initKeyboard(): void {
         buttons[Math.max(i - 1, 0)].focus();
       }
     });
+  });
+
+  // Tabbing out of the layer nav must not leave a stuck info card (T29).
+  nav?.addEventListener('focusout', (e) => {
+    if (!(e.relatedTarget instanceof Node) || !nav.contains(e.relatedTarget)) {
+      bus.emit('layer:hover', { id: null });
+    }
   });
 
   // Escape closes the preview (and the detail view, once T08 adds it).

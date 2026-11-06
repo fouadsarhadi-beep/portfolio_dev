@@ -35,12 +35,14 @@ Restacking must feel quicker and harder than separating.
 - Orthographic (see DESIGN.md). Target Y follows the exposed layer: `floorY[m] + 0.9`, damped (lambda 6). View height = LIFT + 3 x SLAB_T + 4. Tune both in tuning.ts by screenshot until the exposed room is fully visible with the lifted stack docked at the top of the frame.
 - The jolt adds to target Y only.
 
-## Pick, hover, touch (scene/stack/pick.ts, labels.ts)
+## Pick, hover, touch (scene/stack/pick.ts, labels.ts, ui/preview.ts)
 - Every slab is a raycast target at all times, including while closed. Its side faces are the click surface.
 - Each slab also has a DOM label button, positioned from `getLayerRect(id)`, aligned to the slab's right face. Labels and slabs behave the same.
-- Hover (desktop): slab lifts 0.35 within its gap (when closed: nudges 0.25 out along the view-right direction). Other slabs lose 6 percent lightness. An animated edge highlight runs along the hovered slab. A preview card appears: number, title, short line, "View work".
-- Touch: first tap selects and shows the preview. A second tap on the same layer opens the detail view. A tap elsewhere dismisses.
-- Keyboard: layer-nav buttons are in the Tab order. ArrowUp and ArrowDown move the selection. Enter opens. Escape closes the preview or detail. Focus returns to the originating button.
+- Hover movement is derived from stack state, never from a layer index: a slab with a gap above it (exposed floor, or a lifted floor docked at the top, including the first floor once scrolled) moves up 0.35 within its gap; a closed floor below the exposed one nudges 0.25 out along the view-right direction. Before any scroll the top floor therefore nudges right. Movement eases (damped), is reversible and never accumulates: state.apply writes base positions each frame, pick adds the offsets.
+- Other slabs lose 6 percent lightness. An animated neutral edge highlight runs along the hovered slab (no per-floor color in the scene).
+- The hover info card (T29) is a `.layer-card` fixed on the right edge of the stage, in the vertical band the layer-nav pills never occupy at any scroll step. It shows number, title and a short explanation with a thin accent rule. It never follows the slab, never overlaps the nav titles, and has no "View work" control (clicking the floor opens the detail view). Its surface, radius, hairline border and accent rule are the visual seed for the T30 expanded card.
+- Touch: first tap selects and shows the card (docked above the label zone on mobile). A second tap on the same layer opens the detail view. A tap elsewhere dismisses.
+- Keyboard: layer-nav buttons are in the Tab order; focusing one shows the card. ArrowUp and ArrowDown move the selection. Enter opens. Escape closes the card or detail. Tabbing out of the nav clears the card. Focus returns to the originating button.
 
 ## Detail view (ui/detail.ts, scene/focus.ts)
 Open (0.9s total):

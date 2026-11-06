@@ -229,6 +229,88 @@ html[data-theme='dark'] .theme-toggle .icon-moon {
   }
 }
 
+/* --- Layer info card (T29): hover preview; T30 expands it into the detail card ---
+   Deliberate fixed spot on the right edge of the stage, in the vertical band the
+   layer-nav pills never occupy at any scroll step (pills hug the slab faces).
+   Shares its visual language with the T30 expanded card: same surface, radius,
+   hairline border, accent rule, soft shadow. No hard cartoon offsets. */
+.layer-card {
+  position: absolute;
+  z-index: 6;
+  inset-inline-end: clamp(16px, 2.5vw, 36px);
+  top: clamp(96px, 24vh, 220px);
+  width: min(320px, calc(100vw - 32px));
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-m);
+  box-shadow: 0 12px 32px color-mix(in srgb, var(--ink) 10%, transparent);
+  padding: 18px 20px 20px;
+  pointer-events: none;
+  opacity: 0;
+  transform: translateY(6px);
+  transition: opacity 0.18s ease, transform 0.18s ease;
+}
+
+.layer-card[data-show='true'] {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.layer-card::before {
+  content: '';
+  display: block;
+  width: 24px;
+  height: 2px;
+  border-radius: 1px;
+  background: var(--layer-c, var(--c-butter));
+  margin-block-end: 12px;
+}
+
+.lc-kicker {
+  display: flex;
+  align-items: baseline;
+  gap: 10px;
+  margin: 0;
+}
+
+.lc-num {
+  font-family: var(--font-display);
+  font-weight: 600;
+  font-size: var(--fs-14);
+  color: var(--ink-soft);
+  font-variant-numeric: tabular-nums;
+}
+
+.lc-title {
+  font-family: var(--font-display);
+  font-weight: 600;
+  font-size: var(--fs-20);
+  line-height: 1.2;
+}
+
+.lc-short {
+  margin-block-start: 8px;
+  font-size: var(--fs-14);
+  line-height: 1.5;
+  color: var(--ink-soft);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .layer-card {
+    transition: opacity 0.15s;
+    transform: none;
+  }
+}
+
+@media (max-width: 760px) {
+  .layer-card {
+    inset-inline: 16px;
+    top: auto;
+    bottom: 118px;
+    width: auto;
+  }
+}
+
 /* --- Detail view panel (docs/MOTION.md Detail view) --- */
 .detail-panel {
   position: absolute;

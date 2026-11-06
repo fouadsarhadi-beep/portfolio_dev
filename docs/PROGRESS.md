@@ -1,13 +1,13 @@
 # PROGRESS
 
-Current task: T29 (redesign hover interactions and preview)
+Current task: T30 (implement separated floor detail view)
 
 ## Handoff note (max 8 lines, rewrite each session)
-Redesign batch T28-T32 in progress (user brief 2026-11-05). T28 done: unified plaster/wood slab family (roles slab/slabShade/underGlow in ThemeColors + tokens.css), floating tower (STACK_BASE_Y 1.35, no platform/ground), rebuilt stage environment (contact shadow + underGlow halo + under light, shapes removed), collision dust (stack/dust.ts pool), poster regenerated. verify-stack PASS, check PASS, both themes shot.
-T29 next: hover movement states (top floor right pre-scroll; exposed floor up; first floor included) + full redesign of the right-side hover info card (no "View work" link), component shared with T30's expanded card. Files: pick.ts, preview.ts, bus, Hero/hud.css.
-Gotchas: a stale dev server may hold 4321 — run `URL=http://localhost:4322/ npm run shots`; verify-stack takes URL env too. Astro dev toolbar disabled (screenshot leak). Number textures redraw on theme change (icons.ts returns {tex, redraw}).
-Git policy: one commit per task, exact messages "T28: refine tower materials and environment" etc.; never push.
-Next: T29, then T30 (detached floor 50/50), T31 (page-wide language), T32 (responsive + QA).
+Redesign batch T28-T32 (user brief 2026-11-05). T28 done (8140bc1): unified plaster/wood slab family, floating tower (STACK_BASE_Y 1.35, no platform/ground), contact shadow + underGlow environment, collision dust (stack/dust.ts), poster regenerated. T29 done: right-edge .layer-card hover card (hud.css, no View work link, no pill overlap at any step, mobile docked variant), neutral hover edge, keyboard tab-away clearing. Hover movement rule unchanged (gap above -> up, closed -> right) and verified for floors 0/exposed/lower.
+T30 next: selected floor must physically separate and move left; ~50/50 desktop composition (floor left, explanatory card right, work samples beneath); card evolves from .layer-card; mobile stacks vertically. Inspect focus.ts (camera-only today), detail.ts, dialog.ts, stack.ts (room is child of slab).
+Gotchas: stale dev server may hold 4321 (use URL=4322 for shots/verify-stack). Number textures redraw on theme change. Astro dev toolbar disabled.
+Git policy: one commit per task, exact messages; never push.
+Next: T30, T31 (page-wide language), T32 (responsive + QA).
 
 ## How to run
 - Open a terminal in the portfolio-kit folder (the one with package.json): `cd "C:\Users\ASUS\OneDrive - sternx.de\Desktop\personal\homepage\GLM 5.3_2\portfolio-kit"`
@@ -71,8 +71,10 @@ Next: T29, then T30 (detached floor 50/50), T31 (page-wide language), T32 (respo
   T26 cleanup also fixed: translation screen swap never advanced (pair argument dropped). |
 | T27 | Final visual consistency and release-readiness pass | done |
   Final sweep (shots/final-*.png): desktop light+dark heroes coherent, mobile dark HUD/copy correct with poster as loading state. Remaining limitations documented in "Not verified yet" + mobile dark shows the light captured poster until the scene is ready (by design; a dark poster could be captured later). |
-| T28 | Tower materials, positioning and environment (redesign batch) | done, verified |
+| T28 | Tower materials, positioning and environment (redesign batch) | done, verified (8140bc1) |
   Unified plaster/wood slab family, floating tower + contact shadow/under-glow environment, collision dust, full-width shadow fix, poster regenerated, shots tooling fixed (stage selector, dark/slam passes, dev toolbar off). Card: docs/tasks/T28-tower-materials-environment.md. |
+| T29 | Redesign hover interactions and preview (redesign batch) | done, verified |
+  Right-edge .layer-card hover card (no link, zero pill overlap steps 0-5, mobile docked variant), neutral hover edge, tab-away clearing; movement rule verified for first/exposed/lower floors. Card: docs/tasks/T29-hover-card.md. |
 
 ## Blocked
 (none)
