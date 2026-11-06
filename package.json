@@ -9,8 +9,7 @@
     "preview": "astro preview",
     "astro": "astro",
     "check": "tsc --noEmit && node scripts/check.mjs",
-    "map": "node scripts/check.mjs --map-only",
-    "shots": "node scripts/shots.mjs"
+    "map": "node scripts/check.mjs --map-only"
   },
   "dependencies": {
     "@fontsource-variable/dm-sans": "^5.3.0",

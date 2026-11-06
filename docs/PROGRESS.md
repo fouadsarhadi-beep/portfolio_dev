@@ -17,7 +17,6 @@ Next (postponed by the user): day/night theme redesign, explanatory onboarding p
 - `npm run build` — static build into dist/; `npm run preview` — serves the build
 - `npm run check` — TypeScript strict + repo guardrails (also regenerates docs/MAP.md)
 - `node scripts/verify-stack.mjs` — motion checks (dev server must be running)
-- `npm run shots` — screenshots into shots/ (dev server must be running)
 
 ## Needs (changes requested outside a task's files)
 - T03: index.astro gained `<script> import '@/main';</script>`.

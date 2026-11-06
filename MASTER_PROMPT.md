@@ -13,6 +13,6 @@ Rules that matter most:
 - Check docs/MAP.md before you create any file.
 - Do not claim something works unless you ran it. Write "not verified" instead.
 - Do not change anything under "Locked decisions" in AGENTS.md. Ask me.
-- If you can view images, run `npm run shots` and critique the screenshots before you call a visual task done. If you cannot, use the checks the task card lists.
+- Screenshot tooling (scripts/shots.mjs) is removed for now. Judge visual work with the checks the task card lists, and by looking at the running dev server yourself.
 
 When I write "continue", start the next task in docs/PROGRESS.md.
