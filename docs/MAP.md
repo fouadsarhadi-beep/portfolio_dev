@@ -243,7 +243,7 @@ Search this file before creating anything.
   uses: src/config/tuning, src/config/palette, src/config/types, src/scene/rooms/props/screen.ts, src/scene/rooms/web-design-development/anim
 
 ## src/scene/stack/
-- dust.ts: scene/stack/dust: small pooled dust puffs at floor touchdown points (T28). @see docs/MOTION.md (Slam), src/scene/stack/landing.ts
+- dust.ts: scene/stack/dust: pooled pixel dust along the two front faces at touchdown (T28). @see docs/MOTION.md (Slam), src/scene/stack/landing.ts
   exports: DustPuffs, createDustPuffs
   uses: src/config/tuning
 - icons.ts: scene/stack/icons: draws layer icons, numbers and registration crosses to CanvasTextures. @see docs/DESIGN.md (Slab), src/scene/stack/slab.ts
