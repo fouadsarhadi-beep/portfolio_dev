@@ -13,8 +13,7 @@ html.js .stack-fallback {
   display: none;
 }
 
-html:not(.js) #canvas-mount,
-html:not(.js) .poster {
+html:not(.js) #canvas-mount {
   display: none;
 }
 
@@ -23,7 +22,7 @@ html:not(.js) .stage-sticky {
   height: auto;
 }
 
-/* WebGL unavailable: keep the poster, collapse the stage, show the DOM cards. */
+/* WebGL unavailable: collapse the stage and show the DOM cards. */
 html.no-webgl #canvas-mount {
   display: none;
 }
@@ -35,14 +34,6 @@ html.no-webgl .stage {
 html.no-webgl .stage-sticky {
   position: static;
   height: auto;
-}
-
-html.no-webgl .poster {
-  position: static;
-  width: min(100%, 720px);
-  height: auto;
-  margin-inline: auto;
-  border-radius: var(--radius-l);
 }
 
 html.no-webgl .layer-nav,

@@ -18,6 +18,7 @@ Next (postponed by the user): day/night theme redesign, explanatory onboarding p
 - `npm run check` — TypeScript strict + repo guardrails (also regenerates docs/MAP.md)
 
 ## Needs (changes requested outside a task's files)
+- Poster removed (user review 2026-11-06): poster.png was a 1280x801 screenshot of the old stage, so it painted the previous version's header, h1 and copy as a ghost layer over the live scene while the canvas loaded. Removed the `<img>` (Hero.astro), `.poster` rules (hud.css 203-212, sections.css not(.js) and no-webgl blocks), the boot.ts fade, and public/poster.png. no-webgl now relies on the stack-fallback cards alone. Regenerate a scene-only render if the loading state needs an image back.
 - Framing fix (user review 2026-11-06): the opening view left a tall empty band above the tower and the hero copy sat low. Added `CAM_FRAME_OFFSET_Y` (tuning.ts) applied in camera.ts resizeCamera, and `--hero-lift` in sections.css (all three breakpoints). Both are 22% of the visible height, ≈200px at 900px tall. docs/DESIGN.md (Camera) updated.
 - T03: index.astro gained `<script> import '@/main';</script>`.
 - T04: stage.ts edits (removed test cube, fixed ring y).

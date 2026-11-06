@@ -1,4 +1,4 @@
-/* @module styles/hud: HUD header, progress bar, layer nav and poster. @see src/sections/Hud.astro, src/sections/Hero.astro, docs/DESIGN.md (HUD and UI style) */
+/* @module styles/hud: HUD header, progress bar, layer nav. @see src/sections/Hud.astro, src/sections/Hero.astro, docs/DESIGN.md (HUD and UI style) */
 
 .hud {
   position: sticky;
@@ -198,17 +198,6 @@ html[data-theme='dark'] .theme-toggle .icon-moon {
   color: var(--ink-soft);
   font-variant-numeric: tabular-nums;
   min-inline-size: 1.6ch;
-}
-
-/* Poster: static stand-in until the canvas is ready */
-.poster {
-  position: absolute;
-  inset: 0;
-  width: 100%;
-  height: 100%;
-  object-fit: contain;
-  pointer-events: none;
-  z-index: 1;
 }
 
 /* These dock rules only apply when JS has not pinned the pills to the slabs

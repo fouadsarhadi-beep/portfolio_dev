@@ -262,7 +262,7 @@ Search this file before creating anything.
   uses: src/config/site, src/lib/i18n
 - Footer.astro: sections/Footer: compact footer with name, note, top link. @see docs/DESIGN.md (Sections)
   uses: src/config/site, src/lib/i18n
-- Hero.astro: sections/Hero: tall scroll stage, sticky canvas mount, poster, layer nav, hero copy, no-JS fallback. @see docs/MOTION.md, src/styles/hud.css, src/styles/sections.css
+- Hero.astro: sections/Hero: tall scroll stage, sticky canvas mount, layer nav, hero copy, no-JS fallback. @see docs/MOTION.md, src/styles/hud.css, src/styles/sections.css
   uses: src/config/layers, src/lib/i18n
 - Hud.astro: sections/Hud: sticky header with name, role, nav links, availability, progress bar. @see src/styles/hud.css, docs/DESIGN.md (HUD and UI style)
   uses: src/config/site, src/config/layers, src/lib/i18n, src/lib/bus, src/ui/theme

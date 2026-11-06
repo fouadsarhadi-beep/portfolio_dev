@@ -21,13 +21,13 @@ function hasWebGL(): boolean {
   return Boolean(c.getContext('webgl2') || c.getContext('webgl'));
 }
 
-/** Keep the poster and the DOM content; un-hide the fallback cards. */
+/** Keep the DOM content; un-hide the fallback cards. */
 function fallback(reason: string): void {
   if (!warned) {
     warned = true;
-    console.warn(`[scene] ${reason} Showing the poster and static content instead.`);
+    console.warn(`[scene] ${reason} Showing the static content instead.`);
   }
-  // Keep html.js so the poster stays visible (T11 fallback); un-hide the cards.
+  // Keep html.js so the fallback cards show (T11); un-hide them.
   document.documentElement.classList.add('no-webgl');
 }
 
@@ -172,8 +172,6 @@ export async function boot(): Promise<void> {
 
 function markReady(mount: HTMLElement): void {
   document.documentElement.setAttribute('data-scene-ready', 'true');
-  const poster = document.querySelector<HTMLElement>('.poster');
-  if (poster) poster.style.opacity = '0'; // CSS fades it out; it stays non-interactive
   mount.setAttribute('data-live', 'true');
 }
 

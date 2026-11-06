@@ -59,7 +59,7 @@ Scroll and input
 Performance
 - Cap device pixel ratio at 1.75. Reuse geometries and materials. Use InstancedMesh for repeats.
 - Shadow map 2048 on desktop, 1024 on mobile. Pause rendering when the stage is offscreen or the tab is hidden.
-- Load Three.js with a dynamic import after first paint. Show a static poster until the canvas is ready.
+- Load Three.js with a dynamic import after first paint. The static poster is removed (user review 2026-11-06: the screenshot carried the previous version's header and copy); the stage holds the plain background until the canvas fades in, and the DOM cards carry no-WebGL.
 Accessibility
 - Visible focus rings. Every layer has a real button in the DOM layer-nav. Escape closes. Honor prefers-reduced-motion. All content reachable with JavaScript off.
 Copy

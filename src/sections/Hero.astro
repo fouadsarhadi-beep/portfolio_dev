@@ -1,5 +1,5 @@
 ---
-/** @module sections/Hero: tall scroll stage, sticky canvas mount, poster, layer nav, hero copy, no-JS fallback. @see docs/MOTION.md, src/styles/hud.css, src/styles/sections.css */
+/** @module sections/Hero: tall scroll stage, sticky canvas mount, layer nav, hero copy, no-JS fallback. @see docs/MOTION.md, src/styles/hud.css, src/styles/sections.css */
 import { LAYERS } from '@/config/layers';
 import { t } from '@/lib/i18n';
 ---
@@ -7,7 +7,6 @@ import { t } from '@/lib/i18n';
 <section id="stack" class="stage">
   <div class="stage-sticky">
     <div id="canvas-mount"></div>
-    <img class="poster" src="/poster.png" alt="" width="1280" height="800" loading="eager" />
     <ul class="layer-nav">
       {LAYERS.map((l) => (
         <li>
