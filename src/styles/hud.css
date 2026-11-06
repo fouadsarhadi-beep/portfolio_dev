@@ -319,7 +319,7 @@ html[data-theme='dark'] .theme-toggle .icon-moon {
   z-index: 8;
   display: grid;
   grid-template-columns: 45fr 55fr;
-  grid-template-rows: minmax(0, 1fr) auto;
+  grid-template-rows: minmax(0, 1fr);
   gap: clamp(12px, 2vw, 26px);
   padding: clamp(16px, 2.4vw, 34px);
   pointer-events: none;
@@ -361,6 +361,8 @@ html[data-theme='dark'] .theme-toggle .icon-moon {
   max-inline-size: 100%;
   max-block-size: 100%;
   overflow-y: auto;
+  overscroll-behavior: contain;
+  scrollbar-gutter: stable;
   pointer-events: auto;
   background: var(--surface);
   border: 1px solid var(--line);
@@ -473,10 +475,11 @@ html[data-theme='dark'] .theme-toggle .icon-moon {
   color: var(--ink-soft);
 }
 
-/* Sample works: their own block under the card, in the same right column. */
+/* Sample works: inside the card, under the explanatory text. */
 .dv-samples {
-  grid-column: 2;
-  grid-row: 2;
+  margin-block-start: 22px;
+  padding-block-start: 16px;
+  border-block-start: 1px solid var(--line);
   pointer-events: auto;
 }
 
@@ -488,48 +491,48 @@ html[data-theme='dark'] .theme-toggle .icon-moon {
 .dv-sample-row {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: 10px;
+  gap: 8px;
 }
 
-/* A work tile: slightly wide rectangle, glyph over title, Windows-tile read. */
+/* A work tile: small and slightly wide, glyph over title, Windows-tile read. */
 .dv-sample {
   display: flex;
   flex-direction: column;
-  gap: 7px;
-  aspect-ratio: 4 / 3;
-  padding: 10px 11px;
+  gap: 5px;
+  aspect-ratio: 16 / 10;
+  padding: 8px 9px;
   background: var(--surface);
   border: 1px solid var(--line);
-  border-radius: 10px;
+  border-radius: 9px;
   overflow: hidden;
 }
 
 .dv-sample-icon {
   display: grid;
   place-items: center;
-  inline-size: 32px;
-  block-size: 32px;
-  border-radius: 8px;
+  inline-size: 26px;
+  block-size: 26px;
+  border-radius: 7px;
   color: var(--layer-c, var(--ink));
   background: color-mix(in srgb, var(--layer-c, var(--ink)) 16%, var(--surface));
 }
 
 .dv-sample-icon svg {
-  inline-size: 19px;
-  block-size: 19px;
+  inline-size: 15px;
+  block-size: 15px;
 }
 
 .dv-sample h4 {
   font-family: var(--font-display);
   font-weight: 600;
   font-size: var(--fs-12);
-  line-height: 1.25;
+  line-height: 1.2;
 }
 
 .dv-sample p {
   margin: 0;
   font-size: 11px;
-  line-height: 1.4;
+  line-height: 1.35;
   color: var(--ink-soft);
   display: -webkit-box;
   -webkit-line-clamp: 2;

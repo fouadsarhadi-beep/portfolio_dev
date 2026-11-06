@@ -44,16 +44,16 @@ function buildPanel(panel: HTMLElement): void {
       <ul class="dv-caps" data-dv-caps></ul>
       <h3 class="dv-heading">${t('detail.toolkitHeading')}</h3>
       <ul class="dv-tools" data-dv-toolkit></ul>
-    </div>
-    <div class="dv-samples">
-      <h3 class="dv-heading dv-samples-head">${t('detail.samplesHeading')}</h3>
-      <div class="dv-sample-row" data-dv-samples></div>
-      <div class="dv-pager" data-dv-pager hidden>
-        <button type="button" data-dv-prev aria-label="${t('detail.samplesPrev')}">&#8592;</button>
-        <input type="range" min="0" max="0" step="1" value="0" aria-label="${t('detail.samplesPage')}" />
-        <span class="dv-pager-count" aria-hidden="true"></span>
-        <button type="button" data-dv-next aria-label="${t('detail.samplesNext')}">&#8594;</button>
-      </div>
+      <section class="dv-samples">
+        <h3 class="dv-heading dv-samples-head">${t('detail.samplesHeading')}</h3>
+        <div class="dv-sample-row" data-dv-samples></div>
+        <div class="dv-pager" data-dv-pager hidden>
+          <button type="button" data-dv-prev aria-label="${t('detail.samplesPrev')}">&#8592;</button>
+          <input type="range" min="0" max="0" step="1" value="0" aria-label="${t('detail.samplesPage')}" />
+          <span class="dv-pager-count" aria-hidden="true"></span>
+          <button type="button" data-dv-next aria-label="${t('detail.samplesNext')}">&#8594;</button>
+        </div>
+      </section>
     </div>`;
   panel.querySelector('[data-dv-back]')?.addEventListener('click', () => close());
   samplesView = createSamplesView(panel);
@@ -129,7 +129,7 @@ function close(opts: { fromPop?: boolean; quick?: boolean } = {}): void {
 
   // The card leaves first; the tower fades back in underneath it.
   const panel = dialog.panel;
-  const targets = [...panel.querySelectorAll<HTMLElement>('.dv-card, .dv-samples')];
+  const targets = [...panel.querySelectorAll<HTMLElement>('.dv-card')];
   gsap.to(targets, {
     opacity: 0,
     duration: prefersReducedMotion() ? 0.12 : opts.quick ? 0.14 : 0.24,
