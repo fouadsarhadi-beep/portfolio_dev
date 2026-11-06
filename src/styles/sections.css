@@ -601,3 +601,114 @@ html:not(.js) .layer-nav {
     gap: 8px;
   }
 }
+
+/* --- Side guides either side of the tower (sections/Hero.astro) ---
+   The tower is narrow and centred, so the margins carry the explanation: what
+   the floors are on the left, which floor you are on on the right. */
+.stage-guide {
+  position: absolute;
+  top: clamp(96px, 16vh, 190px);
+  z-index: 3;
+  max-inline-size: 16rem;
+  pointer-events: none;
+  transition: opacity 0.25s ease;
+}
+
+.stage-guide--left {
+  inset-inline-start: clamp(16px, 5vw, 56px);
+}
+
+.stage-guide--right {
+  inset-inline-end: clamp(16px, 5vw, 56px);
+  text-align: end;
+}
+
+/* They belong to the tower, so they leave when a floor expands. */
+.stage-sticky[data-detail='true'] .stage-guide {
+  opacity: 0;
+}
+
+.sg-kicker {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: var(--tracking-wide);
+  text-transform: uppercase;
+  color: var(--ink-soft);
+}
+
+.sg-dot {
+  inline-size: 6px;
+  block-size: 6px;
+  border-radius: 50%;
+  background: var(--c-butter);
+}
+
+.sg-line {
+  margin-block-start: 8px;
+  max-inline-size: 22ch;
+  font-size: var(--fs-14);
+  line-height: 1.45;
+  color: var(--ink);
+}
+
+.sg-hint {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-block-start: 10px;
+  padding-block-start: 10px;
+  border-block-start: 1px solid var(--line);
+  font-size: var(--fs-12);
+  font-weight: 600;
+  color: var(--ink-soft);
+}
+
+.sg-arrow {
+  color: var(--ink);
+}
+
+.sg-count {
+  display: flex;
+  align-items: baseline;
+  gap: 6px;
+  justify-content: flex-end;
+  font-family: var(--font-display);
+  font-size: var(--fs-20);
+  font-weight: 650;
+  font-variant-numeric: tabular-nums;
+  letter-spacing: var(--tracking-tight);
+}
+
+.sg-of {
+  font-size: var(--fs-12);
+  font-weight: 600;
+  letter-spacing: 0;
+  color: var(--ink-soft);
+}
+
+.sg-title {
+  margin-block-start: 2px;
+  font-family: var(--font-display);
+  font-size: var(--fs-16);
+  font-weight: 650;
+  letter-spacing: var(--tracking-tight);
+}
+
+.sg-short {
+  margin-block-start: 6px;
+  margin-inline-start: auto;
+  max-inline-size: 26ch;
+  font-size: var(--fs-12);
+  line-height: 1.45;
+  color: var(--ink-soft);
+}
+
+/* Narrow viewports have no room for the guides without crowding the tower. */
+@media (max-width: 1100px) {
+  .stage-guide {
+    display: none;
+  }
+}

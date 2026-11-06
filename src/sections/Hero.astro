@@ -4,6 +4,25 @@ import { LAYERS } from '@/config/layers';
 import { t } from '@/lib/i18n';
 ---
 
+<script>
+  import { bus } from '@/lib/bus';
+  import { LAYERS } from '@/config/layers';
+
+  const count = document.querySelector<HTMLElement>('[data-guide-count]');
+  const title = document.querySelector<HTMLElement>('[data-guide-title]');
+  const short = document.querySelector<HTMLElement>('[data-guide-short]');
+
+  // The right guide names the floor the scroll is on: it is the caption for the
+  // tower, and the reason the empty space either side of it earns its keep.
+  bus.on('step:change', ({ step }) => {
+    const layer = LAYERS[Math.min(step, LAYERS.length - 1)];
+    if (!layer) return;
+    if (count) count.textContent = layer.number;
+    if (title) title.textContent = layer.title;
+    if (short) short.textContent = layer.short;
+  });
+</script>
+
 <section id="stack" class="stage">
   <div class="stage-sticky">
     <div id="canvas-mount"></div>
@@ -27,6 +46,16 @@ import { t } from '@/lib/i18n';
       <p class="sub">{t('hero.sub')}</p>
       <p class="hint">{t('hero.hint')}</p>
     </div>
+    <aside class="stage-guide stage-guide--left">
+      <p class="sg-kicker"><span class="sg-dot" aria-hidden="true"></span>{t('guide.kicker')}</p>
+      <p class="sg-line">{t('guide.line')}</p>
+      <p class="sg-hint"><span class="sg-arrow" aria-hidden="true">&#8594;</span>{t('guide.hint')}</p>
+    </aside>
+    <aside class="stage-guide stage-guide--right" aria-live="polite">
+      <p class="sg-count"><span data-guide-count>{LAYERS[0].number}</span><span class="sg-of">/ {String(LAYERS.length).padStart(2, '0')}</span></p>
+      <p class="sg-title" data-guide-title>{LAYERS[0].title}</p>
+      <p class="sg-short" data-guide-short>{LAYERS[0].short}</p>
+    </aside>
   </div>
   <div class="stack-fallback">
     {LAYERS.map((l) => (

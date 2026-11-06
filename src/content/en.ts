@@ -12,6 +12,11 @@ export const en = {
   ladder: {
     label: 'Floors',
   },
+  guide: {
+    kicker: 'Floors 01 to 06',
+    line: 'Each floor is one part of the job, stacked by craft.',
+    hint: 'Click a floor to read its samples',
+  },
   hero: {
     h1: 'I build websites from the server up to the sentence.',
     sub: 'Alex Morgan is a web generalist. Scroll to take the stack apart and see each layer.',
