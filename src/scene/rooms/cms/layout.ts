@@ -75,17 +75,11 @@ export function buildLayout(ctx: RoomContext, room: THREE.Group): CmsHandles {
   keyboard.position.set(-0.55, 0.815, -1.62);
   room.add(keyboard);
 
-  const mug = p.mug(ctx, {});
-  mug.position.set(0.25, 0.8, -1.7);
-  room.add(mug);
-
-  const lamp = p.lamp(ctx, {});
-  lamp.position.set(-2.25, 0, -2.2);
-  room.add(lamp);
-
-  const plant = p.plant(ctx, {});
-  plant.position.set(2.3, 0, -2.3);
-  room.add(plant);
+  // Content blocks are the CMS icon; the mug, lamp and plant were furniture.
+  const cards = p.cardGrid(ctx, {});
+  cards.position.set(2.05, 0.82, -1.45);
+  cards.rotation.y = -0.35;
+  room.add(cards);
 
   const shelf = p.shelf(ctx, { books: 18 });
   shelf.position.set(-2.42, 0, 1.1);

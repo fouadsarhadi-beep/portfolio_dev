@@ -55,14 +55,8 @@ export function buildLayout(ctx: RoomContext, room: THREE.Group): void {
   calendar.rotation.y = Math.PI / 2;
   room.add(calendar);
 
-  const lamp = p.lamp(ctx, {});
-  lamp.position.set(-2.25, 0, -2.2);
-  room.add(lamp);
-
-  const plant = p.plant(ctx, {});
-  plant.position.set(2.3, 0, -2.3);
-  room.add(plant);
-
+  // The calendar, corkboard, shelf and paper plane carry this room; a lamp and a
+  // plant only added the same generic office furniture as every other floor.
   room.add(makePaperPlane());
 }
 

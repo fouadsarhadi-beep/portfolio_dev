@@ -91,8 +91,7 @@ export function buildLayout(ctx: RoomContext, room: THREE.Group): WddHandles {
   const chipFan = p.chipFan(ctx, {});
   chipFan.position.set(2.25, 0.82, 1.3);
   room.add(chipFan);
-  const plant = p.plant(ctx, {});
-  plant.position.set(2.3, 0, -2.3);
-  room.add(plant);
+  // No plant here either: the drafting desk, the easel, the monitors and the
+  // chip fan already say "design and front-end".
   return { editorTex, drawEditor, easelTex, drawStroke, ledStrip, duck };
 }

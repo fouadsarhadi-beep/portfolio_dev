@@ -66,9 +66,8 @@ export function buildLayout(ctx: RoomContext, room: THREE.Group): TranslationHan
   globe.position.set(1.95, 0, -2.0);
   room.add(globe);
   room.add(makeDictStack(ctx, -2.15, -0.9));
-  const plant = p.plant(ctx, {});
-  plant.position.set(2.3, 0, -2.3);
-  room.add(plant);
+  // No plant: the globe, the dictionary stack and the two speech bubbles are the
+  // room's icons, and one more leafy shape made them harder to read.
   // Two speech-bubble signs on the -z wall; they pop in turn.
   const bubbles: THREE.Object3D[] = [];
   [[-0.9, 1.25, -0.9], [0.4, 1.35, 0.8]].forEach(([x, y, rz], i) => {

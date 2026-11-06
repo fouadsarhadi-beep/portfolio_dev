@@ -28,6 +28,11 @@ export function buildLayout(ctx: RoomContext, room: THREE.Group): SeoHandles {
   desk.position.set(-0.7, 0, -1.85);
   room.add(desk);
 
+  // A ranking gauge on the desk: the room's plainest "this is SEO" icon.
+  const gauge = p.gauge(ctx, {});
+  gauge.position.set(0.62, 0.82, -1.72);
+  room.add(gauge);
+
   // Laptop drawing a search-results panel.
   const laptop = p.laptop(ctx, {
     draw: (c: CanvasRenderingContext2D, w: number, h: number) => {
