@@ -352,7 +352,13 @@ html[data-theme='dark'] .theme-toggle .icon-moon {
 .dv-card {
   grid-column: 2;
   grid-row: 1;
-  align-self: center;
+  /* A tile, not a banner: square, as tall as its row allows, centred in the
+     column (user review 2026-11-06). max-inline-size keeps it inside the
+     column on tall, narrow viewports. */
+  align-self: stretch;
+  justify-self: center;
+  aspect-ratio: 1 / 1;
+  max-inline-size: 100%;
   max-block-size: 100%;
   overflow-y: auto;
   pointer-events: auto;
@@ -467,9 +473,9 @@ html[data-theme='dark'] .theme-toggle .icon-moon {
   color: var(--ink-soft);
 }
 
-/* Compact work samples: secondary to the floor and the card. */
+/* Sample works: their own block under the card, in the same right column. */
 .dv-samples {
-  grid-column: 1 / -1;
+  grid-column: 2;
   grid-row: 2;
   pointer-events: auto;
 }
@@ -478,47 +484,100 @@ html[data-theme='dark'] .theme-toggle .icon-moon {
   margin-block: 0 8px;
 }
 
+/* Three across, nine at most per page (detail.ts PAGE). */
 .dv-sample-row {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
+  grid-template-columns: repeat(3, minmax(0, 1fr));
   gap: 10px;
 }
 
+/* A work tile: slightly wide rectangle, glyph over title, Windows-tile read. */
 .dv-sample {
-  padding: 11px 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+  aspect-ratio: 4 / 3;
+  padding: 10px 11px;
   background: var(--surface);
   border: 1px solid var(--line);
   border-radius: 10px;
+  overflow: hidden;
+}
+
+.dv-sample-icon {
+  display: grid;
+  place-items: center;
+  inline-size: 32px;
+  block-size: 32px;
+  border-radius: 8px;
+  color: var(--layer-c, var(--ink));
+  background: color-mix(in srgb, var(--layer-c, var(--ink)) 16%, var(--surface));
+}
+
+.dv-sample-icon svg {
+  inline-size: 19px;
+  block-size: 19px;
 }
 
 .dv-sample h4 {
   font-family: var(--font-display);
   font-weight: 600;
-  font-size: var(--fs-14);
+  font-size: var(--fs-12);
+  line-height: 1.25;
 }
 
 .dv-sample p {
-  margin-block: 3px 7px;
+  margin: 0;
+  font-size: 11px;
+  line-height: 1.4;
+  color: var(--ink-soft);
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+/* Pager: only rendered when a floor has more than one page of samples. */
+.dv-pager {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-block-start: 10px;
+}
+
+/* Author styles beat the UA sheet, so [hidden] needs saying out loud. */
+.dv-pager[hidden] {
+  display: none;
+}
+
+.dv-pager input[type='range'] {
+  flex: 1;
+  accent-color: var(--layer-c, var(--ink));
+  pointer-events: auto;
+}
+
+.dv-pager-count {
   font-size: var(--fs-12);
-  line-height: 1.45;
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
   color: var(--ink-soft);
 }
 
-.dv-tags {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 0 10px;
-}
-
-.dv-tags li {
-  font-size: 11px;
+.dv-pager button {
+  padding: 3px 9px;
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-pill);
+  font: inherit;
+  font-size: var(--fs-12);
   font-weight: 600;
   color: var(--ink-soft);
+  cursor: pointer;
 }
 
-.dv-tags li + li::before {
-  content: '/ ';
-  opacity: 0.6;
+.dv-pager button:disabled {
+  opacity: 0.45;
+  cursor: default;
 }
 
 /* Mobile: a deliberate vertical composition, not a squeezed 50/50:
@@ -537,6 +596,7 @@ html[data-theme='dark'] .theme-toggle .icon-moon {
   .dv-card {
     max-block-size: none;
     overflow: visible;
+    aspect-ratio: auto;
   }
 
   .dv-caps {
@@ -548,7 +608,7 @@ html[data-theme='dark'] .theme-toggle .icon-moon {
   }
 
   .dv-sample-row {
-    grid-template-columns: 1fr;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 }
 

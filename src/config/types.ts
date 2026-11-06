@@ -6,7 +6,11 @@ export type LayerId = string;
 
 export interface Vec3 { x: number; y: number; z: number }
 
-export interface Sample { title: string; blurb: string; tags: string[]; href?: string }
+/**
+ * A work sample. `icon` names a glyph in src/config/sample-icons.ts; without it
+ * the tile falls back to the layer icon. `href` is unused for now.
+ */
+export interface Sample { title: string; blurb: string; tags: string[]; href?: string; icon?: string }
 
 export interface LayerConfig {
   id: string; number: string; title: string; short: string; intro: string;

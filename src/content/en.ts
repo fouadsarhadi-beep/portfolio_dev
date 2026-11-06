@@ -36,6 +36,9 @@ export const en = {
     introHeading: 'Intro',
     capabilitiesHeading: 'What I do',
     samplesHeading: 'Sample work',
+    samplesPage: 'Sample work page',
+    samplesPrev: 'Previous samples',
+    samplesNext: 'More samples',
     toolkitHeading: 'Toolkit',
   },
   hud: {

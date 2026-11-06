@@ -1,13 +1,15 @@
-/** @module ui/detail: expanded floor view: card on the right half, compact sample strip beneath. @see docs/MOTION.md (Detail view), docs/WIRING.md (Routes), src/ui/dialog.ts, src/scene/focus.ts */
+/** @module ui/detail: expanded floor view: square text card on the right, work tiles beneath. @see docs/MOTION.md (Detail view), docs/WIRING.md (Routes), src/ui/detail-samples.ts, src/ui/dialog.ts, src/scene/focus.ts */
 import { gsap } from 'gsap';
 import { bus } from '@/lib/bus';
 import { LAYERS } from '@/config/layers';
 import { focusLayer, releaseFocus } from '@/scene/api';
 import { prefersReducedMotion } from '@/lib/reduced-motion';
 import { t } from '@/lib/i18n';
+import { createSamplesView, type SamplesView } from './detail-samples';
 import { createDialog, type DialogHandle } from './dialog';
 
 let dialog: DialogHandle | null = null;
+let samplesView: SamplesView | null = null;
 let isOpen = false;
 let currentId: string | null = null;
 let savedScrollY = 0;
@@ -46,8 +48,15 @@ function buildPanel(panel: HTMLElement): void {
     <div class="dv-samples">
       <h3 class="dv-heading dv-samples-head">${t('detail.samplesHeading')}</h3>
       <div class="dv-sample-row" data-dv-samples></div>
+      <div class="dv-pager" data-dv-pager hidden>
+        <button type="button" data-dv-prev aria-label="${t('detail.samplesPrev')}">&#8592;</button>
+        <input type="range" min="0" max="0" step="1" value="0" aria-label="${t('detail.samplesPage')}" />
+        <span class="dv-pager-count" aria-hidden="true"></span>
+        <button type="button" data-dv-next aria-label="${t('detail.samplesNext')}">&#8594;</button>
+      </div>
     </div>`;
   panel.querySelector('[data-dv-back]')?.addEventListener('click', () => close());
+  samplesView = createSamplesView(panel);
 }
 
 function fillPanel(id: string): void {
@@ -63,11 +72,8 @@ function fillPanel(id: string): void {
     .map((c) => `<li>${c}</li>`).join('');
   (panel.querySelector('[data-dv-toolkit]') as HTMLElement).innerHTML = layer.toolkit
     .map((tool) => `<li>${tool}</li>`).join('');
-  // Compact sample cards under the main composition; no links, no invented claims.
-  (panel.querySelector('[data-dv-samples]') as HTMLElement).innerHTML = layer.samples
-    .map((s) => `<article class="dv-sample"><h4>${s.title}</h4><p>${s.blurb}</p>
-      <ul class="dv-tags">${s.tags.map((tag) => `<li>${tag}</li>`).join('')}</ul></article>`)
-    .join('');
+  // Work tiles: the view owns the grid, the pager and the page fetches.
+  samplesView?.show(layer);
 }
 
 function open(id: string): void {

@@ -6,12 +6,16 @@ Search this file before creating anything.
 - main.ts: main: page entry; boots the scene, then wires the UI layer to it. @see src/scene/boot.ts, src/ui/preview.ts, src/ui/detail.ts, src/ui/keyboard.ts
 
 ## src/config/
+- detail.ts: config/detail: shared constants for the expanded floor view. @see src/ui/detail.ts, src/ui/detail-samples.ts, src/pages/work/[id]/samples/[page].json.ts
+  exports: SAMPLE_PAGE
 - layers.ts: config/layers: the six layer configs in locked top-to-bottom order. @see docs/COPY.md, src/config/types.ts
   exports: LAYERS
   uses: src/config/types
 - palette.ts: config/palette: the only place hex colors may live, plus lighten/darken and the theme palettes. @see docs/DESIGN.md (Dual theme), src/config/theme.ts
   exports: PALETTE, PaletteName, lighten, darken, LIGHT, DARK
   uses: src/config/theme
+- sample-icons.ts: config/sample-icons: stroked 24x24 glyphs for the sample work tiles. @see src/config/layers.ts, src/ui/detail-samples.ts, docs/DESIGN.md (Detail view)
+  exports: SAMPLE_ICONS
 - site.ts: config/site: person, links and availability in one place. @see docs/COPY.md, src/content/en.ts
   exports: SITE
 - theme.ts: config/theme: the light and dark palettes as semantic roles, shared by CSS and the scene. @see docs/DESIGN.md (Dual theme), src/styles/tokens.css
@@ -53,6 +57,11 @@ Search this file before creating anything.
 - [layer].astro: pages/work/[layer]: static page per layer; the SEO page and no-JS detail. @see docs/WIRING.md (Routes), src/config/layers.ts
   exports: getStaticPaths
   uses: src/layouts/Base.astro, src/sections/Hud.astro, src/sections/Footer.astro, src/config/layers, src/config/site, src/lib/i18n, src/config/types
+
+## src/pages/work/[id]/samples/
+- [page].json.ts: pages/work/[id]/samples/[page].json: static sample pages for the detail pager. @see src/ui/detail-samples.ts, src/config/detail.ts, src/config/layers.ts
+  exports: getStaticPaths, GET
+  uses: src/config/detail, src/config/layers, src/config/types
 
 ## src/scene/
 - api.ts: scene/api: the only door from UI into the scene. @see docs/WIRING.md, src/lib/bus.ts, src/scene/stack/pick.ts
@@ -270,9 +279,12 @@ Search this file before creating anything.
   uses: src/config/layers, src/lib/i18n
 
 ## src/ui/
-- detail.ts: ui/detail: expanded floor view: card on the right half, compact sample strip beneath. @see docs/MOTION.md (Detail view), docs/WIRING.md (Routes), src/ui/dialog.ts, src/scene/focus.ts
+- detail-samples.ts: ui/detail-samples: work tiles for the expanded view: 3 across, 9 per page, slider pager. @see src/ui/detail.ts, src/config/detail.ts, src/config/sample-icons.ts, src/pages/work/[id]/samples/[page].json.ts
+  exports: SamplesView, createSamplesView
+  uses: src/config/detail, src/config/sample-icons, src/config/types
+- detail.ts: ui/detail: expanded floor view: square text card on the right, work tiles beneath. @see docs/MOTION.md (Detail view), docs/WIRING.md (Routes), src/ui/detail-samples.ts, src/ui/dialog.ts, src/scene/focus.ts
   exports: initDetail
-  uses: src/lib/bus, src/config/layers, src/scene/api, src/lib/reduced-motion, src/lib/i18n, src/ui/dialog
+  uses: src/lib/bus, src/config/layers, src/scene/api, src/lib/reduced-motion, src/lib/i18n, src/ui/detail-samples, src/ui/dialog
 - dialog.ts: ui/dialog: dialog semantics: aria, focus in and out, Tab trap, Escape. @see docs/MOTION.md (Detail view), src/ui/detail.ts
   exports: DialogHandle, createDialog
 - keyboard.ts: ui/keyboard: layer-nav focus, ArrowUp/ArrowDown selection, Enter via native click, Escape. @see docs/MOTION.md (Pick, hover, touch), src/lib/bus.ts
