@@ -56,8 +56,16 @@ Search this file before creating anything.
   exports: TickFn, Ticker, ticker
 
 ## src/pages/
+- 404.astro: pages/404: not found: the six floors as an exit. @see src/layouts/Base.astro, src/config/layers.ts
+  uses: src/layouts/Base.astro, src/config/layers, src/lib/i18n
 - index.astro: pages/index: the one-page experience, sections in order. @see src/layouts/Base.astro, src/sections/
   uses: src/layouts/Base.astro, src/sections/Hud.astro, src/sections/Ladder.astro, src/sections/Hero.astro, src/sections/About.astro, src/sections/Toolkit.astro, src/sections/Contact.astro, src/sections/Footer.astro, src/config/site
+- robots.txt.ts: pages/robots.txt: crawl everything, point at the sitemap. @see src/pages/sitemap.xml.ts, src/config/site.ts
+  exports: GET
+  uses: src/config/site
+- sitemap.xml.ts: pages/sitemap.xml: one entry per route, generated from LAYERS. @see src/pages/robots.txt.ts, src/config/layers.ts, src/config/site.ts
+  exports: GET
+  uses: src/config/layers, src/config/site
 
 ## src/pages/work/
 - [layer].astro: pages/work/[layer]: static page per layer; the SEO page and no-JS detail. @see docs/WIRING.md (Routes), src/config/layers.ts

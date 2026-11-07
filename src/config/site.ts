@@ -5,6 +5,8 @@ export const SITE = {
   name: 'Alex Morgan',
   role: 'Web Generalist',
   email: 'alex@example.com',
+  /** The deployed origin, used by robots.txt and sitemap.xml. Change on launch. */
+  url: 'https://example.com',
   available: true,
   socials: [
     { label: 'GitHub', href: 'https://github.com/alexmorgan' },
