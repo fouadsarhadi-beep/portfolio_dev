@@ -1,24 +1,27 @@
 # PROGRESS
 
-Current task: T31 (unify portfolio visual language)
+Current task: none. T28 to T37 are done and committed; the live visual, touch and reduced-motion pass sits with the user.
 
 ## Handoff note (max 8 lines, rewrite each session)
-Redesign batch T28-T32 complete: T28 8140bc1, T29 697c68b, T30 4345d8a, T31 a09f73c, T32 (see git log). All local, nothing pushed.
-Result: unified plaster/wood floating tower + contact shadow/under-glow, right-side hover card, detached floor in a 45/55 expanded composition (floor left, card right) with a sample strip, one page-wide surface system, responsive passes at 860/480 plus a measured HUD offset.
-Verified in-session: npm run check, npm run build, and T30 numeric probes (detach/fade/zoom/URL/focus/scroll, desktop + 390px geometry). Everything visual, touch and reduced-motion is left to the user's live pass.
+State: T28-T37 done. Nothing is pushed: origin/main still sits at 02b3517 and these tasks stack on top of it. The tree was dirty only because this file carried the pre-move path (the folder now lives at C:\Users\ASUS\Desktop\personal\homepage\GLM 5.3_2, outside OneDrive); that line is fixed and committed in T37.
+Landed after T32: detail view and document reader refinements (e1301c0..f79943c), the black-floor material fix (c8983d2), the interface batch (8df65c2..e41cf89: pixel dust, hold plus overview, layered surfaces, scroll ladder, side guides, one icon per room), and all twenty council ideas (928a2c6..a770a3b, nineteen commits because idea 1 was already in place).
+Verified in-session 2026-11-07: npm run check (0 errors, 2 warnings: focus.ts 271 and pick.ts 203 lines), npm run build (8 pages) and npm run smoke (26 of 26 checks over dist/).
+Result: unified plaster/wood floating tower with contact shadow and under-glow, right-side hover card, detached floor in a 45/55 expanded composition, one page-wide surface system, responsive passes at 860/480 with a measured HUD offset, plus the council layer (deep link, keys, 404, robots+sitemap, social cards, reader, print, Persian/RTL, favicons, smoke).
 Open questions for the user: taste on the new surface language; whether the 860px single-column expanded view should move to 900px; whether mobile pills should keep hugging the slabs.
 Gotchas: labels.ts pins pills absolutely (the CSS mobile dock is a no-scene fallback only); `--hud-h` is the bar minimum, never feed the measurement into it; number textures redraw on theme change.
-Next (postponed by the user): day/night theme redesign, explanatory onboarding popups.
+Next (postponed by the user): day/night theme redesign, explanatory onboarding popups. Before release: the user's live pass, then git push, then splitting focus.ts and pick.ts.
 
 ## How to run
-- Open a terminal in the portfolio-kit folder (the one with package.json): `cd "C:\Users\ASUS\OneDrive - sternx.de\Desktop\personal\homepage\GLM 5.3_2\portfolio-kit"`
+- Open a terminal in the portfolio-kit folder (the one with package.json): `cd "C:\Users\ASUS\Desktop\personal\homepage\GLM 5.3_2\portfolio-kit"`
 - `npm install` (once, or after package.json changes)
 - `npm run dev` — serves http://localhost:4321/ with live reload
 - `npm run build` — static build into dist/; `npm run preview` — serves the build
 - `npm run check` — TypeScript strict + repo guardrails (also regenerates docs/MAP.md)
+- `npm run smoke` — 26 checks over dist/ (run `npm run build` first); `npm run map` — regenerates docs/MAP.md only
+- The folder left OneDrive on 2026-11-07; any `OneDrive - sternx.de` path in older notes is stale.
 
 ## Needs (changes requested outside a task's files)
-- Batch after the material fixes (user review 2026-11-06), one commit each: pixel dust on the two front faces; the last floor holds and the camera pulls back over three extra steps (LAYER_STEPS 5 + OVERVIEW_STEPS 3 = the 8 in tokens.css); a layered surface system (gradient cards, inset highlight, glass header, drawn grid, DM Sans display face, tighter tracking); a scroll ladder replaces the header step indicator; side guides explain the floors and caption the current one; rooms drop generic furniture and foreground one skill icon each; then all twenty council ideas (council_ideas.txt in the parent folder) - deep link, keyboard shortcuts, 404, robots+sitemap, reader progress, social cards, copy email, reduced data, skip link, structured data, live region, slow-connection shimmer, print styles, reading copy, line-cap warning, reduced-motion overview, Persian scaffold, favicons, smoke suite.
+- Batch after the material fixes (user review 2026-11-06): delivered, one commit each, in T35-T36 (see the table). Pixel dust on the two front faces (8df65c2); the last floor holds and the camera pulls back over three extra steps, LAYER_STEPS 5 + OVERVIEW_STEPS 3 = the 8 in tokens.css (62f9cd7); a layered surface system with gradient cards, inset highlight, glass header, drawn grid, DM Sans display face and tighter tracking (0e4ae3c); a scroll ladder replacing the header step indicator (b02c0f3); side guides that explain the floors and caption the current one (431cc76); rooms that drop generic furniture and foreground one skill icon each (e41cf89); then all twenty council ideas from council_ideas.txt (parent folder, outside the repo) across 928a2c6..a770a3b. Nothing in this batch is left to build; only the user's live pass remains.
 - Guardrails now warn (not fail) when a source file passes 200 lines: focus.ts (271) and pick.ts (203) are the known offenders, both worth a split.
 - Two material bugs behind the "black floor" report (user review 2026-11-06), independent of each other: (1) `pick.ts` snapshotted each slab body color at boot and rewrote it on every hover, so a theme switch was undone by the next pointer move, leaving all six floors dark in light mode. It now derives the color from the theme role (slab.ts stores it in `userData.role`, scene-theme.ts exposes `currentTheme()`) and repaints on `theme:change` as well. (2) `focus.ts` forced `transparent = false` on every material it restored; the number engraving, icon decal and AO strips are canvas textures with transparent backgrounds, and alpha off renders those empty pixels black, so floors that had faded showed a black left face after the detail view closed (the clicked floor, which never faded, stayed correct). `focus.ts` now remembers build-time transparency and restores it.
 - Long-form documents (user review 2026-11-06): the reader now takes authored `html` bodies (headings, lists, emphasis, tables, code, rules) as well as short prose and sheet rows, so real samples can run to a few thousand words. `doc.css` gained the full long-form scale on site tokens plus a 68ch reading measure. The long bodies live in the new `src/config/articles.ts` (documents.ts stays short; the reader resolves ARTICLES first). Two placeholders converted: content-1 is a 932-word article with 9 h2, 5 h3, 4 ol, 2 ul, a table, 2 blockquotes and a link; content-2 a structured 124-word note. The other 20 documents stay short until real samples land.
@@ -91,6 +94,16 @@ Next (postponed by the user): day/night theme redesign, explanatory onboarding p
   Shared surface system across HUD, pills, buttons, chips, About panels/diagram, Toolkit tiles (icon replaces swatch), Contact, footer, work pages: 1px hairlines, 14px radii, two soft shadow tokens, accent rule as the only per-floor color, neutral progress bar, no oversized numerals. Card: docs/tasks/T31-visual-language.md. |
 | T32 | Refine responsive layouts and complete QA (redesign batch) | done, code-verified; live pass by user |
   Camera/CSS breakpoint aligned at 860px, measured HUD height for anchor offsets, 480px small-phone pass, reduced-motion guard on the detail chrome fade. check + build pass; visual/touch/reduced-motion pass handed to the user (no automated screenshots this session). Card: docs/tasks/T32-responsive-qa.md. |
+| T33 | Detail view and document reader refinements | done, code-verified (e1301c0..f79943c) |
+  Square card with a 3-column tile grid and slider pager, one scrollable container with smaller tiles, twelve content samples so the pager and the per-page JSON fetch are visible, a text reader for pdf/doc/sheet samples, and authored long-form html bodies with a 68ch measure in `config/articles.ts`. Cards: docs/tasks/T30-separated-floor-detail.md plus the Needs notes above.
+| T34 | Black-floor material fix | done, code-verified (c8983d2) |
+  Hover repaint and fade restore no longer black out floor faces: `pick.ts` derives slab colour from the theme role, `focus.ts` remembers build-time transparency. Both bugs are described in Needs.
+| T35 | Interface batch from the user review | done, code-verified (8df65c2..e41cf89) |
+  Pixel dust on the two front faces, hold the last floor then pull back for the six-floor overview, layered surface system, scroll ladder, side guides, one skill icon per room.
+| T36 | Council round, all twenty ideas | done, code-verified (928a2c6..a770a3b) |
+  Idea 1 (system theme on first visit) was already in place and only verified. Then deep link, keyboard shortcuts, 404, robots+sitemap, reading progress, per-floor social cards, copy email, reduced data, skip link, structured data, live region, slow-connection shimmer, print styles, per-room reading copy, line-cap warning, reduced-motion overview, Persian dictionary with an RTL switch, theme-aware favicons, smoke suite. `npm run smoke` runs 26 checks over dist/.
+| T37 | Docs sync after the folder move | done (this commit) |
+  The run path in How to run no longer points at OneDrive, T33-T37 are recorded, and the handoff note is rewritten. check (0 errors, 2 warnings), build (8 pages) and smoke (26 of 26) re-run clean on 2026-11-07.
 
 ## Blocked
 (none)
@@ -99,3 +112,4 @@ Next (postponed by the user): day/night theme redesign, explanatory onboarding p
 - Focused-canvas pixels (WebGL context loss under swiftshader; logic verified numerically).
 - Landing squash/jolt/prop-punch pixels (single-frame effects under software rendering; rings verified, code implemented per docs/MOTION.md).
 - Whoosh wall-clock and trackpad/real-touch-drag on real hardware.
+- Council round visuals (social card render, print sheet, slow-connection shimmer, reading progress, RTL layout) are build- and smoke-verified only; the user's live pass covers them.
