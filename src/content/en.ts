@@ -3,6 +3,11 @@
 // All UI text lives here and is read through t() (locked decision).
 // Strings from docs/COPY.md are verbatim; headings and hints are placeholder copy.
 export const en = {
+  nf: {
+    title: 'This page is not here',
+    line: 'The stack is one page. Try a floor instead.',
+    home: 'Back to the stack',
+  },
   nav: {
     stack: 'Stack',
     toolkit: 'Toolkit',
