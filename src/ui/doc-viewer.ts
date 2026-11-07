@@ -44,6 +44,7 @@ function build(): void {
   backdrop.hidden = true;
   backdrop.innerHTML = `
     <section class="doc-view" role="dialog" aria-modal="true" aria-labelledby="doc-title">
+      <span class="doc-progress" data-doc-progress aria-hidden="true"></span>
       <header class="doc-head">
         <span class="doc-kind" data-doc-kind></span>
         <h3 class="doc-title" id="doc-title" data-doc-title></h3>
@@ -78,6 +79,20 @@ function build(): void {
       first.focus();
     }
   });
+
+  // Reading progress: a hairline that fills as the article is read.
+  const bodyEl = backdrop.querySelector<HTMLElement>('[data-doc-body]');
+  const bar = backdrop.querySelector<HTMLElement>('[data-doc-progress]');
+  bodyEl?.addEventListener(
+    'scroll',
+    () => {
+      if (!bar || !bodyEl) return;
+      const max = bodyEl.scrollHeight - bodyEl.clientHeight;
+      const k = max > 0 ? Math.min(1, Math.max(0, bodyEl.scrollTop / max)) : 0;
+      bar.style.inlineSize = `${(k * 100).toFixed(1)}%`;
+    },
+    { passive: true },
+  );
 }
 
 /** Opens the document for a sample. Returns false when nothing is attached. */
@@ -106,6 +121,11 @@ export function openDocument(key: string | undefined, fallbackTitle: string, fro
   restoreTo = from;
   isOpen = true;
   backdrop.hidden = false;
+  // Each document starts at the top, with the progress hairline empty.
+  const bodyEl = backdrop.querySelector<HTMLElement>('[data-doc-body]');
+  if (bodyEl) bodyEl.scrollTop = 0;
+  const progress = backdrop.querySelector<HTMLElement>('[data-doc-progress]');
+  if (progress) progress.style.inlineSize = '0%';
   const close = backdrop.querySelector<HTMLElement>('[data-doc-close]');
   close?.focus();
   if (!prefersReducedMotion()) {
