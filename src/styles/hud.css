@@ -280,7 +280,7 @@ html[data-theme='dark'] .theme-toggle .icon-moon {
   z-index: 6;
   inset-inline-end: var(--page-inset);
   top: clamp(96px, 24vh, 220px);
-  width: min(320px, calc(100vw - 32px));
+  width: min(320px, calc(100vw - 2 * var(--page-inset)));
   background: var(--surface-grad);
   border: 1px solid var(--line);
   border-radius: var(--radius-l);

@@ -87,10 +87,18 @@ html:not(.js) .layer-nav {
   background: radial-gradient(120% 90% at 50% 45%, transparent 55%, color-mix(in srgb, var(--ink) 9%, transparent) 100%);
 }
 
+/* The scene mounts into the middle cell of the stage grid, so the tower is
+   nested between the two text cells and its frustum is built from this box
+   (boot.ts observes it and calls resizeFrustum with its size). It spans all
+   three rows, so the tower's full height is available. */
 #canvas-mount {
-  position: absolute;
-  inset: 0;
+  grid-column: 2;
+  grid-row: 1 / -1;
+  position: relative;
   z-index: 2;
+  align-self: stretch;
+  block-size: 100%;
+  min-block-size: 0;
 }
 
 /* The canvas fades in after its first rendered frame (data-live from boot). */
@@ -104,14 +112,15 @@ html:not(.js) .layer-nav {
 }
 
 .hero-copy {
-  /* Bottom band of the stage grid (src/styles/layout.css). The copy is raised by
-     --hero-lift alone, so its place above the tower base needs no second offset.
-     START-side cell: the left edge is the shell's left edge, like every section. */
+  /* Bottom band of the stage grid (src/styles/layout.css), START-side cell: the
+     copy sits left of the tower and never crosses under it. The copy is raised by
+     --hero-lift alone, so its place above the tower base needs no second offset. */
   --hero-lift: 22svh;
-  grid-column: 1 / -1;
+  grid-column: 1;
   grid-row: 3;
   align-self: end;
-  margin-block-end: var(--hero-lift);
+  max-inline-size: 100%;
+  margin-block-end: calc(clamp(20px, 9vh, 72px) + var(--hero-lift));
   z-index: 3;
   pointer-events: none;
 }
@@ -124,15 +133,17 @@ html:not(.js) .layer-nav {
 }
 
 .hero-copy h1 {
-  font-size: clamp(var(--fs-28), 5vw, var(--fs-44));
-  max-width: 24ch;
+  /* Sized against the side cell, not the viewport: the cell is roughly a quarter
+     of the width, so 5vw would overflow it. */
+  font-size: clamp(var(--fs-28), 2.2vw, var(--fs-44));
+  max-inline-size: 100%;
 }
 
 .hero-copy .sub {
   margin-block-start: 10px;
   font-size: var(--fs-16);
   color: var(--ink-soft);
-  max-width: 46ch;
+  max-inline-size: min(34ch, 100%);
 }
 
 .hero-copy .hint {
@@ -612,8 +623,14 @@ html:not(.js) .layer-nav {
 .stage-guide {
   grid-row: 1;
   align-self: start;
+  /* The stage's top inset lives here now: layout.css keeps only the inline
+     padding, so the canvas in the middle cell spans the full stage height. */
+  margin-block-start: clamp(96px, 16vh, 190px);
+
   z-index: 3;
-  max-inline-size: 16rem;
+  /* The side cell is narrow by design (the middle cell holds the tower), so a
+     guide never asks for more than its own cell can give. */
+  max-inline-size: min(16rem, 100%);
   pointer-events: none;
   transition: opacity 0.25s ease;
 }

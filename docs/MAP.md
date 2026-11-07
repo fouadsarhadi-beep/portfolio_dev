@@ -95,11 +95,11 @@ Search this file before creating anything.
 - boot.ts: scene/boot: entry; dynamic-imports three after first paint, mounts the canvas or falls back. @see src/scene/loop.ts, src/main.ts, docs/WIRING.md
   exports: boot
   uses: src/config/types, src/config/theme, src/scene/stage
-- camera.ts: scene/camera: orthographic camera locked to the (1,1,1) isometric view, with damped follow and the framing-offset tween. @see docs/DESIGN.md (Camera), docs/MOTION.md (Camera), src/config/tuning.ts
-  exports: createCamera, applyFraming, resizeCamera, currentFrameOffset, tweenFraming, followCamera
-  uses: src/config/tuning
+- camera.ts: scene/camera: orthographic camera locked to the (1,1,1) isometric view, with damped follow, the framing-offset tween and the stage's sideways shift. @see docs/DESIGN.md (Camera), docs/MOTION.md (Camera), src/config/tuning.ts
+  exports: stageShift, createCamera, applyFraming, resizeCamera, currentFrameOffset, tweenFraming, tweenShift, setShiftDetached, followCamera
+  uses: src/config/tuning, src/scene/focus-pose
 - focus-pose.ts: scene/focus-pose: detail-view pose maths: the zoom, column shift and vertical bias that put one floor in the band's floor share. @see src/scene/focus.ts, src/config/layout.ts
-  exports: VIEW_LEFT, DetailPose, detailPose
+  exports: stageShiftPx, VIEW_LEFT, DetailPose, detailPose
   uses: src/config/tuning, src/config/layout
 - focus-shade.ts: scene/focus-shade: fades every floor except the expanded one, then takes the invisible floors out of the scene. @see src/scene/focus.ts, docs/MOTION.md (Detail view)
   exports: Shade, createShade

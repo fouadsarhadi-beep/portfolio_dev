@@ -1,10 +1,53 @@
-/** @module scene/camera: orthographic camera locked to the (1,1,1) isometric view, with damped follow and the framing-offset tween. @see docs/DESIGN.md (Camera), docs/MOTION.md (Camera), src/config/tuning.ts */
+/** @module scene/camera: orthographic camera locked to the (1,1,1) isometric view, with damped follow, the framing-offset tween and the stage's sideways shift. @see docs/DESIGN.md (Camera), docs/MOTION.md (Camera), src/config/tuning.ts */
 import * as THREE from 'three';
 import { gsap } from 'gsap';
 import { CAM_DIR, CAM_DISTANCE, CAM_VIEW_HEIGHT, CAM_DAMP_LAMBDA, CAM_FRAME_OFFSET_Y } from '@/config/tuning';
+import { stageShiftPx } from './focus-pose';
 
 const NEAR = 0.1;
 const FAR = 100;
+
+interface CameraData {
+  /** Framing offset in world units (the hero lift, or a value mid-tween). */
+  frameOffset?: number;
+  /** The stage's sideways shift in px: the tower sits at its cell's start edge
+   *  so the floor pills get the cell's leftover width on the end side. */
+  stageShiftPx?: number;
+  /** The shift actually applied: the stage's, or 0 while a floor is expanded. */
+  shiftPx?: number;
+  /** True while the detail view owns the shift (tweened to 0). */
+  shiftDetached?: boolean;
+  viewW?: number;
+  viewH?: number;
+  targetY?: number;
+}
+
+function data(camera: THREE.OrthographicCamera): CameraData {
+  return camera.userData as CameraData;
+}
+
+/** The shift in px a floor-expanded view must neutralise. */
+export function stageShift(camera: THREE.OrthographicCamera): number {
+  return data(camera).stageShiftPx ?? 0;
+}
+
+/** Rebuilds the frustum from the last known box, keeping both offsets. */
+function applyFrustum(camera: THREE.OrthographicCamera): void {
+  const d = data(camera);
+  const width = Math.max(d.viewW ?? 1, 1);
+  const height = Math.max(d.viewH ?? 1, 1);
+  const halfH = CAM_VIEW_HEIGHT / 2;
+  const halfW = (halfH * width) / height;
+  const offsetY = d.frameOffset ?? CAM_FRAME_OFFSET_Y;
+  // A px shift is this many world units at the current zoom-independent scale.
+  const dx = ((d.shiftPx ?? 0) * CAM_VIEW_HEIGHT) / height;
+  d.frameOffset = offsetY;
+  camera.left = -halfW + dx;
+  camera.right = halfW + dx;
+  camera.top = halfH - offsetY;
+  camera.bottom = -halfH - offsetY;
+  camera.updateProjectionMatrix();
+}
 
 export function createCamera(width: number, height: number): THREE.OrthographicCamera {
   const camera = new THREE.OrthographicCamera(-1, 1, 1, -1, NEAR, FAR);
@@ -22,28 +65,23 @@ export function createCamera(width: number, height: number): THREE.OrthographicC
  * rather than inherit it (src/scene/focus.ts).
  */
 export function applyFraming(camera: THREE.OrthographicCamera, offsetY: number): void {
-  const halfH = CAM_VIEW_HEIGHT / 2;
-  camera.userData.frameOffset = offsetY;
-  camera.top = halfH - offsetY;
-  camera.bottom = -halfH - offsetY;
-  camera.updateProjectionMatrix();
+  data(camera).frameOffset = offsetY;
+  applyFrustum(camera);
 }
 
 export function resizeCamera(camera: THREE.OrthographicCamera, width: number, height: number): void {
-  const halfH = CAM_VIEW_HEIGHT / 2;
-  const halfW = (halfH * Math.max(width, 1)) / Math.max(height, 1);
-  camera.left = -halfW;
-  camera.right = halfW;
-  // Re-apply whatever offset is current: the hero lift, or the value the detail
-  // view tweened to while it owns the framing.
-  const offset =
-    typeof camera.userData.frameOffset === 'number' ? camera.userData.frameOffset : CAM_FRAME_OFFSET_Y;
-  applyFraming(camera, offset);
+  const d = data(camera);
+  d.viewW = width;
+  d.viewH = height;
+  d.stageShiftPx = stageShiftPx(width, height);
+  // The stage shift follows the box, unless a floor owns the framing right now.
+  if (d.shiftDetached !== true) d.shiftPx = d.stageShiftPx;
+  applyFrustum(camera);
 }
 
 /** The framing offset currently applied: the hero lift, or a value mid-tween. */
 export function currentFrameOffset(camera: THREE.OrthographicCamera): number {
-  return typeof camera.userData.frameOffset === 'number' ? camera.userData.frameOffset : CAM_FRAME_OFFSET_Y;
+  return data(camera).frameOffset ?? CAM_FRAME_OFFSET_Y;
 }
 
 /** Eases the frustum framing offset to `to`; the scene stays put in view space. */
@@ -64,15 +102,52 @@ export function tweenFraming(
 }
 
 /**
+ * Eases the sideways shift to `to` px. The detail view calls this with 0 on open
+ * (so a floor is framed against the whole viewport, not the stage cell) and with
+ * the stage's own value on close. `done` runs once the shift has landed.
+ */
+export function tweenShift(
+  camera: THREE.OrthographicCamera,
+  to: number,
+  duration: number,
+  ease: string,
+  done?: () => void,
+): void {
+  const d = data(camera);
+  const proxy = { px: d.shiftPx ?? 0 };
+  gsap.to(proxy, {
+    px: to,
+    duration,
+    ease,
+    overwrite: true,
+    onUpdate: () => {
+      d.shiftPx = proxy.px;
+      applyFrustum(camera);
+    },
+    onComplete: () => {
+      d.shiftPx = to;
+      applyFrustum(camera);
+      done?.();
+    },
+  });
+}
+
+/** True while a floor owns the framing; the stage shift is frozen until it lands. */
+export function setShiftDetached(camera: THREE.OrthographicCamera, detached: boolean): void {
+  data(camera).shiftDetached = detached;
+}
+
+/**
  * Damped follow: the target Y eases toward wantY (lambda 6). Moves the camera
  * with the target and returns the current target Y. The caller adds the landing
  * jolt to the lookAt target only (docs/MOTION.md Camera).
  */
 export function followCamera(camera: THREE.OrthographicCamera, wantY: number, dt: number): number {
-  const cur = typeof camera.userData.targetY === 'number' ? camera.userData.targetY : wantY;
+  const cur = data(camera).targetY ?? wantY;
   const next = cur + (wantY - cur) * (1 - Math.exp(-CAM_DAMP_LAMBDA * Math.max(dt, 0)));
-  camera.userData.targetY = next;
+  data(camera).targetY = next;
   camera.position.set(CAM_DIR.x * CAM_DISTANCE, next + CAM_DIR.y * CAM_DISTANCE, CAM_DIR.z * CAM_DISTANCE);
   camera.updateMatrixWorld();
   return next;
 }
+

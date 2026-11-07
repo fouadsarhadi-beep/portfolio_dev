@@ -3,7 +3,7 @@ import { gsap } from 'gsap';
 import * as THREE from 'three';
 import type { Object3D, OrthographicCamera } from 'three';
 import { CAM_DIR, CAM_DISTANCE, CAM_FRAME_OFFSET_Y } from '@/config/tuning';
-import { tweenFraming } from './camera';
+import { tweenFraming, tweenShift, stageShift, setShiftDetached } from './camera';
 import { createShade } from './focus-shade';
 import { detailPose, VIEW_LEFT } from './focus-pose';
 import { prefersReducedMotion } from '@/lib/reduced-motion';
@@ -87,6 +87,11 @@ export function createFocus(opts: {
       // floor into the ceiling. The detail view owns the framing instead.
       tweenFraming(camera, 0, dur, 'expo.out');
 
+      // The stage shift puts the tower at its cell's start edge, where the pills
+      // want it. A floor is framed against the whole viewport, so it releases.
+      setShiftDetached(camera, true);
+      tweenShift(camera, 0, dur, 'expo.out');
+
       // Detach: the selected floor travels to the left half while the tower stays put.
       detached = slab;
       detach.set(x0, y0, z0);
@@ -128,6 +133,10 @@ export function createFocus(opts: {
       });
       // Hand the framing back to the hero lift as the floor returns to the stack.
       tweenFraming(camera, CAM_FRAME_OFFSET_Y, dur, 'power2.inOut');
+      // ...and the sideways shift back to the stage's own, for the pills.
+      tweenShift(camera, stageShift(camera), dur, 'power2.inOut', () =>
+        setShiftDetached(camera, false),
+      );
       gsap.to(want, {
         x: 0, y: opts.getFollowY(), z: 0,
         duration: dur,

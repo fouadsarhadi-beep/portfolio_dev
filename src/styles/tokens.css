@@ -89,6 +89,16 @@
   --page-gap: clamp(12px, 2vw, 40px);
   --shell-cols: minmax(0, 1fr) minmax(0, 1fr) minmax(0, 1fr);
   --hud-h: 56px;
+
+  /* The tower's projected width, in vh. The camera is height-driven, so the
+     isometric silhouette of the 6-unit footprint is 6*sqrt(2) world units wide
+     and a world unit is (100vh / CAM_VIEW_HEIGHT) tall:
+     (6*sqrt(2) / 17.6) * 100vh = 48.2vh. The stage's middle cell is this plus the
+     room the floor pills need, so the tower can never bleed into a side cell.
+     Mirrors FOOTPRINT / CAM_VIEW_HEIGHT in src/config/tuning.ts. */
+  --tower-w: 48.4vh;
+  --pill-room: clamp(14rem, 20vh, 16rem);
+  --stage-mid: calc(var(--tower-w) + var(--pill-room));
 }
 
 /* Dark theme (values mirror DARK in config/theme.ts; approved design in docs/DESIGN.md) */

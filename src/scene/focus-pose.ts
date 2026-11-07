@@ -7,6 +7,19 @@ const ZOOM_MOBILE = 1.35;
 const COL_FILL = 0.86;        // the floor fills most of, not all of, its share
 const FLOOR_W = FOOTPRINT * Math.SQRT2; // 8.49: projected slab width in the isometric view
 const UP_BIAS_MOBILE = 0.16;  // lift it into the top band on mobile
+const STAGE_EDGE_GAP = 6;     // px between the tower and its cell's start edge
+
+/**
+ * How far to shift the tower from the centre of its cell, in px, so it hugs the
+ * cell's start edge and leaves the leftover width (the floor pills) on the end
+ * side. The camera is height-driven, so the tower's projected width is fixed by
+ * the height; the cell's width is the leftover.
+ */
+export function stageShiftPx(cellW: number, cellH: number): number {
+  const towerPx = (FLOOR_W * cellH) / CAM_VIEW_HEIGHT;
+  const air = Math.max(0, cellW - towerPx);
+  return Math.max(0, air / 2 - STAGE_EDGE_GAP);
+}
 
 // Screen-left in world space; screen-right is (SQRT1_2, 0, -SQRT1_2) (src/scene/stack/pick.ts).
 export const VIEW_LEFT = { x: -Math.SQRT1_2, z: Math.SQRT1_2 };

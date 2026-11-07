@@ -23,28 +23,44 @@
 }
 
 /* --- The default view grid (the stage) -------------------------------------
-   The sticky stage is the default view. The canvas stays full-bleed behind it
-   (absolute, so it is not a cell); the chrome drops into cells and cannot
-   collide at any width. Rows: top band (guides, pinned below the HUD), the
-   flexible middle (floor pills), the bottom band (hero copy). Placement lives
-   with each piece in sections.css and hud.css. */
+   The sticky stage is the default view, and it is the one band whose middle
+   cell is not an equal third: it is sized to the tower plus the room the floor
+   pills need (--stage-mid, tokens.css). That is what keeps the tower inside the
+   middle cell and gives the side cells a real divide to hold the copy.
+   The renderer mounts into that middle cell (#canvas-mount), so the frustum is
+   built from the cell's own box and the tower can never spill into a side cell.
+   The stage's outer edges are still the shell's, so it lines up with every band.
+   Placement of the pieces lives with each piece (sections.css, hud.css). */
 .stage-grid {
   display: grid;
-  grid-template-columns: var(--shell-cols);
+  grid-template-columns: minmax(0, 1fr) minmax(0, var(--stage-mid)) minmax(0, 1fr);
   grid-template-rows: auto minmax(0, 1fr) auto;
   column-gap: var(--page-gap);
   row-gap: clamp(8px, 2vh, 20px);
+  /* Inline only: the block edges belong to the pieces (sections.css), so the
+     canvas in the middle cell keeps the stage's full height and the tower keeps
+     its framed size. */
   padding-inline: var(--page-inset);
-  padding-block-start: clamp(96px, 16vh, 190px);
-  padding-block-end: clamp(20px, 9vh, 72px);
   align-items: start;
 }
 
-/* Phones: the floor pills dock on the bottom band (hud.css), so the stage gives
-   them its edge and the hero copy lifts clear of them (sections.css). */
-@media (max-width: 760px) {
-  .stage-grid {
-    padding-block-end: 14px;
+/* A viewport that cannot hold the middle cell plus two readable side cells (or a
+   square-ish one, where the tower's vh width outgrows the band) drops to a single
+   cell: the side cells would be under ~200px, and the guides are hidden there
+   anyway. Wide: 1440x900 keeps all three. */
+@media (max-width: 1279px), (max-aspect-ratio: 1/1) {
+  .stage-grid,
+  html.no-webgl .stage-grid {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .stage-grid #canvas-mount {
+    grid-column: 1;
+  }
+
+  .stage-grid .hero-copy,
+  .stage-grid .stage-guide {
+    grid-column: 1;
   }
 }
 
