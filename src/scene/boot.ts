@@ -112,7 +112,7 @@ export async function boot(): Promise<void> {
 
   // Scroll state, motion, landing (with contact-shadow pulse + dust puffs).
   const state = createState();
-  const puffs = createDustPuffs(stack.group, PALETTE.graphite);
+  const puffs = createDustPuffs(stack.group, PALETTE.dust);
   const landing = createLanding(findContactShadow(stage.group), puffs);
   const motion = createMotion(state.u, LAYERS.length, {
     onLand: (i) => {

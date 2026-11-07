@@ -23,6 +23,9 @@ export const PALETTE = {
   wood: '#F0D5A8',
   white: '#FBFBF6',
   graphite: '#59606B',
+  // Touchdown dust (user review 2026-11-07): graphite read as black soot against
+  // the plaster family; light khaki sits in the tower's warm neutral range.
+  dust: '#E2D5A9',
   glow: '#BFE3FF',
   ledGreen: '#7BE0A4',
   ledAmber: '#FFC857',
