@@ -1,5 +1,5 @@
 /** @module scene/stack/state: scroll-derived step, the u and e arrays, the invariant, window.__stack. @see docs/MOTION.md (Scroll mapping, State, Debug), src/scene/stack/motion.ts */
-import { LIFT, OVERVIEW_STEPS, SLAB_T, STACK_BASE_Y } from '@/config/tuning';
+import { LIFT, OVERVIEW_GAP, OVERVIEW_STEPS, SLAB_T, STACK_BASE_Y } from '@/config/tuning';
 import { LAYERS } from '@/config/layers';
 import * as THREE from 'three';
 
@@ -19,6 +19,8 @@ const clamp01 = (x: number): number => Math.min(1, Math.max(0, x));
 export interface StackState {
   ids: string[];
   restY: number[];
+  /** Evenly exploded heights: where each layer sits at overview = 1. */
+  spreadY: number[];
   u: number[];
   e: number[];
   step: number;
@@ -35,11 +37,15 @@ export interface StackState {
 export function createState(): StackState {
   const ids = LAYERS.map((l) => l.id);
   const restY = LAYERS.map((_, i) => STACK_BASE_Y + (N - 1 - i) * SLAB_T);
+  // Full-overview heights: one even gap (SLAB_T + OVERVIEW_GAP) between floors,
+  // so the six slabs read as an exploded stack instead of a closed tower.
+  const spreadY = LAYERS.map((_, i) => STACK_BASE_Y + (N - 1 - i) * (SLAB_T + OVERVIEW_GAP));
   const u = new Array<number>(N).fill(0);
   const e = new Array<number>(N).fill(0);
   const state: StackState = {
     ids,
     restY,
+    spreadY,
     u,
     e,
     step: 0,
@@ -68,14 +74,22 @@ export function createState(): StackState {
       for (let i = N - 2; i >= 0; i--) {
         if (u[i] < u[i + 1]) u[i] = u[i + 1];
       }
+      // The overview opens every floor at once. A cubic lags the gaps on purpose:
+      // each room's walls (WALL_H) stay behind the slab above while the column
+      // explodes, and only fill in once the air is there.
+      const openAll = state.overview ** 3;
       for (let i = 0; i < N; i++) {
-        e[i] = i === 0 ? 1 : clamp01((u[i - 1] - u[i]) / LIFT);
+        const gap = i === 0 ? 1 : clamp01((u[i - 1] - u[i]) / LIFT);
+        e[i] = Math.max(gap, openAll);
       }
     },
 
     apply(slabs, rooms) {
+      const k = state.overview;
       for (let i = 0; i < N; i++) {
-        slabs[i].position.y = restY[i] + u[i];
+        const base = restY[i] + u[i];
+        // The opened column blends into the even exploded column, layer by layer.
+        slabs[i].position.y = base + (spreadY[i] - base) * k;
       }
       for (const { group, layerIndex } of rooms) {
         // The detail view forces its room to e = 1 (docs/MOTION.md Detail view).
@@ -94,6 +108,7 @@ export function createState(): StackState {
         u: [...u],
         e: [...e],
         restY: [...restY],
+        spreadY: [...spreadY],
         ids,
       };
     },

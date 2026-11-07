@@ -1,14 +1,14 @@
 # MOTION: scroll, lift, slam, camera, interaction
 
-Layers are indexed 0 (top) to N-1 (bottom). N = 6. LAYER_STEPS = N - 1 = 5 open one floor each; OVERVIEW_STEPS = 3 more pull the camera back, so the scroll range is STEPS = 8.
+Layers are indexed 0 (top) to N-1 (bottom). N = 6. LAYER_STEPS = N - 1 = 5 open one floor each; OVERVIEW_STEPS = 2 more pull the camera right back and explode the column, so the scroll range is STEPS = 7.
 
 ## Scroll mapping
-- `#stage` height = 100svh + STEPS x STEP_VH (STEP_VH = 80svh). Total about 800svh.
+- `#stage` height = 100svh + STEPS x STEP_VH (STEP_VH = 80svh). Total about 700svh.
 - Its child is `position: sticky; top: 0; height: 100svh` and holds the canvas, labels and HUD.
 - progress s = (scrollY - stageTop) / STEP_PX, where STEP_PX = 0.8 x innerHeight. Clamp to 0..STEPS.
 - Wanted step m uses hysteresis so edges do not flicker: open to m+1 when s >= m + 0.35. Close to m-1 when s < m - 1 + 0.15. The step only ever runs 0..LAYER_STEPS.
 - Step m means layers 0..m-1 are lifted. Layer m is exposed. Layers below it stay closed.
-- Past the last floor the step holds and `overview` ramps 0 to 1 across OVERVIEW_STEPS: the camera target blends to the middle of the fanned column and the zoom pulls back to OVERVIEW_ZOOM, so the six separated floors read as one stack before the page moves on.
+- Past the last floor the step holds and `overview` ramps 0 to 1 across OVERVIEW_STEPS: every layer's height blends from the opened stack to `spreadY`, an evenly gapped column (SLAB_T + OVERVIEW_GAP apart), every room opens (e ramps up on a cubic so walls never poke through the slab above), the camera target follows the middle of the spread column and the zoom pulls right back to OVERVIEW_ZOOM (0.5). The floors read as the exploded hamburger-ad stack: one room per band, air between them.
 - Triggered, not scrubbed: a step change starts timed tweens. Scroll never drives the tween position directly.
 
 ## State (src/scene/stack/state.ts)
@@ -66,7 +66,8 @@ One ticker (lib/ticker.ts) gives `time` and `dt`. Rooms animate through `update(
 Under `prefers-reduced-motion`: lift and drop become 0.2s fades or short moves, no squash, ring, dust puff, jolt, blur or particles, ambient dust and idle loops stop except a slow LED blink. Every layer stays reachable and readable.
 
 ## Debug and verification
-`window.__stack = { step, u, e, restY, ids }` refreshed each frame. Checks that need no eyes:
+`window.__stack = { step, overview, u, e, restY, spreadY, ids }` refreshed each frame. Checks that need no eyes:
 - At s = 0: all u are 0, only layer 0 has e = 1.
-- At s = STEPS: u[0..N-2] equal LIFT, u[N-1] is 0, only the last layer has e = 1.
+- At s = STEPS: u[0..N-2] equal LIFT, u[N-1] is 0, and every layer has e near 1 (overview opens them all).
+- When overview reaches 1: slab i sits at spreadY[i], one even gap between floors.
 - During any motion: u[i] >= u[i+1] always.

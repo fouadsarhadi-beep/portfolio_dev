@@ -68,5 +68,5 @@ export interface StackEvents {
 
 /** Debug state on window.__stack, refreshed every frame (docs/WIRING.md). */
 export interface StackDebugState {
-  step: number; overview: number; u: number[]; e: number[]; restY: number[]; ids: string[];
+  step: number; overview: number; u: number[]; e: number[]; restY: number[]; spreadY: number[]; ids: string[];
 }

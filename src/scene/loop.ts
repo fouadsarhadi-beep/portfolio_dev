@@ -1,5 +1,5 @@
 /** @module scene/loop: the per-frame update: state, pick, labels, camera follow, rooms, render. @see src/scene/boot.ts, docs/MOTION.md (Camera), src/lib/ticker.ts */
-import { LIFT, OVERVIEW_ZOOM, SLAB_T } from '@/config/tuning';
+import { CAM_FRAME_OFFSET_Y, LIFT, OVERVIEW_ZOOM, SLAB_T, WALL_H } from '@/config/tuning';
 import { ticker } from '@/lib/ticker';
 import { prefersReducedMotion } from '@/lib/reduced-motion';
 import { followCamera } from './camera';
@@ -32,10 +32,21 @@ export interface LoopParts {
  */
 export function startLoop(parts: LoopParts): () => void {
   const wantY = (): number => parts.state.restY[parts.state.step] + SLAB_T / 2 + 0.9;
-  // Middle of the fully fanned column: the top slab is lifted, the bottom is not.
+  // Middle of the fully exploded column at the current overview. At overview 0
+  // this is the empty-point average (top lifted, bottom seated); as the column
+  // expands it follows the spread heights, so the six floors stay centred.
   const overviewY = (): number => {
-    const rest = parts.state.restY;
-    return (rest[0] + LIFT + SLAB_T + rest[rest.length - 1]) / 2;
+    const st = parts.state;
+    const k = st.overview;
+    const top = st.restY[0] + LIFT + SLAB_T;
+    const bottom = st.restY[st.restY.length - 1];
+    const flat = (top + bottom) / 2;
+    // Centre of the exploded column, rooms and their walls included.
+    const last = st.spreadY.length - 1;
+    const spreadTop = st.spreadY[0] + SLAB_T / 2 + WALL_H;
+    const spreadBottom = st.spreadY[last] - SLAB_T / 2;
+    const mid = (spreadTop + spreadBottom) / 2;
+    return flat + (mid - flat) * k;
   };
   const baseZoom = parts.camera.zoom; // tier zoom from boot (1, or 1.3 on the low tier)
   parts.camera.userData.targetY = wantY(); // start settled, no fly-in
@@ -54,15 +65,20 @@ export function startLoop(parts: LoopParts): () => void {
     if (parts.focus.active()) {
       parts.focus.updateCamera(dt);
     } else {
-      // The overview blends the follow target toward the middle of the fanned
+      // The overview blends the follow target toward the middle of the exploded
       // column and pulls the camera back, so all six floors read at once.
       // Reduced motion cuts between the two framings instead of gliding.
       const raw = parts.state.overview;
       const o = prefersReducedMotion() ? Math.round(raw) : raw;
-      const target = wantY() + (overviewY() - wantY()) * o;
+      const zoom = baseZoom * (1 + (OVERVIEW_ZOOM - 1) * o);
+      // The hero framing offset is a fixed pixel push that the zoom converts to
+      // world units, so it covers more screen as the camera pulls back. Add it
+      // back to the target at full overview, or the column would sit off centre
+      // and the top room would clip the frustum.
+      const push = (CAM_FRAME_OFFSET_Y / zoom) * o;
+      const target = wantY() + (overviewY() - wantY()) * o + push;
       const t = followCamera(parts.camera, target, dt);
       parts.camera.lookAt(0, t + parts.landing.jolt(), 0);
-      const zoom = baseZoom * (1 + (OVERVIEW_ZOOM - 1) * o);
       if (Math.abs(parts.camera.zoom - zoom) > 0.0005) {
         parts.camera.zoom = zoom;
         parts.camera.updateProjectionMatrix();

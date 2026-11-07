@@ -75,10 +75,11 @@
   --tracking-tight: -0.02em;
   --tracking-wide: 0.09em;
 
-  /* Scroll mapping (docs/MOTION.md): 5 steps open the floors, 3 more pull the
-     camera back for the overview. Mirrors LAYER_STEPS + OVERVIEW_STEPS. */
+  /* Scroll mapping (docs/MOTION.md): 5 steps open the floors, 2 more pull the
+     camera back and explode the column for the overview. Mirrors LAYER_STEPS +
+     OVERVIEW_STEPS. */
   --step-vh: 80svh;
-  --steps: 8;
+  --steps: 7;
 
   /* Layout */
   --content-max: 68rem;
