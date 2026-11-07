@@ -119,3 +119,7 @@ Next: the user live pass, then git push.
 - Landing squash/jolt/prop-punch pixels (single-frame effects under software rendering; rings verified, code implemented per docs/MOTION.md).
 - Whoosh wall-clock and trackpad/real-touch-drag on real hardware.
 - Council round visuals (social card render, print sheet, slow-connection shimmer, reading progress, RTL layout) are build- and smoke-verified only; the user's live pass covers them.
+
+## 2026-11-08 — the stage is a real 3-column grid
+The canvas mounts into the stage middle cell (sized to the tower + pill room, tokens.css --stage-mid), and the camera shifts the tower to that cell start edge (stageShiftPx in scene/focus-pose.ts), so the floor pills get the leftover width and cannot reach a text cell. Guides and hero copy are capped to their own cells. The hover card is inside the band: the 10% margins hold the ladder alone. Wide viewports (over 1279px and wider than square) get the three cells; below that the stage is one cell and the guides are hidden.
+
