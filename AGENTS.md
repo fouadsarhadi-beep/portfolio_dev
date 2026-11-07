@@ -46,7 +46,7 @@ docs            DESIGN, MOTION, ROOMS, WIRING, COPY, PROGRESS, QA, MAP (generate
 
 ## Hard rules
 Code
-- Every file is at most 200 lines. Split before that.
+- Every file targets 200 lines. Past that, the file is usually doing two jobs: split it along a functional seam (data and config, pure maths, DOM, wiring), never into arbitrary halves, and never cut code apart that only reads well together. When a cohesive unit is genuinely clearer whole, keep it whole and state why in its own header as `@cap-exempt: <reason>`; the guardrail honours the marker. The count is a smell detector, not a wall.
 - Every file starts with a header: `/** @module name: one-line purpose. @see neighbor files */`. In .astro files, put it inside the frontmatter.
 - Hex colors appear only in src/config/palette.ts and src/styles/tokens.css.
 - A room folder never imports another room folder. It may import ../props/*, ../shell and config.
