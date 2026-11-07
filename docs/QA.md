@@ -1,6 +1,6 @@
 # QA (T12)
 
-Run: `npm run dev`, then the Playwright sessions described below. Motion numbers come from `window.__stack` and `window.__scene` (docs/WIRING.md). Each test was run; results are honest.
+Run: `npm run dev`, then the manual checks described below. Motion numbers come from `window.__stack` and `window.__scene` (docs/WIRING.md). No browser automation: the checks below are read from the console or from a Node script (AGENTS.md, Verification). Each test was run; results are honest.
 
 | # | Test | Result | Note |
 |---|------|--------|------|

@@ -64,6 +64,8 @@ Accessibility
 - Visible focus rings. Every layer has a real button in the DOM layer-nav. Escape closes. Honor prefers-reduced-motion. All content reachable with JavaScript off.
 Copy
 - Follow docs/COPY.md. Active voice, concrete nouns, no adverbs, no em dashes.
+Verification
+- No browser automation. No Playwright, no screenshot or click harness, unless the check cannot be done any other way (and then say why in the handoff note). Verify with `npm run check`, `npm run build`, `npm run smoke`, a Node script that reads the source, or arithmetic on the tuning constants. These are fast and cheap; a browser run is the last resort.
 
 ## Definition of done (any task)
 - `npm run check` passes.
