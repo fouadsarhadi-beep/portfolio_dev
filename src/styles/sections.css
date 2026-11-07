@@ -739,3 +739,19 @@ html:not(.js) .layer-nav {
   border-color: color-mix(in srgb, var(--c-sage) 65%, var(--line));
   color: var(--ink);
 }
+
+/* A quiet way past the 800svh stage for anyone who already saw the show. */
+.sg-skip {
+  margin-block-start: 8px;
+  font-size: var(--fs-12);
+}
+
+.sg-skip a {
+  color: var(--ink-soft);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+.sg-skip a:hover {
+  color: var(--ink);
+}

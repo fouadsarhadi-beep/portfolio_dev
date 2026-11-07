@@ -1,4 +1,4 @@
-/** @module content/en: every English UI string, read through t(). @see src/lib/i18n.ts, docs/COPY.md */
+﻿/** @module content/en: every English UI string, read through t(). @see src/lib/i18n.ts, docs/COPY.md */
 
 // All UI text lives here and is read through t() (locked decision).
 // Strings from docs/COPY.md are verbatim; headings and hints are placeholder copy.
@@ -21,6 +21,7 @@ export const en = {
     kicker: 'Floors 01 to 06',
     line: 'Each floor is one part of the job, stacked by craft.',
     hint: 'Click a floor to read its samples',
+    skip: 'Skip the tower',
   },
   hero: {
     h1: 'I build websites from the server up to the sentence.',

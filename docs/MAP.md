@@ -48,7 +48,7 @@ Search this file before creating anything.
 - i18n.ts: lib/i18n: reads UI strings from the active locale through t(). @see src/content/en.ts
   exports: TKey, setLocale, t
   uses: src/content/en
-- quality.ts: lib/quality: picks the quality tier from screen width and CPU cores. @see docs/DESIGN.md (Responsive), src/config/tuning.ts
+- quality.ts: lib/quality: picks the quality tier from screen width, CPU cores and data preference. @see docs/DESIGN.md (Responsive), src/config/tuning.ts
   exports: QualityTier, detectTier
 - reduced-motion.ts: lib/reduced-motion: reads prefers-reduced-motion for every motion decision. @see docs/MOTION.md (Reduced motion)
   exports: prefersReducedMotion, onReducedMotionChange
