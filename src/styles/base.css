@@ -159,3 +159,44 @@ button {
   white-space: nowrap;
   border: 0;
 }
+
+/* Print: the words are the point. Drop the scene, the chrome and the overlays,
+   and let the no-JS cards carry the content. */
+@media print {
+  .hud,
+  .ladder,
+  .stage-guide,
+  #canvas-mount,
+  .layer-nav,
+  .skip-link,
+  .doc-backdrop,
+  .detail-view {
+    display: none !important;
+  }
+
+  html.js .stage {
+    height: auto !important;
+  }
+
+  .stage-sticky {
+    position: static !important;
+    height: auto !important;
+  }
+
+  html.js .stack-fallback {
+    display: grid !important;
+  }
+
+  body {
+    background: var(--surface);
+    color: var(--ink);
+  }
+
+  .panel,
+  .tile,
+  .contact-panel,
+  .stack-fallback article {
+    box-shadow: none;
+    break-inside: avoid;
+  }
+}
