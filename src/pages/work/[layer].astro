@@ -15,6 +15,22 @@ export function getStaticPaths() {
 interface Props { layer: LayerConfig }
 
 const { layer } = Astro.props;
+
+// The samples as structured data, so search engines can read this page as a
+// portfolio entry rather than a paragraph of prose.
+const listJson = {
+  '@context': 'https://schema.org',
+  '@type': 'ItemList',
+  name: layer.title,
+  description: layer.short,
+  itemListElement: layer.samples.map((sample, i) => ({
+    '@type': 'CreativeWork',
+    position: i + 1,
+    name: sample.title,
+    description: sample.blurb,
+    keywords: sample.tags.join(', '),
+  })),
+};
 ---
 
 <Base
@@ -63,6 +79,7 @@ const { layer } = Astro.props;
       <p class="work-back">
         <a class="btn" href="/#stack">{t('detail.back')}</a>
       </p>
+      <script is:inline type="application/ld+json" set:html={JSON.stringify(listJson)} />
     </article>
   </main>
   <Footer />
