@@ -29,7 +29,7 @@ Search this file before creating anything.
   exports: ThemeName, ThemeColors, THEMES
   uses: src/config/palette
 - tuning.ts: config/tuning: geometry, scroll step, camera and render tuning constants. @see docs/DESIGN.md, docs/MOTION.md, src/config/types.ts
-  exports: FOOTPRINT, SLAB_T, WALL_H, WALL_THICK, CORNER_R, LIFT, STACK_BASE_Y, STEP_VH, CAM_DIR, CAM_DISTANCE, CAM_TARGET_OFFSET_Y, CAM_VIEW_HEIGHT, CAM_DAMP_LAMBDA, CAM_FRAME_OFFSET_Y, OVERVIEW_STEPS, OVERVIEW_ZOOM, EXPOSURE, MAX_PIXEL_RATIO, SHADOW_MAP_DESKTOP, SHADOW_MAP_MOBILE
+  exports: FOOTPRINT, SLAB_T, WALL_H, WALL_THICK, CORNER_R, LIFT, STACK_BASE_Y, STEP_VH, CAM_DIR, CAM_DISTANCE, CAM_TARGET_OFFSET_Y, CAM_VIEW_HEIGHT, CAM_DAMP_LAMBDA, CAM_FRAME_OFFSET_Y, OVERVIEW_STEPS, OVERVIEW_ZOOM, OVERVIEW_GAP, EXPOSURE, MAX_PIXEL_RATIO, SHADOW_MAP_DESKTOP, SHADOW_MAP_MOBILE
   uses: src/config/types
 - types.ts: config/types: shared contracts for config, scene and UI. @see docs/WIRING.md, src/config/layers.ts
   exports: PaletteKey, LayerId, Vec3, DocKind, SampleDocument, Sample, LayerConfig, MaterialKit, PropFactory, PropKit, RoomContext, RoomInstance, RoomBuilder, StackEvents, StackDebugState
@@ -93,12 +93,17 @@ Search this file before creating anything.
 - boot.ts: scene/boot: entry; dynamic-imports three after first paint, mounts the canvas or falls back. @see src/scene/loop.ts, src/main.ts, docs/WIRING.md
   exports: boot
   uses: src/config/types, src/config/theme, src/scene/stage
-- camera.ts: scene/camera: orthographic camera locked to the (1,1,1) isometric view, with damped follow. @see docs/DESIGN.md (Camera), docs/MOTION.md (Camera), src/config/tuning.ts
-  exports: createCamera, applyFraming, resizeCamera, followCamera
+- camera.ts: scene/camera: orthographic camera locked to the (1,1,1) isometric view, with damped follow and the framing-offset tween. @see docs/DESIGN.md (Camera), docs/MOTION.md (Camera), src/config/tuning.ts
+  exports: createCamera, applyFraming, resizeCamera, currentFrameOffset, tweenFraming, followCamera
   uses: src/config/tuning
-- focus.ts: scene/focus: the selected floor leaves the stack into the left 45% column, the rest fades. @see docs/MOTION.md (Detail view), src/ui/detail.ts, src/scene/loop.ts
+- focus-pose.ts: scene/focus-pose: detail-view pose maths: the zoom, column shift and vertical bias that put one floor in the left column. @see src/scene/focus.ts, src/config/tuning.ts
+  exports: VIEW_LEFT, DetailPose, detailPose
+  uses: src/config/tuning
+- focus-shade.ts: scene/focus-shade: fades every floor except the expanded one, then takes the invisible floors out of the scene. @see src/scene/focus.ts, docs/MOTION.md (Detail view)
+  exports: Shade, createShade
+- focus.ts: scene/focus: the selected floor leaves the stack into the left 45% column, the rest fades. @see docs/MOTION.md (Detail view), src/ui/detail.ts, src/scene/focus-pose.ts, src/scene/focus-shade.ts
   exports: Focus, createFocus
-  uses: src/config/tuning, src/scene/camera, src/lib/reduced-motion
+  uses: src/config/tuning, src/scene/camera, src/scene/focus-shade, src/scene/focus-pose, src/lib/reduced-motion
 - lights.ts: scene/lights: hemisphere, warm key with soft shadows, weak cool fill. @see docs/DESIGN.md (Light and render), src/scene/renderer.ts, src/scene/scene-theme.ts
   exports: createLights
   uses: src/config/palette, src/lib/quality, src/scene/renderer, src/scene/scene-theme
@@ -210,9 +215,9 @@ Search this file before creating anything.
 - plant.ts: scene/rooms/props/plant: potted plant with instanced leaves that sway (name: leaves). @see src/scene/rooms/props/index.ts, docs/DESIGN.md (Prop quality rules)
   exports: makePlant
   uses: src/config/palette, src/config/types
-- rug.ts: scene/rooms/props/rug: flat round rug with a border ring. @see src/scene/rooms/props/index.ts
+- rug.ts: scene/rooms/props/rug: flat round rug with a border ring and, optionally, the floor's skill glyph woven into it. @see src/scene/rooms/props/index.ts, src/scene/rooms/props/screen.ts
   exports: makeRug
-  uses: src/config/palette, src/config/types
+  uses: src/config/palette, src/config/types, src/scene/rooms/props/screen
 - screen.ts: scene/rooms/props/screen: canvas texture helpers for screens, gradients and drawn panels. @see src/scene/rooms/props/monitor.ts, src/scene/rooms/shell.ts
   exports: makeCanvasTexture, makeGradientTexture, drawCodeScreen
   uses: src/config/palette
@@ -271,12 +276,15 @@ Search this file before creating anything.
 - landing.ts: scene/stack/landing: touchdown effects: squash, shadow pulse, impact ring, dust puff, camera jolt, prop punch. @see docs/MOTION.md (Slam), src/scene/stack/motion.ts, src/scene/stack/dust.ts
   exports: PulseMat, Landing, createLanding
   uses: src/config/tuning, src/config/palette, src/lib/reduced-motion, src/scene/stack/dust
+- layer-rect.ts: scene/stack/layer-rect: projects a slab's outer corner so a DOM label or card clears its full width. @see src/scene/stack/pick.ts, src/scene/stack/labels.ts
+  exports: ScreenRect, layerRect
+  uses: src/config/tuning
 - motion.ts: scene/stack/motion: GSAP tweens on the u array; lift and slam timings per MOTION.md. @see docs/MOTION.md (Lift, Slam), src/scene/stack/state.ts, src/scene/stack/landing.ts
   exports: Motion, createMotion
   uses: src/config/tuning, src/lib/reduced-motion
 - pick.ts: scene/stack/pick: raycasts slab sides, hover lift or nudge, dims others, edge highlight. @see docs/MOTION.md (Pick, hover, touch), src/lib/bus.ts, src/scene/stack/labels.ts
-  exports: ScreenRect, Pick, createPick
-  uses: src/lib/bus, src/config/layers, src/config/tuning, src/config/palette, src/config/theme, src/scene/scene-theme
+  exports: Pick, createPick
+  uses: src/lib/bus, src/config/layers, src/config/palette, src/config/theme, src/scene/scene-theme, src/scene/stack/layer-rect
 - slab.ts: scene/stack/slab: builds one chunky slab per LayerConfig (T28: unified material family). @see docs/DESIGN.md (Slab), src/scene/stack/stack.ts, src/scene/stack/icons.ts
   exports: makeSlab
   uses: src/config/tuning, src/config/palette, src/config/theme, src/config/types, src/scene/stack/icons, src/scene/scene-theme

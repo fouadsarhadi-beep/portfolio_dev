@@ -1,5 +1,6 @@
-/** @module scene/camera: orthographic camera locked to the (1,1,1) isometric view, with damped follow. @see docs/DESIGN.md (Camera), docs/MOTION.md (Camera), src/config/tuning.ts */
+/** @module scene/camera: orthographic camera locked to the (1,1,1) isometric view, with damped follow and the framing-offset tween. @see docs/DESIGN.md (Camera), docs/MOTION.md (Camera), src/config/tuning.ts */
 import * as THREE from 'three';
+import { gsap } from 'gsap';
 import { CAM_DIR, CAM_DISTANCE, CAM_VIEW_HEIGHT, CAM_DAMP_LAMBDA, CAM_FRAME_OFFSET_Y } from '@/config/tuning';
 
 const NEAR = 0.1;
@@ -38,6 +39,28 @@ export function resizeCamera(camera: THREE.OrthographicCamera, width: number, he
   const offset =
     typeof camera.userData.frameOffset === 'number' ? camera.userData.frameOffset : CAM_FRAME_OFFSET_Y;
   applyFraming(camera, offset);
+}
+
+/** The framing offset currently applied: the hero lift, or a value mid-tween. */
+export function currentFrameOffset(camera: THREE.OrthographicCamera): number {
+  return typeof camera.userData.frameOffset === 'number' ? camera.userData.frameOffset : CAM_FRAME_OFFSET_Y;
+}
+
+/** Eases the frustum framing offset to `to`; the scene stays put in view space. */
+export function tweenFraming(
+  camera: THREE.OrthographicCamera,
+  to: number,
+  duration: number,
+  ease: string,
+): void {
+  const framing = { off: currentFrameOffset(camera) };
+  gsap.to(framing, {
+    off: to,
+    duration,
+    ease,
+    overwrite: true,
+    onUpdate: () => applyFraming(camera, framing.off),
+  });
 }
 
 /**

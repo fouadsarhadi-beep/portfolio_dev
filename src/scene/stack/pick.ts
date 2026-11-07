@@ -3,12 +3,12 @@ import * as THREE from 'three';
 import type { OrthographicCamera } from 'three';
 import { bus } from '@/lib/bus';
 import { LAYERS } from '@/config/layers';
-import { FOOTPRINT, SLAB_T } from '@/config/tuning';
 import { PALETTE } from '@/config/palette';
 import type { ThemeColors } from '@/config/theme';
 import { currentTheme } from '../scene-theme';
+import { layerRect, type ScreenRect } from './layer-rect';
 
-export interface ScreenRect { left: number; top: number; width: number; height: number }
+export type { ScreenRect };
 
 export interface Pick {
   update(dt: number, time: number): void;
@@ -19,7 +19,6 @@ export interface Pick {
   dispose(): void;
 }
 
-const HALF = FOOTPRINT / 2;
 const HOVER_LIFT = 0.35;
 const NUDGE = 0.25;
 const DIM = 0.94; // other floors lose 6 percent while one is hovered
@@ -170,23 +169,7 @@ export function createPick(opts: {
     getLayerRect(id): ScreenRect | null {
       const i = LAYERS.findIndex((l) => l.id === id);
       if (i < 0) return null;
-      const slab = slabs[i];
-      // The screen-right corner lies along the camera's +x / -z direction.
-      // Project that outer corner so the DOM label clears the slab's full width.
-      const v = new THREE.Vector3(
-        slab.position.x + HALF,
-        slab.position.y,
-        slab.position.z - HALF,
-      ).project(camera);
-      const w = canvas.clientWidth;
-      const h = canvas.clientHeight;
-      const viewH = camera.top - camera.bottom;
-      return {
-        left: (v.x * 0.5 + 0.5) * w,
-        top: (-v.y * 0.5 + 0.5) * h,
-        width: 0,
-        height: (SLAB_T / viewH) * h,
-      };
+      return layerRect(slabs[i], camera, canvas);
     },
 
     dispose() {
