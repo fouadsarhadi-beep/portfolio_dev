@@ -11,18 +11,36 @@
   border-block-end: 1px solid color-mix(in srgb, var(--line) 75%, transparent);
 }
 
+/* One item per cell of the shell (src/styles/layout.css): identity, nav, status.
+   Deterministic placement instead of flex-wrap, so the bar cannot reorder itself
+   at an awkward width. */
 .hud-row {
-  display: flex;
+  display: grid;
+  grid-template-columns: var(--shell-cols);
+  column-gap: var(--page-gap);
   align-items: center;
-  flex-wrap: wrap;
-  gap: 8px 24px;
   min-height: var(--hud-h);
   padding-block: 8px;
+  padding-inline: var(--page-inset);
 }
 
 .hud-id {
+  grid-column: 1;
   display: flex;
   flex-direction: column;
+}
+
+.hud-row nav {
+  grid-column: 2;
+  justify-self: center;
+}
+
+.hud-status {
+  grid-column: 3;
+  justify-self: end;
+  display: flex;
+  align-items: center;
+  gap: 12px;
 }
 
 .hud-id strong {
@@ -153,11 +171,15 @@ html[data-theme='dark'] .theme-toggle .icon-moon {
 }
 
 /* Layer nav: real buttons, one per layer (AGENTS accessibility rules) */
+/* Floors' pills: the end cell of the stage grid, vertically centred. The scene
+   (src/scene/stack/labels.ts) later pins each button to its slab face and leaves
+   the list itself static, so this placement is what the pre-boot/no-WebGL state
+   shows. */
 .layer-nav {
-  position: absolute;
-  inset-inline-end: clamp(12px, 3vw, 44px);
-  top: 50%;
-  transform: translateY(-50%);
+  grid-column: 3;
+  grid-row: 2;
+  align-self: center;
+  justify-self: end;
   z-index: 4;
   display: flex;
   flex-direction: column;
@@ -205,17 +227,36 @@ html[data-theme='dark'] .theme-toggle .icon-moon {
 
 /* These dock rules only apply when JS has not pinned the pills to the slabs
    (labels.ts does that once the scene boots); they keep the no-WebGL/no-scene
-   case usable on narrow screens. */
+   case usable on narrow screens. The pills and the hero copy share the bottom
+   row: the pills sit on the stage edge, the copy lifts clear of them. */
 @media (max-width: 760px) {
   .progress {
     display: none;
   }
 
+  /* Two rows instead of flex-wrap: identity and status on the first, the nav
+     under them across the whole band. */
+  .hud-row {
+    grid-template-columns: 1fr auto;
+    row-gap: 4px;
+  }
+
+  .hud-status {
+    grid-column: 2;
+    grid-row: 1;
+  }
+
+  .hud-row nav {
+    grid-column: 1 / -1;
+    grid-row: 2;
+    justify-self: start;
+  }
+
   .layer-nav {
-    inset-inline: 12px;
-    top: auto;
-    bottom: 14px;
-    transform: none;
+    grid-column: 1 / -1;
+    grid-row: 3;
+    align-self: end;
+    justify-self: stretch;
     flex-direction: row;
     overflow-x: auto;
     padding-block-end: 6px;
@@ -237,7 +278,7 @@ html[data-theme='dark'] .theme-toggle .icon-moon {
 .layer-card {
   position: absolute;
   z-index: 6;
-  inset-inline-end: clamp(48px, 4.6vw, 72px);
+  inset-inline-end: var(--page-inset);
   top: clamp(96px, 24vh, 220px);
   width: min(320px, calc(100vw - 32px));
   background: var(--surface-grad);
@@ -323,10 +364,14 @@ html[data-theme='dark'] .theme-toggle .icon-moon {
   inset: 0;
   z-index: 8;
   display: grid;
+  /* The second grid: the same band as the page (10% margin, same gap), split 45/55
+     because the camera frames the floor inside the first share (src/config/layout.ts
+     DETAIL_FLOOR_SHARE). fr units keep the split exact after the gap is taken out. */
   grid-template-columns: 45fr 55fr;
   grid-template-rows: minmax(0, 1fr);
-  gap: clamp(12px, 2vw, 26px);
-  padding: clamp(16px, 2.4vw, 34px);
+  column-gap: var(--page-gap);
+  padding-inline: var(--page-inset);
+  padding-block: clamp(16px, 2.4vw, 34px);
   pointer-events: none;
 }
 
@@ -612,7 +657,8 @@ button.dv-sample:focus-visible {
     overflow-y: auto;
     overscroll-behavior: contain;
     pointer-events: auto;
-    padding: 0 14px 28px;
+    padding-block: 0 28px;
+    padding-inline: var(--page-inset);
     padding-block-start: 44svh;
     background: linear-gradient(to bottom, transparent 0 38svh, var(--bg) 46svh, var(--bg) 100%);
   }
@@ -639,7 +685,7 @@ button.dv-sample:focus-visible {
 /* Small phones (360-480): tighter chrome, same composition. */
 @media (max-width: 480px) {
   .hud-row {
-    gap: 6px 14px;
+    column-gap: 10px;
   }
 
   .hud-nav {
@@ -647,7 +693,6 @@ button.dv-sample:focus-visible {
   }
 
   .detail-view {
-    padding-inline: 12px;
     padding-block-start: 40svh;
     padding-block-end: 20px;
   }

@@ -81,8 +81,13 @@
   --step-vh: 80svh;
   --steps: 7;
 
-  /* Layout */
-  --content-max: 68rem;
+  /* Layout: one shell for the whole page. A 10% margin each side leaves the grid
+     in the middle 80%, and that band is three flexible cells. Both views (the
+     default stage and the expanded floor) are compositions of this band.
+     Mirrors src/config/layout.ts, which the scene camera reads. */
+  --page-inset: 10%;
+  --page-gap: clamp(12px, 2vw, 40px);
+  --shell-cols: minmax(0, 1fr) minmax(0, 1fr) minmax(0, 1fr);
   --hud-h: 56px;
 }
 

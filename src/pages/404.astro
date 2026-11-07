@@ -6,7 +6,7 @@ import { t } from '@/lib/i18n';
 ---
 
 <Base title={`${t('nf.title')} | ${t('nf.home')}`}>
-  <main id="main" class="wrap nf">
+  <main id="main" class="shell nf">
     <p class="nf-kicker">404</p>
     <h1>{t('nf.title')}</h1>
     <p class="nf-line">{t('nf.line')}</p>
@@ -27,7 +27,6 @@ import { t } from '@/lib/i18n';
 <style>
   .nf {
     padding-block: clamp(64px, 14vh, 140px) 96px;
-    max-width: 46rem;
   }
 
   .nf-kicker {

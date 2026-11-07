@@ -89,12 +89,6 @@ button {
   color: var(--ink);
 }
 
-.wrap {
-  max-width: var(--content-max);
-  margin-inline: auto;
-  padding-inline: clamp(16px, 4vw, 32px);
-}
-
 /* Anchor targets clear the sticky HUD; --hud-offset is the measured height (Hud.astro). */
 [id] {
   scroll-margin-top: calc(var(--hud-offset, var(--hud-h)) + 16px);

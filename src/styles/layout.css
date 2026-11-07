@@ -1,0 +1,56 @@
+/* @module styles/layout: the one page shell: a three-column grid inset 10% each side, plus the view compositions built from it. @see src/styles/tokens.css, src/config/layout.ts, docs/DESIGN.md (Layout) */
+
+/* --- The shell -------------------------------------------------------------
+   A 10% margin each side leaves the grid in the middle 80%. Three flexible
+   cells, so every band (header, stage, sections, footer) starts and ends on the
+   same vertical line at any width. fr units, not percentages: the gap comes out
+   of the shared space and the cells stay equal while they shrink. */
+.shell {
+  display: grid;
+  grid-template-columns: var(--shell-cols);
+  column-gap: var(--page-gap);
+  padding-inline: var(--page-inset);
+}
+
+/* Bands that are their own layout container (flex rows) only need the margin. */
+.shell-inset {
+  padding-inline: var(--page-inset);
+}
+
+/* A section fills the band; its own inner grids do any splitting. */
+.shell > * {
+  grid-column: 1 / -1;
+}
+
+/* --- The default view grid (the stage) -------------------------------------
+   The sticky stage is the default view. The canvas stays full-bleed behind it
+   (absolute, so it is not a cell); the chrome drops into cells and cannot
+   collide at any width. Rows: top band (guides, pinned below the HUD), the
+   flexible middle (floor pills), the bottom band (hero copy). Placement lives
+   with each piece in sections.css and hud.css. */
+.stage-grid {
+  display: grid;
+  grid-template-columns: var(--shell-cols);
+  grid-template-rows: auto minmax(0, 1fr) auto;
+  column-gap: var(--page-gap);
+  row-gap: clamp(8px, 2vh, 20px);
+  padding-inline: var(--page-inset);
+  padding-block-start: clamp(96px, 16vh, 190px);
+  padding-block-end: clamp(20px, 9vh, 72px);
+  align-items: start;
+}
+
+/* Phones: the floor pills dock on the bottom band (hud.css), so the stage gives
+   them its edge and the hero copy lifts clear of them (sections.css). */
+@media (max-width: 760px) {
+  .stage-grid {
+    padding-block-end: 14px;
+  }
+}
+
+/* Phones: the same margin, tighter, so the reading column keeps its measure. */
+@media (max-width: 600px) {
+  :root {
+    --page-inset: 6vw;
+  }
+}

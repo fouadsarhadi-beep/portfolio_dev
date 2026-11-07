@@ -104,15 +104,23 @@ html:not(.js) .layer-nav {
 }
 
 .hero-copy {
-  /* Opening framing (user review 2026-11-06): the copy sat low, under a tall
-     empty band. Raised by a share of the visible height so it stays in step
-     with the tower lift (CAM_FRAME_OFFSET_Y in src/config/tuning.ts). */
+  /* Bottom band of the stage grid (src/styles/layout.css). The copy is raised by
+     --hero-lift alone, so its place above the tower base needs no second offset.
+     START-side cell: the left edge is the shell's left edge, like every section. */
   --hero-lift: 22svh;
-  position: absolute;
-  inset-inline-start: clamp(16px, 5vw, 56px);
-  bottom: calc(clamp(20px, 9vh, 72px) + var(--hero-lift));
+  grid-column: 1 / -1;
+  grid-row: 3;
+  align-self: end;
+  margin-block-end: var(--hero-lift);
   z-index: 3;
   pointer-events: none;
+}
+
+@media (max-width: 760px) {
+  /* The floor pills dock on this same band (hud.css), so the copy lifts clear. */
+  .hero-copy {
+    margin-block-end: 72px;
+  }
 }
 
 .hero-copy h1 {
@@ -446,6 +454,7 @@ html:not(.js) .layer-nav {
 }
 
 .footer-row {
+  padding-inline: var(--page-inset);
   display: flex;
   flex-wrap: wrap;
   gap: 8px 24px;
@@ -556,7 +565,7 @@ html:not(.js) .layer-nav {
   }
 
   .hero-copy {
-    bottom: calc(88px + var(--hero-lift));
+--hero-lift: 8svh;
   }
 }
 
@@ -584,11 +593,6 @@ html:not(.js) .layer-nav {
     padding: 24px 20px;
   }
 
-  .hero-copy {
-    inset-inline-end: 16px;
-    bottom: calc(72px + var(--hero-lift));
-  }
-
   .hero-copy .sub {
     font-size: var(--fs-14);
   }
@@ -606,8 +610,8 @@ html:not(.js) .layer-nav {
    The tower is narrow and centred, so the margins carry the explanation: what
    the floors are on the left, which floor you are on on the right. */
 .stage-guide {
-  position: absolute;
-  top: clamp(96px, 16vh, 190px);
+  grid-row: 1;
+  align-self: start;
   z-index: 3;
   max-inline-size: 16rem;
   pointer-events: none;
@@ -615,11 +619,11 @@ html:not(.js) .layer-nav {
 }
 
 .stage-guide--left {
-  inset-inline-start: clamp(16px, 5vw, 56px);
+  grid-column: 1;
 }
 
 .stage-guide--right {
-  inset-inline-end: clamp(16px, 5vw, 56px);
+  grid-column: 3;
   text-align: end;
 }
 
