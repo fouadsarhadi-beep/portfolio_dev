@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" role="img" aria-label="Six stacked floors">
+  <g fill="#1F251C">
+    <rect x="7" y="3.2" width="18" height="3.4" rx="1.5" />
+    <rect x="7" y="7.9" width="18" height="3.4" rx="1.5" />
+    <rect x="7" y="12.6" width="18" height="3.4" rx="1.5" />
+    <rect x="7" y="17.3" width="18" height="3.4" rx="1.5" />
+    <rect x="7" y="22" width="18" height="3.4" rx="1.5" />
+    <rect x="7" y="26.7" width="18" height="3.4" rx="1.5" />
+  </g>
+</svg>

@@ -3,7 +3,8 @@
 Search this file before creating anything.
 
 ## src/
-- main.ts: main: page entry; boots the scene, then wires the UI layer to it. @see src/scene/boot.ts, src/ui/preview.ts, src/ui/detail.ts, src/ui/keyboard.ts
+- main.ts: main: page entry; resolves the locale, boots the scene, then wires the UI layer to it. @see src/scene/boot.ts, src/lib/i18n.ts, src/ui/preview.ts, src/ui/detail.ts, src/ui/keyboard.ts
+  uses: src/lib/i18n
 
 ## src/config/
 - articles.ts: config/articles: long-form sample documents (articles), keyed by Sample.doc. @see src/config/documents.ts, src/ui/doc-viewer.ts, docs/DESIGN.md (Document reader)
@@ -36,6 +37,9 @@ Search this file before creating anything.
 ## src/content/
 - en.ts: content/en: every English UI string, read through t(). @see src/lib/i18n.ts, docs/COPY.md
   exports: en, Dict
+- fa.ts: content/fa: Persian strings, partial by design; anything missing falls back to English. @see src/lib/i18n.ts, src/content/en.ts, docs/DESIGN.md (Dual theme)
+  exports: LocaleOverrides, fa
+  uses: src/content/en
 
 ## src/layouts/
 - Base.astro: layouts/Base: html head, fonts, global styles, meta, JSON-LD, skip link. @see src/pages/index.astro, src/styles/base.css
@@ -45,9 +49,9 @@ Search this file before creating anything.
 - bus.ts: lib/bus: typed event bus, one of two doors between UI and scene. @see docs/WIRING.md, src/config/types.ts, src/scene/api.ts
   exports: bus
   uses: src/config/types
-- i18n.ts: lib/i18n: reads UI strings from the active locale through t(). @see src/content/en.ts
-  exports: TKey, setLocale, t
-  uses: src/content/en
+- i18n.ts: lib/i18n: reads UI strings from the active locale through t(). @see src/content/en.ts, src/content/fa.ts
+  exports: TKey, setLocale, t, initLocale
+  uses: src/content/en, src/content/fa
 - quality.ts: lib/quality: picks the quality tier from screen width, CPU cores and data preference. @see docs/DESIGN.md (Responsive), src/config/tuning.ts
   exports: QualityTier, detectTier
 - reduced-motion.ts: lib/reduced-motion: reads prefers-reduced-motion for every motion decision. @see docs/MOTION.md (Reduced motion)
