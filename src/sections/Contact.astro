@@ -12,7 +12,10 @@ import { t } from '@/lib/i18n';
       <span class="dot" aria-hidden="true"></span>
       {t('contact.availability')}
     </p>
-    <a class="btn" href={`mailto:${SITE.email}`}>{t('contact.emailButton')}</a>
+    <div class="contact-actions">
+      <a class="btn" href={`mailto:${SITE.email}`}>{t('contact.emailButton')}</a>
+      <button type="button" class="btn btn-ghost" data-copy-email={SITE.email}>{t('contact.copyEmail')}</button>
+    </div>
     <ul class="socials">
       {SITE.socials.map((s) => (
         <li><a href={s.href}>{s.label}</a></li>
@@ -20,3 +23,29 @@ import { t } from '@/lib/i18n';
     </ul>
   </div>
 </section>
+
+<script>
+  import { t } from '@/lib/i18n';
+
+  // Copy the address for people whose machine has no mail client wired up.
+  const button = document.querySelector<HTMLButtonElement>('[data-copy-email]');
+  if (button) {
+    const label = button.textContent ?? '';
+    button.addEventListener('click', () => {
+      const email = button.dataset.copyEmail ?? '';
+      navigator.clipboard?.writeText(email).then(
+        () => {
+          button.textContent = t('contact.copied');
+          button.dataset.copied = 'true';
+          window.setTimeout(() => {
+            button.textContent = label;
+            delete button.dataset.copied;
+          }, 1600);
+        },
+        () => {
+          /* clipboard blocked: the mailto button still works */
+        },
+      );
+    });
+  }
+</script>

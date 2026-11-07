@@ -712,3 +712,30 @@ html:not(.js) .layer-nav {
     display: none;
   }
 }
+
+/* Contact actions: the mailto link plus a copy button for machines with no
+   mail client. The ghost button is the outline variant of .btn. */
+.contact-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  justify-content: center;
+  margin-block-start: 18px;
+}
+
+.btn-ghost {
+  background: transparent;
+  color: var(--ink);
+  border-color: color-mix(in srgb, var(--ink) 24%, var(--line));
+  box-shadow: none;
+}
+
+.btn-ghost:hover,
+.btn-ghost:focus-visible {
+  background: color-mix(in srgb, var(--ink) 6%, transparent);
+}
+
+.btn-ghost[data-copied='true'] {
+  border-color: color-mix(in srgb, var(--c-sage) 65%, var(--line));
+  color: var(--ink);
+}

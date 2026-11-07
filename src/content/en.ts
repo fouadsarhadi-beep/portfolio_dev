@@ -36,6 +36,8 @@ export const en = {
     intro: 'One tile per layer. The tools I reach for most.',
   },
   contact: {
+    copyEmail: 'Copy email',
+    copied: 'Copied',
     heading: 'Have a site to build, fix or rank?',
     body: 'Tell me what the site should do. I answer within two working days.',
     emailButton: 'Send email',
