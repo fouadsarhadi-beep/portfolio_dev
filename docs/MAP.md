@@ -67,6 +67,11 @@ Search this file before creating anything.
   exports: GET
   uses: src/config/layers, src/config/site
 
+## src/pages/og/
+- [layer].svg.ts: pages/og/[layer].svg: a per-floor social card, drawn from the theme. @see src/pages/work/[layer].astro, src/config/theme.ts, src/config/layers.ts
+  exports: getStaticPaths, GET
+  uses: src/config/theme, src/config/layers, src/config/types
+
 ## src/pages/work/
 - [layer].astro: pages/work/[layer]: static page per layer; the SEO page and no-JS detail. @see docs/WIRING.md (Routes), src/config/layers.ts
   exports: getStaticPaths
@@ -282,7 +287,7 @@ Search this file before creating anything.
 - About.astro: sections/About: statement, six-layer diagram, three color panels. @see docs/DESIGN.md (Sections), src/styles/sections.css
   uses: src/config/layers, src/lib/i18n
 - Contact.astro: sections/Contact: end-of-level panel with heading, mailto, socials, availability. @see docs/COPY.md, src/config/site.ts
-  uses: src/config/site, src/lib/i18n
+  uses: src/config/site, src/lib/i18n, src/lib/i18n
 - Footer.astro: sections/Footer: compact footer with name, note, top link. @see docs/DESIGN.md (Sections)
   uses: src/config/site, src/lib/i18n
 - Hero.astro: sections/Hero: tall scroll stage, sticky canvas mount, layer nav, hero copy, no-JS fallback. @see docs/MOTION.md, src/styles/hud.css, src/styles/sections.css

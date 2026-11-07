@@ -12,9 +12,9 @@ import { SITE } from '@/config/site';
 import { LAYERS } from '@/config/layers';
 import { t } from '@/lib/i18n';
 
-interface Props { title: string; description?: string }
+interface Props { title: string; description?: string; ogImage?: string; canonical?: string }
 
-const { title, description } = Astro.props;
+const { title, description, ogImage, canonical } = Astro.props;
 const desc = description ?? `${SITE.role}: ${LAYERS.map((l) => l.title).join(', ')}.`;
 const person = {
   '@context': 'https://schema.org',
@@ -36,6 +36,11 @@ const person = {
     <meta property="og:title" content={title} />
     <meta property="og:description" content={desc} />
     <meta property="og:type" content="website" />
+    <meta property="og:site_name" content={SITE.name} />
+    {ogImage && <meta property="og:image" content={ogImage} />}
+    {ogImage && <meta name="twitter:card" content="summary_large_image" />}
+    {ogImage && <meta name="twitter:image" content={ogImage} />}
+    {canonical && <link rel="canonical" href={canonical} />}
     <script is:inline>document.documentElement.classList.add('js');</script>
     <script is:inline>
       // Theme before first paint: saved choice wins, else system preference.

@@ -17,7 +17,12 @@ interface Props { layer: LayerConfig }
 const { layer } = Astro.props;
 ---
 
-<Base title={`${layer.title} — ${SITE.name}`} description={layer.short}>
+<Base
+  title={`${layer.title} — ${SITE.name}`}
+  description={layer.short}
+  ogImage={`${SITE.url}/og/${layer.id}.svg`}
+  canonical={`${SITE.url}/work/${layer.id}/`}
+>
   <Hud />
   <main id="main">
     <article class="work wrap" style={`--layer-c: var(--c-${layer.color})`}>
