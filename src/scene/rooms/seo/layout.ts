@@ -20,7 +20,7 @@ export interface SeoHandles {
 
 export function buildLayout(ctx: RoomContext, room: THREE.Group): SeoHandles {
   const p = ctx.props;
-  const rug = p.rug(ctx, { color: `#${new THREE.Color(lighten(PALETTE.peach, 0.35)).getHexString()}` });
+  const rug = p.rug(ctx, { color: `#${new THREE.Color(lighten(PALETTE.peach, 0.35)).getHexString()}`, glyph: ctx.layer.icon });
   rug.position.set(0.2, 0, 0.5);
   room.add(rug);
 

@@ -2,6 +2,8 @@
 
 Rules for all rooms: footprint FOOTPRINT x FOOTPRINT, two back walls (-x, -z), wood floor, wall height WALL_H, props at most WALL_H x 0.95 tall. Target 35 to 80 meshes (count instances once). At least four distinct idle loops. At most 6 colors (DESIGN.md). Props come from the shared kit in rooms/props/. Each room is its own folder and imports nothing from another room.
 
+Readability rule (user review 2026-11-07): every floor's rug carries that layer's icon, woven in at `p.rug(ctx, { glyph: ctx.layer.icon })`. It is the biggest flat surface in the room and the same glyph as the slab badge, so the exploded overview reads as a legend. `RoomContext` also carries `layer` (id, title, accent, icon), so a room can label itself without importing `config/layers.ts`.
+
 Folder per room: `index.ts` (build), `layout.ts` (positions), `anim.ts` (idle loops). Copy `rooms/content/` as the template.
 
 ## 1 content (butter), top layer

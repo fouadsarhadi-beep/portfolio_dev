@@ -21,6 +21,15 @@ export interface InfraHandles {
 }
 export function buildLayout(ctx: RoomContext, room: THREE.Group): InfraHandles {
   const ledMeshes: THREE.InstancedMesh[] = [];
+  // The dais the racks stand on carries the floor's glyph (props/rug): the server
+  // floor reads at a glance from the overview, like every other floor.
+  const rug = ctx.props.rug(ctx, {
+    color: `#${new THREE.Color(lighten(PALETTE.steel, 0.3)).getHexString()}`,
+    glyph: ctx.layer.icon,
+    radius: 1.45,
+  });
+  rug.position.set(0.55, 0, 0.35);
+  room.add(rug);
   room.add(makeRack(ctx, -2.3, -1.4, ledMeshes, 0));
   room.add(makeRack(ctx, -2.3, 0.9, ledMeshes, 1));
   makeFloorProps(ctx, room);

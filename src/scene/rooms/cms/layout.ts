@@ -54,7 +54,7 @@ export function drawCalendar(c: CanvasRenderingContext2D, w: number, h: number, 
 
 export function buildLayout(ctx: RoomContext, room: THREE.Group): CmsHandles {
   const p = ctx.props;
-  const rug = p.rug(ctx, { color: `#${new THREE.Color(lighten(PALETTE.sage, 0.35)).getHexString()}` });
+  const rug = p.rug(ctx, { color: `#${new THREE.Color(lighten(PALETTE.sage, 0.35)).getHexString()}`, glyph: ctx.layer.icon });
   rug.position.set(0.2, 0, 0.5);
   room.add(rug);
 

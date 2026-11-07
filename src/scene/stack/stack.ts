@@ -38,7 +38,7 @@ export function createStack(layers: LayerConfig[] = LAYERS): Stack {
     const build = ROOMS[layer.room];
     if (build) {
       const mat = createMaterialKit();
-      const ctx: RoomContext = { footprint: FOOTPRINT, wallH: WALL_H, mat, props: PROPS };
+      const ctx: RoomContext = { footprint: FOOTPRINT, wallH: WALL_H, mat, props: PROPS, layer };
       const room = build(ctx);
       room.group.position.y = SLAB_T / 2 + 0.036;
       room.group.userData.layerId = layer.id;

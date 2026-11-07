@@ -46,7 +46,7 @@ export interface MaterialKit { [name: string]: THREE.Material }
 export interface PropFactory { (ctx: RoomContext, opts?: Record<string, unknown>): THREE.Object3D }
 export interface PropKit { [name: string]: PropFactory }
 
-export interface RoomContext { footprint: number; wallH: number; mat: MaterialKit; props: PropKit }
+export interface RoomContext { footprint: number; wallH: number; mat: MaterialKit; props: PropKit; layer: LayerConfig }
 
 export interface RoomInstance {
   group: THREE.Group;

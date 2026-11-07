@@ -20,7 +20,7 @@ export interface WddHandles {
 }
 export function buildLayout(ctx: RoomContext, room: THREE.Group): WddHandles {
   const p = ctx.props;
-  const rug = p.rug(ctx, { color: `#${new THREE.Color(lighten(PALETTE.rose, 0.35)).getHexString()}` });
+  const rug = p.rug(ctx, { color: `#${new THREE.Color(lighten(PALETTE.rose, 0.35)).getHexString()}`, glyph: ctx.layer.icon });
   rug.position.set(0.2, 0, 0.5);
   room.add(rug);
   // L-shaped workstation: development desk on the -z wall, drafting arm on +x.

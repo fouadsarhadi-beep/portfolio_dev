@@ -11,7 +11,7 @@ const WALL_FACE = WALL_CENTER - WALL_THICK / 2; // inner face of the back walls
 export function buildLayout(ctx: RoomContext, room: THREE.Group): void {
   const p = ctx.props;
 
-  const rug = p.rug(ctx, {});
+  const rug = p.rug(ctx, { glyph: ctx.layer.icon });
   rug.position.set(0.35, 0, 0.55);
   room.add(rug);
 

@@ -42,7 +42,10 @@ export function drawDualPane(c: CanvasRenderingContext2D, w: number, h: number, 
 export function buildLayout(ctx: RoomContext, room: THREE.Group): TranslationHandles {
   const p = ctx.props;
 
-  const rug = p.rug(ctx, { color: `#${new THREE.Color(lighten(PALETTE.lilac, 0.22)).getHexString()}` });
+  const rug = p.rug(ctx, {
+    color: `#${new THREE.Color(lighten(PALETTE.lilac, 0.22)).getHexString()}`,
+    glyph: ctx.layer.icon,
+  });
   rug.position.set(0.3, 0, 0.55);
   room.add(rug);
 
