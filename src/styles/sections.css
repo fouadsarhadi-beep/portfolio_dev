@@ -788,3 +788,15 @@ html:not(.js) .layer-nav {
     animation: none;
   }
 }
+
+/* Two more sentences that explain what the floor actually holds. */
+.sg-note {
+  margin-block-start: 10px;
+  padding-block-start: 10px;
+  border-block-start: 1px solid var(--line);
+  max-inline-size: 28ch;
+  margin-inline-start: auto;
+  font-size: var(--fs-12);
+  line-height: 1.5;
+  color: var(--ink-soft);
+}
