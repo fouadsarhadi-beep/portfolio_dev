@@ -6,7 +6,7 @@
   "scripts": {
     "dev": "astro dev",
     "build": "astro build",
-    "preview": "astro preview",
+    "preview": "astro preview --port 4321",
     "astro": "astro",
     "check": "tsc --noEmit && node scripts/check.mjs",
     "map": "node scripts/check.mjs --map-only",
