@@ -230,12 +230,14 @@ html[data-theme='dark'] .theme-toggle .icon-moon {
 /* --- Layer info card (T29): hover preview; T30 expands it into the detail card ---
    Deliberate fixed spot on the right edge of the stage, in the vertical band the
    layer-nav pills never occupy at any scroll step (pills hug the slab faces).
+   Inset cleared past the scroll ladder (user review 2026-11-07, the rail moved to
+   the end side): the card and the ladder own separate columns.
    Shares its visual language with the T30 expanded card: same surface, radius,
    hairline border, accent rule, soft shadow. No hard cartoon offsets. */
 .layer-card {
   position: absolute;
   z-index: 6;
-  inset-inline-end: clamp(16px, 2.5vw, 36px);
+  inset-inline-end: clamp(48px, 4.6vw, 72px);
   top: clamp(96px, 24vh, 220px);
   width: min(320px, calc(100vw - 32px));
   background: var(--surface-grad);
