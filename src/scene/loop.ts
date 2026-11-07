@@ -56,7 +56,9 @@ export function startLoop(parts: LoopParts): () => void {
     } else {
       // The overview blends the follow target toward the middle of the fanned
       // column and pulls the camera back, so all six floors read at once.
-      const o = parts.state.overview;
+      // Reduced motion cuts between the two framings instead of gliding.
+      const raw = parts.state.overview;
+      const o = prefersReducedMotion() ? Math.round(raw) : raw;
       const target = wantY() + (overviewY() - wantY()) * o;
       const t = followCamera(parts.camera, target, dt);
       parts.camera.lookAt(0, t + parts.landing.jolt(), 0);
