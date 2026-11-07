@@ -21,7 +21,7 @@ export const en = {
     kicker: 'Floors 01 to 06',
     line: 'Each floor is one part of the job, stacked by craft.',
     hint: 'Click a floor to read its samples',
-    skip: 'Skip the tower',
+    skip: 'Simple view',
   },
   hero: {
     h1: 'I build websites from the server up to the sentence.',
