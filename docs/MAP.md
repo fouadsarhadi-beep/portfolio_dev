@@ -18,6 +18,8 @@ Search this file before creating anything.
 - layers.ts: config/layers: the six layer configs in locked top-to-bottom order. @see docs/COPY.md, src/config/types.ts
   exports: LAYERS
   uses: src/config/types
+- layout.ts: config/layout: the page shell proportions, read by both the CSS bands and the camera that frames a floor inside one. @see src/styles/tokens.css (--page-inset), src/styles/layout.css, src/scene/focus-pose.ts
+  exports: PAGE_INSET, SHELL_COLS, DETAIL_FLOOR_SHARE, SHELL_BAND, DETAIL_FLOOR_BAND, DETAIL_FLOOR_CENTRE
 - palette.ts: config/palette: the only place hex colors may live, plus lighten/darken and the theme palettes. @see docs/DESIGN.md (Dual theme), src/config/theme.ts
   exports: PALETTE, PaletteName, lighten, darken, LIGHT, DARK
   uses: src/config/theme
@@ -96,9 +98,9 @@ Search this file before creating anything.
 - camera.ts: scene/camera: orthographic camera locked to the (1,1,1) isometric view, with damped follow and the framing-offset tween. @see docs/DESIGN.md (Camera), docs/MOTION.md (Camera), src/config/tuning.ts
   exports: createCamera, applyFraming, resizeCamera, currentFrameOffset, tweenFraming, followCamera
   uses: src/config/tuning
-- focus-pose.ts: scene/focus-pose: detail-view pose maths: the zoom, column shift and vertical bias that put one floor in the left column. @see src/scene/focus.ts, src/config/tuning.ts
+- focus-pose.ts: scene/focus-pose: detail-view pose maths: the zoom, column shift and vertical bias that put one floor in the band's floor share. @see src/scene/focus.ts, src/config/layout.ts
   exports: VIEW_LEFT, DetailPose, detailPose
-  uses: src/config/tuning
+  uses: src/config/tuning, src/config/layout
 - focus-shade.ts: scene/focus-shade: fades every floor except the expanded one, then takes the invisible floors out of the scene. @see src/scene/focus.ts, docs/MOTION.md (Detail view)
   exports: Shade, createShade
 - focus.ts: scene/focus: the selected floor leaves the stack into the left 45% column, the rest fades. @see docs/MOTION.md (Detail view), src/ui/detail.ts, src/scene/focus-pose.ts, src/scene/focus-shade.ts

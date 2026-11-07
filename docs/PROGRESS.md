@@ -1,16 +1,15 @@
 # PROGRESS
 
-Current task: none. The 2026-11-07 review batch (six items) is committed; the live visual, touch and reduced-motion pass sits with the user.
+Current task: none. The 2026-11-07 review batch and the layout-shell pass are committed; the live visual, touch and reduced-motion pass sits with the user.
 
 ## Handoff note (max 8 lines, rewrite each session)
-State: six review items done on main, one commit each, nothing pushed (origin/main is 34 commits behind).
-Landed: dust is light khaki; the overview explodes the six floors into a tower with corridors; the ladder rail moved to the end side; the guide link reads "Simple view"; every rug carries its floor's icon so the explosion reads as a legend; the 200-line cap stands, so focus.ts (271) and pick.ts (203) were split into focus-pose.ts, focus-shade.ts and stack/layer-rect.ts (plus `tweenFraming` in camera.ts).
-Verified in-session 2026-11-07: npm run check (0 errors, 0 warnings, 104 files), npm run build, npm run smoke (26 of 26). No browser automation: geometry checked against the tuning constants (gap 2.2, zoom 0.5, steps 2).
-Result: the tower now reads as six skill floors from the overview and from every room; the guardrails are quiet again.
-Open questions for the user: dust strength (khaki is a warm neutral now); whether the exploded overview wants more air between floors.
-Gotchas: the rug glyph is a canvas texture on the cylinder's top cap only (side and underside stay plain); `RoomContext.layer` is the only way a room knows its own icon.
-Next: the user's live pass, then git push.
-
+State: the page sits on one shell grid (10% margin each side, three flexible cells). Committed on main, nothing pushed.
+Landed: `src/config/layout.ts` holds the proportions (PAGE_INSET 0.1, DETAIL_FLOOR_SHARE 0.45, derived band and centre); `src/styles/layout.css` holds the recipe (.shell, .shell-inset, .stage-grid). The HUD row is identity/nav/status cells (two rows below 760px); the stage is the default view grid (canvas full-bleed, guides in the top band, pills in the end cell, hero copy in the bottom band); sections, footer and 404 sit on the band; the expanded floor view is the second grid on the same band, and `focus-pose.ts` now derives zoom and shift from layout.ts instead of a hardcoded 0.45.
+Verified in-session 2026-11-07: npm run check (0 errors, 0 warnings, 105 files), npm run build (8 pages), npm run smoke (26 of 26). No browser: the geometry is proved by arithmetic (band 0.800, floor share 0.360 of the viewport, centre 0.280, floor right edge 0.460 meets the card edge 0.460) and by a source-reading script over each band rule and dist/.
+Result: header, guides, hero, sections and footer share one left and one right edge at every width; the old hand-tuned clamp insets, .wrap and --content-max are gone.
+Open questions for the user: 10% is generous on a laptop (144px at 1440), and the camera ignores the shell gap, so the floor can sit ~9px left of its cell centre; say if either should change.
+Gotchas: the detail grid is 45fr 55fr, not three cells, because the camera frames the floor in that share; the shell keeps three cells at every width and only tightens the margin (6vw) below 600px; .layer-card and .detail-view stay absolutely positioned on purpose (JS appends them to .stage-sticky).
+Next: the user live pass, then git push.
 ## How to run
 - Open a terminal in the portfolio-kit folder (the one with package.json): `cd "C:\Users\ASUS\Desktop\personal\homepage\GLM 5.3_2\portfolio-kit"`
 - `npm install` (once, or after package.json changes)
@@ -22,6 +21,7 @@ Next: the user's live pass, then git push.
 - The folder left OneDrive on 2026-11-07; any `OneDrive - sternx.de` path in older notes is stale.
 
 ## Needs (changes requested outside a task's files)
+- Layout shell (user request 2026-11-07): the whole page is one three-column grid inset 10% each side, with the grid in the middle 80%, and a second grid for the expanded floor view. Delivered: layout.ts + layout.css, every band moved onto the shell, camera derived from the same constants. Recorded in docs/DESIGN.md (Layout) and AGENTS.md (hard rules).
 - Review batch (user review 2026-11-07, six items, one commit each): dust colour, exploded overview, ladder position, "Simple view" guide link, room iconography, 200-line cap. All delivered; the handoff note above lists them, docs/ROOMS.md carries the rug-glyph rule and docs/MOTION.md the overview explosion.
 - Batch after the material fixes (user review 2026-11-06): delivered, one commit each, in T35-T36 (see the table). Pixel dust on the two front faces (8df65c2); the last floor holds and the camera pulls back over three extra steps, LAYER_STEPS 5 + OVERVIEW_STEPS 3 = the 8 in tokens.css (62f9cd7); a layered surface system with gradient cards, inset highlight, glass header, drawn grid, DM Sans display face and tighter tracking (0e4ae3c); a scroll ladder replacing the header step indicator (b02c0f3); side guides that explain the floors and caption the current one (431cc76); rooms that drop generic furniture and foreground one skill icon each (e41cf89); then all twenty council ideas from council_ideas.txt (parent folder, outside the repo) across 928a2c6..a770a3b. Nothing in this batch is left to build; only the user's live pass remains.
 - Guardrails warn (not fail) when a source file passes 200 lines. The cap stayed (user review 2026-11-07: keep it, it earns its place), so the two known offenders are split: `focus.ts` keeps the state machine and delegates pose maths to `focus-pose.ts` and the floor fade to `focus-shade.ts`; `pick.ts` projects labels through `stack/layer-rect.ts`. The warning stays armed for the next file that grows.
@@ -108,6 +108,8 @@ Next: the user's live pass, then git push.
   Idea 1 (system theme on first visit) was already in place and only verified. Then deep link, keyboard shortcuts, 404, robots+sitemap, reading progress, per-floor social cards, copy email, reduced data, skip link, structured data, live region, slow-connection shimmer, print styles, per-room reading copy, line-cap warning, reduced-motion overview, Persian dictionary with an RTL switch, theme-aware favicons, smoke suite. `npm run smoke` runs 26 checks over dist/.
 | T37 | Docs sync after the folder move | done (this commit) |
   The run path in How to run no longer points at OneDrive, T33-T37 are recorded, and the handoff note is rewritten. check (0 errors, 2 warnings), build (8 pages) and smoke (26 of 26) re-run clean on 2026-11-07.
+| T38 | Layout shell: one grid for the page and one for the expanded floor | done, code-verified (this commit) |
+  Three flexible cells inside a 10% margin each side; HUD, stage, sections, footer and 404 on the band; absent the old wrap/clamp insets; second grid 45/55 on the same band with the camera derived from `src/config/layout.ts`. check (0 warnings), build (8 pages), smoke (26/26) and an arithmetic + source-reading verification. Card: none (direct user request; recorded in DESIGN Layout and AGENTS hard rules).
 
 ## Blocked
 (none)

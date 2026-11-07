@@ -36,7 +36,7 @@ Stuck after 3 attempts? Write it under "Blocked" in docs/PROGRESS.md and report 
 src/config      content and tuning data only. Imports nothing.
 src/content     UI strings (en.ts).
 src/pages, layouts, sections   Astro pages and DOM sections.
-src/styles      tokens.css, base.css, hud.css, doc.css, ladder.css, sections.css.
+src/styles      tokens.css, layout.css (the page shell), base.css, hud.css, doc.css, ladder.css, sections.css.
 src/scene       all Three.js code. boot.ts is the entry. api.ts is the only door for the UI.
 src/scene/stack slab.ts, stack.ts, state.ts, motion.ts, landing.ts, pick.ts, labels.ts
 src/scene/rooms one folder per room id, plus props/ (shared kit) and shell.ts
@@ -49,6 +49,7 @@ Code
 - Every file targets 200 lines. Past that, the file is usually doing two jobs: split it along a functional seam (data and config, pure maths, DOM, wiring), never into arbitrary halves, and never cut code apart that only reads well together. When a cohesive unit is genuinely clearer whole, keep it whole and state why in its own header as `@cap-exempt: <reason>`; the guardrail honours the marker. The count is a smell detector, not a wall.
 - Every file starts with a header: `/** @module name: one-line purpose. @see neighbor files */`. In .astro files, put it inside the frontmatter.
 - Hex colors appear only in src/config/palette.ts and src/styles/tokens.css.
+- The page is one shell: a three-column grid inset 10% each side (the grid lives in the middle 80%), defined in src/styles/layout.css and previewed by the --page-inset / --shell-cols tokens in tokens.css. Every band (header, stage, sections, footer) sits on it, and the expanded floor view is a second grid on the same band. Never reintroduce a bespoke sidebar inset: put the item in a cell.
 - A room folder never imports another room folder. It may import ../props/*, ../shell and config.
 - scene/ never imports ui/, sections/ or pages/. ui/ reaches the scene only through scene/api.ts.
 - Shared types live in src/config/types.ts. No `any`.
