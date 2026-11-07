@@ -21,6 +21,18 @@ import { t } from '@/lib/i18n';
     if (title) title.textContent = layer.title;
     if (short) short.textContent = layer.short;
   });
+
+  // If three.js has not mounted anything shortly after load, mark the mount so a
+  // quiet placeholder shows: on a slow line the stage must not look broken.
+  const mount = document.getElementById('canvas-mount');
+  if (mount) {
+    window.setTimeout(() => {
+      const live = mount.getAttribute('data-live') === 'true' || mount.childElementCount > 0;
+      if (!live && !document.documentElement.classList.contains('no-webgl')) {
+        mount.dataset.pending = 'true';
+      }
+    }, 2200);
+  }
 </script>
 
 <section id="stack" class="stage">

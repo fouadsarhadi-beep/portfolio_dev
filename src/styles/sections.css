@@ -755,3 +755,36 @@ html:not(.js) .layer-nav {
 .sg-skip a:hover {
   color: var(--ink);
 }
+
+/* Before the scene arrives, and only then: a calm shimmer over the stage, so a
+   slow connection never looks like a broken page. No spinner, no message. */
+#canvas-mount[data-pending='true']::after {
+  content: '';
+  position: absolute;
+  inset: 24% 20% 32%;
+  z-index: 1;
+  border-radius: var(--radius-l);
+  background: linear-gradient(
+    100deg,
+    transparent 32%,
+    color-mix(in srgb, var(--ink) 7%, transparent) 50%,
+    transparent 68%
+  );
+  background-size: 220% 100%;
+  animation: stage-shimmer 1.9s linear infinite;
+}
+
+@keyframes stage-shimmer {
+  from {
+    background-position: 180% 0;
+  }
+  to {
+    background-position: -80% 0;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  #canvas-mount[data-pending='true']::after {
+    animation: none;
+  }
+}
