@@ -26,6 +26,11 @@ for (const f of files) {
   if (f.endsWith('.ts') && r !== 'src/config/palette.ts' && /#[0-9a-fA-F]{6}\b/.test(code)) errors.push(`${r}: hex color outside src/config/palette.ts. Use a palette token.`);
   if (/:\s*any\b|\bas any\b/.test(code)) warns.push(`${r}: uses "any"`);
 
+  // AGENTS.md caps every source file at 200 lines. Warn, never fail: the point
+  // is to keep the offenders visible without blocking a build mid-refactor.
+  const lineCount = s.split('\n').length;
+  if (lineCount > 200) warns.push(r + ': ' + lineCount + ' lines (AGENTS.md caps a file at 200)');
+
   for (const i of imports) {
     const t = target(i);
     if (r.startsWith('src/config/') && !t.startsWith('src/config/')) errors.push(`${r}: config may not import ${i}`);
