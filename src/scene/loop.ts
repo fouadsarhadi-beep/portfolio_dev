@@ -1,14 +1,13 @@
-/** @module scene/loop: the per-frame update: state, pick, labels, camera follow, rooms, render. @see src/scene/boot.ts, docs/MOTION.md (Camera), src/lib/ticker.ts */
+/** @module scene/loop: the per-frame update: state, pick, camera follow, rooms, render. @see src/scene/boot.ts, docs/MOTION.md (Camera), src/lib/ticker.ts */
 import { CAM_FRAME_OFFSET_Y, LIFT, OVERVIEW_ZOOM, SLAB_T, WALL_H } from '@/config/tuning';
 import { ticker } from '@/lib/ticker';
 import { prefersReducedMotion } from '@/lib/reduced-motion';
-import { followCamera } from './camera';
+import { followCamera, baseZoomOf } from './camera';
 import type { Focus } from './focus';
 import type { OrthographicCamera, Scene, WebGLRenderer } from 'three';
 import type { StackState } from './stack/state';
 import type { Landing } from './stack/landing';
 import type { Pick } from './stack/pick';
-import type { LabelParts } from './stack/labels';
 import type { Stack } from './stack/stack';
 import type { Stage } from './stage';
 
@@ -20,7 +19,6 @@ export interface LoopParts {
   state: StackState;
   landing: Landing;
   pick: Pick;
-  labels: LabelParts;
   focus: Focus;
   stage: Stage;
 }
@@ -48,7 +46,6 @@ export function startLoop(parts: LoopParts): () => void {
     const mid = (spreadTop + spreadBottom) / 2;
     return flat + (mid - flat) * k;
   };
-  const baseZoom = parts.camera.zoom; // tier zoom from boot (1, or 1.3 on the low tier)
   parts.camera.userData.targetY = wantY(); // start settled, no fly-in
 
   return ticker.add((time, dt) => {
@@ -57,7 +54,6 @@ export function startLoop(parts: LoopParts): () => void {
     parts.pick.update(dt, time);
     // The expanded floor receives its leftward offset after the base positions are written.
     parts.focus.applyDetach(parts.stack.slabs);
-    parts.labels.update();
     parts.landing.update(time);
 
     // While the detail view is focused, the focus module drives the camera.
@@ -70,7 +66,8 @@ export function startLoop(parts: LoopParts): () => void {
       // Reduced motion cuts between the two framings instead of gliding.
       const raw = parts.state.overview;
       const o = prefersReducedMotion() ? Math.round(raw) : raw;
-      const zoom = baseZoom * (1 + (OVERVIEW_ZOOM - 1) * o);
+      // The tier fit boot stored (1.4 desktop, 1.3 low tier; re-fitted on resize).
+      const zoom = baseZoomOf(parts.camera) * (1 + (OVERVIEW_ZOOM - 1) * o);
       // The hero framing offset is a fixed pixel push that the zoom converts to
       // world units, so it covers more screen as the camera pulls back. Add it
       // back to the target at full overview, or the column would sit off centre

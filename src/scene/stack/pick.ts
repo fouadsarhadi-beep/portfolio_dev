@@ -1,4 +1,4 @@
-/** @module scene/stack/pick: raycasts slab sides, hover lift or nudge, dims others, edge highlight. @see docs/MOTION.md (Pick, hover, touch), src/lib/bus.ts, src/scene/stack/labels.ts */
+/** @module scene/stack/pick: raycasts slab sides, hover lift or nudge, dims others, edge highlight. @see docs/MOTION.md (Pick, hover, touch), src/lib/bus.ts */
 import * as THREE from 'three';
 import type { OrthographicCamera } from 'three';
 import { bus } from '@/lib/bus';
@@ -6,16 +6,12 @@ import { LAYERS } from '@/config/layers';
 import { PALETTE } from '@/config/palette';
 import type { ThemeColors } from '@/config/theme';
 import { currentTheme } from '../scene-theme';
-import { layerRect, type ScreenRect } from './layer-rect';
-
-export type { ScreenRect };
 
 export interface Pick {
   update(dt: number, time: number): void;
   setHover(id: string | null): void;
   /** Picking is paused while a floor is expanded (no hover state behind the card). */
   setEnabled(on: boolean): void;
-  getLayerRect(id: string): ScreenRect | null;
   dispose(): void;
 }
 
@@ -34,7 +30,6 @@ export function createPick(opts: {
   const n = slabs.length;
   const raycaster = new THREE.Raycaster();
   const ndc = new THREE.Vector2();
-  const rectVector = new THREE.Vector3();
   const lift = new Array<number>(n).fill(0);
   const nudgeX = new Array<number>(n).fill(0);
   const nudgeZ = new Array<number>(n).fill(0);
@@ -164,12 +159,6 @@ export function createPick(opts: {
     setEnabled(on: boolean): void {
       enabled = on;
       if (!on) setHover(null);
-    },
-
-    getLayerRect(id): ScreenRect | null {
-      const i = LAYERS.findIndex((l) => l.id === id);
-      if (i < 0) return null;
-      return layerRect(slabs[i], camera, canvas);
     },
 
     dispose() {

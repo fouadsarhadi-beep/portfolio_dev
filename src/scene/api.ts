@@ -2,11 +2,8 @@
 import { bus } from '@/lib/bus';
 import type { LayerId, StackDebugState } from '@/config/types';
 
-export interface ScreenRect { left: number; top: number; width: number; height: number }
-
 interface SceneApiImpl {
   setHover(id: LayerId | null): void;
-  getLayerRect(id: LayerId): ScreenRect | null;
   getState(): StackDebugState | null;
   focus(id: LayerId): void;
   release(): void;
@@ -14,7 +11,6 @@ interface SceneApiImpl {
 
 let impl: SceneApiImpl = {
   setHover: () => undefined,
-  getLayerRect: () => null,
   getState: () => null,
   focus: () => undefined,
   release: () => undefined,
@@ -36,10 +32,6 @@ export function releaseFocus(): void {
 export function setHover(id: LayerId | null): void {
   bus.emit('layer:hover', { id });
   impl.setHover(id);
-}
-
-export function getLayerRect(id: LayerId): ScreenRect | null {
-  return impl.getLayerRect(id);
 }
 
 export function getState(): StackDebugState | null {

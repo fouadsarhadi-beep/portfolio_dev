@@ -3,7 +3,7 @@ import { gsap } from 'gsap';
 import * as THREE from 'three';
 import type { Object3D, OrthographicCamera } from 'three';
 import { CAM_DIR, CAM_DISTANCE, CAM_FRAME_OFFSET_Y } from '@/config/tuning';
-import { tweenFraming, tweenShift, stageShift, setShiftDetached } from './camera';
+import { tweenFraming, tweenShift, stageShift, setShiftDetached, baseZoomOf } from './camera';
 import { createShade } from './focus-shade';
 import { detailPose, VIEW_LEFT } from './focus-pose';
 import { prefersReducedMotion } from '@/lib/reduced-motion';
@@ -124,8 +124,9 @@ export function createFocus(opts: {
       const dur = reduced ? 0.2 : DUR_CLOSE;
       canvasWrap.style.filter = '';
       gsap.to(detach, { x: 0, y: 0, z: 0, duration: dur, ease: 'power2.inOut', overwrite: true });
+      // Back to the stage's own zoom: the tier fit boot stored (1.4 desktop, T39).
       gsap.to(camera, {
-        zoom: 1,
+        zoom: baseZoomOf(camera),
         duration: dur,
         ease: 'power2.inOut',
         overwrite: true,

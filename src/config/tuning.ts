@@ -26,7 +26,8 @@ export const CAM_DAMP_LAMBDA = 6;                        // target Y damping
 // Framing (user review 2026-11-06): the opening view sat low, leaving a tall
 // empty band above the tower. The whole view is drawn this much higher.
 // Expressed as a share of the visible height so the composition holds at any
-// viewport; mirrors --hero-lift in src/styles/sections.css.
+// viewport. (T39 moved the hero copy to the top of the left column, so the
+// CSS --hero-lift mirror is gone; the camera offset stays.)
 export const CAM_FRAME_OFFSET_Y = CAM_VIEW_HEIGHT * 0.22; // ≈ 200px at 900px tall
 
 // End of the scroll (user review 2026-11-07): after the last floor opens, two
@@ -38,6 +39,14 @@ export const OVERVIEW_ZOOM = 0.5;
 // Extra air between floors in the overview. It has to clear a room's back walls
 // (WALL_H = 1.8) or the exploded floors would clip the slab above them.
 export const OVERVIEW_GAP = 2.2;
+
+// Base view zoom (user sketch 2026-11-08): the tower renders this much bigger
+// than the raw frustum fit, so the 50% stage column carries a taller stack.
+// Mirrors --tower-w in tokens.css; capped per cell by overviewFitZoom
+// (src/scene/focus-pose.ts) so the silhouette never bleeds out of its column.
+export const OVERVIEW_BASE_ZOOM = 1.4;
+// The low tier keeps its own, smaller zoom: fewer pixels, wider safety margin.
+export const LOW_TIER_BASE_ZOOM = 1.3;
 
 // Render
 export const EXPOSURE = 1.05;

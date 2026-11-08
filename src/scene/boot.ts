@@ -1,4 +1,4 @@
-/** @module scene/boot: entry; dynamic-imports three after first paint, mounts the canvas or falls back. @see src/scene/loop.ts, src/main.ts, docs/WIRING.md */
+/** @module scene/boot: entry; dynamic-imports three after first paint, mounts the canvas or falls back. @cap-exempt: it is the one wiring entry -- every import group here is a sibling step of the same boot sequence, and splitting it would scatter the boot order across files. @see src/scene/loop.ts, src/main.ts, docs/WIRING.md */
 import type { WebGLRenderer, OrthographicCamera, Scene, Object3D, Mesh, Material } from 'three';
 import type { StackDebugState } from '@/config/types';
 import type { ThemeColors } from '@/config/theme';
@@ -76,16 +76,16 @@ export async function boot(): Promise<void> {
 
   // Everything below pulls three.js in, so it all loads dynamically together.
   const [
-    { CAM_DIR, CAM_DISTANCE, SLAB_T }, { LAYERS }, { bus }, { PALETTE }, { createStack },
+    { CAM_DIR, CAM_DISTANCE, SLAB_T, LOW_TIER_BASE_ZOOM }, { LAYERS }, { bus }, { PALETTE }, { createStack },
     { createState }, { createMotion }, { createLanding }, { createPick },
-    { initLabels }, { createFocus }, { bindSceneApi }, { startLoop }, { detectTier },
-    { initSceneTheme }, { createDustPuffs },
+    { createFocus }, { bindSceneApi }, { startLoop }, { detectTier },
+    { initSceneTheme }, { createDustPuffs }, { setBaseZoom }, { overviewFitZoom },
   ] = await Promise.all([
     import('@/config/tuning'), import('@/config/layers'), import('@/lib/bus'), import('@/config/palette'),
     import('./stack/stack'), import('./stack/state'), import('./stack/motion'),
-    import('./stack/landing'), import('./stack/pick'), import('./stack/labels'),
+    import('./stack/landing'), import('./stack/pick'),
     import('./focus'), import('./api'), import('./loop'), import('@/lib/quality'),
-    import('./scene-theme'), import('./stack/dust'),
+    import('./scene-theme'), import('./stack/dust'), import('./camera'), import('./focus-pose'),
   ]);
   // The registry applies the active theme to every material registered during build.
   initSceneTheme();
@@ -105,9 +105,16 @@ export async function boot(): Promise<void> {
   scene.add(stack.group);
 
   // Initial framing target (the loop takes over damping immediately).
-  // Mobile zooms in on the exposed room (docs/DESIGN.md Responsive).
+  // The tower renders at the tier's base zoom, fitted to its cell so the
+  // enlarged tower (T39) never bleeds out of its column (docs/DESIGN.md Responsive).
   camera.position.set(CAM_DIR.x * CAM_DISTANCE, CAM_DISTANCE + CAM_DIR.y * CAM_DISTANCE, CAM_DIR.z * CAM_DISTANCE);
-  camera.zoom = tier === 'low' ? 1.3 : 1;
+  // The low tier keeps the smaller zoom but still respects the cell fit, so the
+  // tower never clips on a low-tier desktop with a square-ish window.
+  const base = tier === 'low'
+    ? Math.min(LOW_TIER_BASE_ZOOM, overviewFitZoom(mount.clientWidth, mount.clientHeight))
+    : overviewFitZoom(mount.clientWidth, mount.clientHeight);
+  camera.zoom = base;
+  setBaseZoom(camera, base);
   camera.updateProjectionMatrix();
 
   // Scroll state, motion, landing (with contact-shadow pulse + dust puffs).
@@ -125,7 +132,6 @@ export async function boot(): Promise<void> {
     bus.emit('step:change', { step: to });
   };
   const pick = createPick({ canvas: renderer.domElement, camera, slabs: stack.slabs, u: state.u });
-  const labels = initLabels();
   const focus = createFocus({
     camera,
     slabs: stack.slabs,
@@ -136,7 +142,6 @@ export async function boot(): Promise<void> {
   });
   bindSceneApi({
     setHover: (id) => pick.setHover(id),
-    getLayerRect: (id) => pick.getLayerRect(id),
     getState: () => ((window as unknown as Record<string, unknown>).__stack as StackDebugState) ?? null,
     // While a floor is expanded the tower is not a hover/click target (T30).
     focus: (id) => { pick.setEnabled(false); focus.open(id); },
@@ -159,14 +164,24 @@ export async function boot(): Promise<void> {
   (window as unknown as Record<string, unknown>).__scene = { camera, scene, renderer, three };
   state.publish();
 
-  startLoop({ renderer, camera, scene, stack, state, landing, pick, labels, focus, stage });
+  startLoop({ renderer, camera, scene, stack, state, landing, pick, focus, stage });
 
-  // Keep renderer size and camera frustum in sync with the mount box.
+  // Keep renderer size and camera frustum in sync with the mount box, and
+  // re-fit the base zoom so the tower keeps its air at any box shape (T39).
   new ResizeObserver((entries) => {
     const box = entries[0]?.contentRect;
     if (!box || box.width === 0 || box.height === 0) return;
     renderer.setSize(box.width, box.height, false);
     resizeFrustum(box.width, box.height);
+    const z = tier === 'low'
+      ? Math.min(LOW_TIER_BASE_ZOOM, overviewFitZoom(box.width, box.height))
+      : overviewFitZoom(box.width, box.height);
+    setBaseZoom(camera, z);
+    // While a floor is expanded the detail view owns the zoom; leave it alone.
+    if (!focus.active() && Math.abs(camera.zoom - z) > 0.0005) {
+      camera.zoom = z;
+      camera.updateProjectionMatrix();
+    }
   }).observe(mount);
 }
 

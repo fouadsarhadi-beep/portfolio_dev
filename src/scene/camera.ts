@@ -10,13 +10,16 @@ const FAR = 100;
 interface CameraData {
   /** Framing offset in world units (the hero lift, or a value mid-tween). */
   frameOffset?: number;
-  /** The stage's sideways shift in px: the tower sits at its cell's start edge
-   *  so the floor pills get the cell's leftover width on the end side. */
+  /** The stage's sideways shift in px: always 0 since T39 centred the tower in
+   *  its cell (the pills moved to their own column), kept for the restore path. */
   stageShiftPx?: number;
   /** The shift actually applied: the stage's, or 0 while a floor is expanded. */
   shiftPx?: number;
   /** True while the detail view owns the shift (tweened to 0). */
   shiftDetached?: boolean;
+  /** The zoom the overview blends from: boot sets it per tier and re-fits it
+   *  on resize; the detail view restores it on close. */
+  baseZoom?: number;
   viewW?: number;
   viewH?: number;
   targetY?: number;
@@ -69,11 +72,21 @@ export function applyFraming(camera: THREE.OrthographicCamera, offsetY: number):
   applyFrustum(camera);
 }
 
+/** The zoom the overview blends from: 1 until boot sets it (tier fit, T39). */
+export function baseZoomOf(camera: THREE.OrthographicCamera): number {
+  return data(camera).baseZoom ?? 1;
+}
+
+/** Store the base zoom; the overview blend and the detail close both read it. */
+export function setBaseZoom(camera: THREE.OrthographicCamera, zoom: number): void {
+  data(camera).baseZoom = zoom;
+}
+
 export function resizeCamera(camera: THREE.OrthographicCamera, width: number, height: number): void {
   const d = data(camera);
   d.viewW = width;
   d.viewH = height;
-  d.stageShiftPx = stageShiftPx(width, height);
+  d.stageShiftPx = stageShiftPx();
   // The stage shift follows the box, unless a floor owns the framing right now.
   if (d.shiftDetached !== true) d.shiftPx = d.stageShiftPx;
   applyFrustum(camera);

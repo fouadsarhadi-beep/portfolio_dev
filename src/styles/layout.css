@@ -1,4 +1,5 @@
-/* @module styles/layout: the one page shell: a three-column grid inset 10% each side, plus the view compositions built from it. @see src/styles/tokens.css, src/config/layout.ts, docs/DESIGN.md (Layout) */
+/* @module styles/layout: the one page shell: a three-column grid inset 10% each side, plus the stage's five-part composition (10 | 15 | 50 | 15 | 10, T39) built on the same margins. @see src/styles/tokens.css, src/config/layout.ts, docs/DESIGN.md (Layout) */
+
 
 /* --- The shell -------------------------------------------------------------
    A 10% margin each side leaves the grid in the middle 80%. Three flexible
@@ -23,17 +24,19 @@
 }
 
 /* --- The default view grid (the stage) -------------------------------------
-   The sticky stage is the default view, and it is the one band whose middle
-   cell is not an equal third: it is sized to the tower plus the room the floor
-   pills need (--stage-mid, tokens.css). That is what keeps the tower inside the
-   middle cell and gives the side cells a real divide to hold the copy.
-   The renderer mounts into that middle cell (#canvas-mount), so the frustum is
-   built from the cell's own box and the tower can never spill into a side cell.
-   The stage's outer edges are still the shell's, so it lines up with every band.
+   T39 (user sketch 2026-11-08): five parts across the viewport. A 10% margin
+   each side, and the middle 80% band split 15fr 50fr 15fr -- of the band, so
+   with the two shared gaps on top each cell lands at about 14.25% / 47.5% /
+   14.25% of the viewport. The left cell holds the stage guide and the hero
+   copy, the middle cell the tower, the right cell the layer nav; the right
+   10% margin additionally carries the scroll ladder (ladder.css).
+   The renderer mounts into the middle cell (#canvas-mount), so the frustum is
+   built from the cell's own box and the tower can never spill into a side cell;
+   overviewFitZoom (focus-pose.ts) keeps the enlarged tower inside it.
    Placement of the pieces lives with each piece (sections.css, hud.css). */
 .stage-grid {
   display: grid;
-  grid-template-columns: minmax(0, 1fr) minmax(0, var(--stage-mid)) minmax(0, 1fr);
+  grid-template-columns: minmax(0, 15fr) minmax(0, 50fr) minmax(0, 15fr);
   grid-template-rows: auto minmax(0, 1fr) auto;
   column-gap: var(--page-gap);
   row-gap: clamp(8px, 2vh, 20px);
@@ -44,10 +47,10 @@
   align-items: start;
 }
 
-/* A viewport that cannot hold the middle cell plus two readable side cells (or a
+/* A viewport that cannot hold the 50% cell plus two readable side cells (or a
    square-ish one, where the tower's vh width outgrows the band) drops to a single
-   cell: the side cells would be under ~200px, and the guides are hidden there
-   anyway. Wide: 1440x900 keeps all three. */
+   cell: the side cells would be under ~200px (the guide hides at 1100, the nav
+   docks at 760). Wide: 1440x900 keeps all three. */
 @media (max-width: 1279px), (max-aspect-ratio: 1/1) {
   .stage-grid,
   html.no-webgl .stage-grid {
@@ -58,6 +61,7 @@
     grid-column: 1;
   }
 
+  .stage-grid .layer-nav,
   .stage-grid .hero-copy,
   .stage-grid .stage-guide {
     grid-column: 1;

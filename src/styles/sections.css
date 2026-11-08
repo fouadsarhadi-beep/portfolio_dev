@@ -36,15 +36,17 @@ html.no-webgl .stage-sticky {
   height: auto;
 }
 
-html.no-webgl .layer-nav,
-html.no-webgl .hero-copy {
-  position: static;
-  transform: none;
-}
-
+/* No scene, no canvas: the nav is a plain grid item (never positioned), the
+   copy takes pointer events back, and the info panel (JS-appended, absolutely
+   positioned) has no anchor to sit on, so it stays out of the way. */
 html.no-webgl .hero-copy {
   pointer-events: auto;
   padding: 24px clamp(16px, 4vw, 32px) 0;
+}
+
+html.no-webgl .layer-card,
+html:not(.js) .layer-card {
+  display: none;
 }
 
 html.no-webgl .stack-fallback {
@@ -52,8 +54,6 @@ html.no-webgl .stack-fallback {
 }
 
 html:not(.js) .layer-nav {
-  position: static;
-  transform: none;
   flex-direction: column;
   align-items: flex-start;
 }
@@ -112,29 +112,21 @@ html:not(.js) .layer-nav {
 }
 
 .hero-copy {
-  /* Bottom band of the stage grid (src/styles/layout.css), START-side cell: the
-     copy sits left of the tower and never crosses under it. The copy is raised by
-     --hero-lift alone, so its place above the tower base needs no second offset. */
-  --hero-lift: 22svh;
+  /* T39 (user sketch): the START-side cell stacks the whole left column -- the
+     stage guide on top (grid-row 1), the h1 and its text right under it. The
+     tower owns the middle cell, so the copy never crosses under it. */
   grid-column: 1;
-  grid-row: 3;
-  align-self: end;
+  grid-row: 2;
+  align-self: start;
   max-inline-size: 100%;
-  margin-block-end: calc(clamp(20px, 9vh, 72px) + var(--hero-lift));
+  margin-block-start: clamp(14px, 3vh, 36px);
   z-index: 3;
   pointer-events: none;
 }
 
-@media (max-width: 760px) {
-  /* The floor pills dock on this same band (hud.css), so the copy lifts clear. */
-  .hero-copy {
-    margin-block-end: 72px;
-  }
-}
-
 .hero-copy h1 {
-  /* Sized against the side cell, not the viewport: the cell is roughly a quarter
-     of the width, so 5vw would overflow it. */
+  /* Sized against the side cell, not the viewport: the cell is roughly a seventh
+     of the width, so a vw-sized headline would overflow it. */
   font-size: clamp(var(--fs-28), 2.2vw, var(--fs-44));
   max-inline-size: 100%;
 }
@@ -574,10 +566,6 @@ html:not(.js) .layer-nav {
     grid-template-columns: 1fr;
     gap: 28px;
   }
-
-  .hero-copy {
---hero-lift: 8svh;
-  }
 }
 
 /* Small phones (360-480): tighter rhythm, nothing allowed to overflow. */
@@ -617,9 +605,10 @@ html:not(.js) .layer-nav {
   }
 }
 
-/* --- Side guides either side of the tower (sections/Hero.astro) ---
-   The tower is narrow and centred, so the margins carry the explanation: what
-   the floors are on the left, which floor you are on on the right. */
+/* --- The stage guide, top of the left column (sections/Hero.astro) ---
+   T39 merged the old right-hand guide into the hover panel (src/ui/preview.ts),
+   so the left column opens with the explanation: what the floors are, how to
+   read them. The hero copy follows it in the same cell. */
 .stage-guide {
   grid-row: 1;
   align-self: start;
@@ -639,12 +628,7 @@ html:not(.js) .layer-nav {
   grid-column: 1;
 }
 
-.stage-guide--right {
-  grid-column: 3;
-  text-align: end;
-}
-
-/* They belong to the tower, so they leave when a floor expands. */
+/* It belongs to the tower, so it leaves when a floor expands. */
 .stage-sticky[data-detail='true'] .stage-guide {
   opacity: 0;
 }
@@ -691,46 +675,16 @@ html:not(.js) .layer-nav {
   color: var(--ink);
 }
 
-.sg-count {
-  display: flex;
-  align-items: baseline;
-  gap: 6px;
-  justify-content: flex-end;
-  font-family: var(--font-display);
-  font-size: var(--fs-20);
-  font-weight: 650;
-  font-variant-numeric: tabular-nums;
-  letter-spacing: var(--tracking-tight);
-}
-
-.sg-of {
-  font-size: var(--fs-12);
-  font-weight: 600;
-  letter-spacing: 0;
-  color: var(--ink-soft);
-}
-
-.sg-title {
-  margin-block-start: 2px;
-  font-family: var(--font-display);
-  font-size: var(--fs-16);
-  font-weight: 650;
-  letter-spacing: var(--tracking-tight);
-}
-
-.sg-short {
-  margin-block-start: 6px;
-  margin-inline-start: auto;
-  max-inline-size: 26ch;
-  font-size: var(--fs-12);
-  line-height: 1.45;
-  color: var(--ink-soft);
-}
-
-/* Narrow viewports have no room for the guides without crowding the tower. */
+/* Narrow viewports have no room for the guide without crowding the tower. */
 @media (max-width: 1100px) {
   .stage-guide {
     display: none;
+  }
+
+  /* The guide owned the stage's top inset; with it gone the copy must take the
+     inset over, or it slides under the glass HUD as soon as the stage pins. */
+  .hero-copy {
+    margin-block-start: clamp(96px, 16vh, 190px);
   }
 }
 
@@ -808,16 +762,4 @@ html:not(.js) .layer-nav {
   #canvas-mount[data-pending='true']::after {
     animation: none;
   }
-}
-
-/* Two more sentences that explain what the floor actually holds. */
-.sg-note {
-  margin-block-start: 10px;
-  padding-block-start: 10px;
-  border-block-start: 1px solid var(--line);
-  max-inline-size: 28ch;
-  margin-inline-start: auto;
-  font-size: var(--fs-12);
-  line-height: 1.5;
-  color: var(--ink-soft);
 }
