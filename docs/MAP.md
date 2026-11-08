@@ -4,7 +4,7 @@ Search this file before creating anything.
 
 ## src/
 - main.ts: main: page entry; resolves the locale, boots the scene, then wires the UI layer to it. @see src/scene/boot.ts, src/lib/i18n.ts, src/ui/preview.ts, src/ui/detail.ts, src/ui/keyboard.ts
-  uses: src/lib/i18n
+  uses: src/lib/i18n, src/lib/bus
 
 ## src/config/
 - articles.ts: config/articles: long-form sample documents (articles), keyed by Sample.doc. @see src/config/documents.ts, src/ui/doc-viewer.ts, docs/DESIGN.md (Document reader)
@@ -31,7 +31,7 @@ Search this file before creating anything.
   exports: ThemeName, ThemeColors, THEMES
   uses: src/config/palette
 - tuning.ts: config/tuning: geometry, scroll step, camera and render tuning constants. @see docs/DESIGN.md, docs/MOTION.md, src/config/types.ts
-  exports: FOOTPRINT, SLAB_T, WALL_H, WALL_THICK, CORNER_R, LIFT, STACK_BASE_Y, STEP_VH, CAM_DIR, CAM_DISTANCE, CAM_TARGET_OFFSET_Y, CAM_VIEW_HEIGHT, CAM_DAMP_LAMBDA, CAM_FRAME_OFFSET_Y, OVERVIEW_STEPS, OVERVIEW_ZOOM, OVERVIEW_GAP, EXPOSURE, MAX_PIXEL_RATIO, SHADOW_MAP_DESKTOP, SHADOW_MAP_MOBILE
+  exports: FOOTPRINT, SLAB_T, WALL_H, WALL_THICK, CORNER_R, LIFT, STACK_BASE_Y, STEP_VH, CAM_DIR, CAM_DISTANCE, CAM_TARGET_OFFSET_Y, CAM_VIEW_HEIGHT, CAM_DAMP_LAMBDA, CAM_FRAME_OFFSET_Y, OVERVIEW_STEPS, OVERVIEW_ZOOM, OVERVIEW_GAP, OVERVIEW_BASE_ZOOM, LOW_TIER_BASE_ZOOM, EXPOSURE, MAX_PIXEL_RATIO, SHADOW_MAP_DESKTOP, SHADOW_MAP_MOBILE
   uses: src/config/types
 - types.ts: config/types: shared contracts for config, scene and UI. @see docs/WIRING.md, src/config/layers.ts
   exports: PaletteKey, LayerId, Vec3, DocKind, SampleDocument, Sample, LayerConfig, MaterialKit, PropFactory, PropKit, RoomContext, RoomInstance, RoomBuilder, StackEvents, StackDebugState
@@ -90,16 +90,16 @@ Search this file before creating anything.
 
 ## src/scene/
 - api.ts: scene/api: the only door from UI into the scene. @see docs/WIRING.md, src/lib/bus.ts, src/scene/stack/pick.ts
-  exports: ScreenRect, bindSceneApi, focusLayer, releaseFocus, setHover, getLayerRect, getState
+  exports: bindSceneApi, focusLayer, releaseFocus, setHover, getState
   uses: src/lib/bus, src/config/types
-- boot.ts: scene/boot: entry; dynamic-imports three after first paint, mounts the canvas or falls back. @see src/scene/loop.ts, src/main.ts, docs/WIRING.md
+- boot.ts: scene/boot: entry; dynamic-imports three after first paint, mounts the canvas or falls back. @cap-exempt: it is the one wiring entry -- every import group here is a sibling step of the same boot sequence, and splitting it would scatter the boot order across files. @see src/scene/loop.ts, src/main.ts, docs/WIRING.md
   exports: boot
   uses: src/config/types, src/config/theme, src/scene/stage
 - camera.ts: scene/camera: orthographic camera locked to the (1,1,1) isometric view, with damped follow, the framing-offset tween and the stage's sideways shift. @see docs/DESIGN.md (Camera), docs/MOTION.md (Camera), src/config/tuning.ts
-  exports: stageShift, createCamera, applyFraming, resizeCamera, currentFrameOffset, tweenFraming, tweenShift, setShiftDetached, followCamera
+  exports: stageShift, createCamera, applyFraming, baseZoomOf, setBaseZoom, resizeCamera, currentFrameOffset, tweenFraming, tweenShift, setShiftDetached, followCamera
   uses: src/config/tuning, src/scene/focus-pose
-- focus-pose.ts: scene/focus-pose: detail-view pose maths: the zoom, column shift and vertical bias that put one floor in the band's floor share. @see src/scene/focus.ts, src/config/layout.ts
-  exports: stageShiftPx, VIEW_LEFT, DetailPose, detailPose
+- focus-pose.ts: scene/focus-pose: pose maths for the tower's zoom and the detail view: the base zoom, the (zeroed) column shift and the vertical bias that put one floor in the band's floor share. @see src/scene/focus.ts, src/config/layout.ts, src/config/tuning.ts
+  exports: stageShiftPx, overviewFitZoom, VIEW_LEFT, DetailPose, detailPose
   uses: src/config/tuning, src/config/layout
 - focus-shade.ts: scene/focus-shade: fades every floor except the expanded one, then takes the invisible floors out of the scene. @see src/scene/focus.ts, docs/MOTION.md (Detail view)
   exports: Shade, createShade
@@ -109,9 +109,9 @@ Search this file before creating anything.
 - lights.ts: scene/lights: hemisphere, warm key with soft shadows, weak cool fill. @see docs/DESIGN.md (Light and render), src/scene/renderer.ts, src/scene/scene-theme.ts
   exports: createLights
   uses: src/config/palette, src/lib/quality, src/scene/renderer, src/scene/scene-theme
-- loop.ts: scene/loop: the per-frame update: state, pick, labels, camera follow, rooms, render. @see src/scene/boot.ts, docs/MOTION.md (Camera), src/lib/ticker.ts
+- loop.ts: scene/loop: the per-frame update: state, pick, camera follow, rooms, render. @see src/scene/boot.ts, docs/MOTION.md (Camera), src/lib/ticker.ts
   exports: LoopParts, startLoop
-  uses: src/config/tuning, src/lib/ticker, src/lib/reduced-motion, src/scene/camera, src/scene/focus, src/scene/stack/state, src/scene/stack/landing, src/scene/stack/pick, src/scene/stack/labels, src/scene/stack/stack, src/scene/stage
+  uses: src/config/tuning, src/lib/ticker, src/lib/reduced-motion, src/scene/camera, src/scene/focus, src/scene/stack/state, src/scene/stack/landing, src/scene/stack/pick, src/scene/stack/stack, src/scene/stage
 - renderer.ts: scene/renderer: transparent WebGL renderer with capped pixel ratio and soft shadows. @see docs/DESIGN.md (Light and render), src/scene/boot.ts
   exports: createRenderer, shadowMapSize
   uses: src/config/tuning, src/lib/quality
@@ -272,21 +272,15 @@ Search this file before creating anything.
   uses: src/config/tuning
 - icons.ts: scene/stack/icons: draws layer icons, numbers and registration crosses to CanvasTextures. @see docs/DESIGN.md (Slab), src/scene/stack/slab.ts
   exports: makeIconTexture, NumberTexture, makeNumberTexture
-- labels.ts: scene/stack/labels: pins each layer-nav button to its slab's right face via getLayerRect. @see docs/MOTION.md (Pick, hover, touch), src/scene/stack/pick.ts
-  exports: LabelParts, initLabels
-  uses: src/config/layers, src/scene/api
 - landing.ts: scene/stack/landing: touchdown effects: squash, shadow pulse, impact ring, dust puff, camera jolt, prop punch. @see docs/MOTION.md (Slam), src/scene/stack/motion.ts, src/scene/stack/dust.ts
   exports: PulseMat, Landing, createLanding
   uses: src/config/tuning, src/config/palette, src/lib/reduced-motion, src/scene/stack/dust
-- layer-rect.ts: scene/stack/layer-rect: projects a slab's outer corner so a DOM label or card clears its full width. @see src/scene/stack/pick.ts, src/scene/stack/labels.ts
-  exports: ScreenRect, layerRect
-  uses: src/config/tuning
 - motion.ts: scene/stack/motion: GSAP tweens on the u array; lift and slam timings per MOTION.md. @see docs/MOTION.md (Lift, Slam), src/scene/stack/state.ts, src/scene/stack/landing.ts
   exports: Motion, createMotion
   uses: src/config/tuning, src/lib/reduced-motion
-- pick.ts: scene/stack/pick: raycasts slab sides, hover lift or nudge, dims others, edge highlight. @see docs/MOTION.md (Pick, hover, touch), src/lib/bus.ts, src/scene/stack/labels.ts
+- pick.ts: scene/stack/pick: raycasts slab sides, hover lift or nudge, dims others, edge highlight. @see docs/MOTION.md (Pick, hover, touch), src/lib/bus.ts
   exports: Pick, createPick
-  uses: src/lib/bus, src/config/layers, src/config/palette, src/config/theme, src/scene/scene-theme, src/scene/stack/layer-rect
+  uses: src/lib/bus, src/config/layers, src/config/palette, src/config/theme, src/scene/scene-theme
 - slab.ts: scene/stack/slab: builds one chunky slab per LayerConfig (T28: unified material family). @see docs/DESIGN.md (Slab), src/scene/stack/stack.ts, src/scene/stack/icons.ts
   exports: makeSlab
   uses: src/config/tuning, src/config/palette, src/config/theme, src/config/types, src/scene/stack/icons, src/scene/scene-theme
@@ -305,7 +299,7 @@ Search this file before creating anything.
 - Footer.astro: sections/Footer: compact footer with name, note, top link. @see docs/DESIGN.md (Sections)
   uses: src/config/site, src/lib/i18n
 - Hero.astro: sections/Hero: tall scroll stage, sticky canvas mount, layer nav, hero copy, no-JS fallback. @see docs/MOTION.md, src/styles/hud.css, src/styles/sections.css
-  uses: src/config/layers, src/lib/i18n, src/lib/bus, src/config/layers
+  uses: src/config/layers, src/lib/i18n, src/lib/bus
 - Hud.astro: sections/Hud: sticky header with name, role, nav links, availability, progress bar. @see src/styles/hud.css, docs/DESIGN.md (HUD and UI style)
   uses: src/config/site, src/lib/i18n, src/ui/theme
 - Ladder.astro: sections/Ladder: the scroll ladder: one rung per floor, click to jump. @see src/styles/ladder.css, docs/MOTION.md (Scroll mapping), src/pages/index.astro
@@ -328,7 +322,7 @@ Search this file before creating anything.
 - keyboard.ts: ui/keyboard: layer-nav focus, ArrowUp/ArrowDown selection, Enter via native click, Escape. @see docs/MOTION.md (Pick, hover, touch), src/lib/bus.ts
   exports: initKeyboard
   uses: src/lib/bus, src/config/layers
-- preview.ts: ui/preview: the hover info card; fixed spot on the right edge of the stage (T29). @see docs/MOTION.md (Pick, hover, touch), src/lib/bus.ts, src/styles/hud.css (.layer-card)
+- preview.ts: ui/preview: the floor info panel: the old right-hand stage guide merged into the hover card (T39). It names the floor the scroll is on, and swaps to any hovered or keyboard-selected floor. @see src/sections/Hero.astro, src/lib/bus.ts, src/styles/hud.css (.layer-card)
   exports: initPreview
   uses: src/lib/bus, src/config/layers
 - theme.ts: ui/theme: the theme toggle; flips data-theme, persists the choice, emits on the bus. @see docs/DESIGN.md (Dual theme), src/config/theme.ts, src/sections/Hud.astro

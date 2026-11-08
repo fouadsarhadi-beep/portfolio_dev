@@ -85,7 +85,8 @@ Why these numbers
 
 ## Camera
 Orthographic. Position = target + (1,1,1) x 30. Looks at target. Visible faces: top, +x (right face), +z (left face). Back walls sit on the -x and -z sides. Never rotate the camera or the stack.
-Framing: the frustum is shifted down by `CAM_FRAME_OFFSET_Y` (22% of the visible height, ≈200px at 900px tall), which draws the whole scene that much higher on screen so the opening view sits above the fold. The hero copy mirrors the same lift through `--hero-lift` in src/styles/sections.css.
+Framing: the frustum is shifted down by `CAM_FRAME_OFFSET_Y` (22% of the visible height, ≈200px at 900px tall), which draws the whole scene that much higher on screen so the opening view sits above the fold. The hero copy sits at the top of the left column (T39), so the lift only frames the tower.
+Base zoom (T39, user sketch): the tower renders at `OVERVIEW_BASE_ZOOM` = 1.4 (1.3 low tier), stored as the camera's base zoom and blended with `OVERVIEW_ZOOM` during the overview. `overviewFitZoom` (focus-pose.ts) caps it so the silhouette keeps 6% air inside the 50% stage column at any box shape (near-square desktop slivers excepted, accepted); boot re-fits it on resize. `--tower-w` (tokens.css) mirrors the enlarged width.
 
 ## Slab (scene/stack/slab.ts) — T28 unified family
 - Body: rounded box FOOTPRINT x SLAB_T x FOOTPRINT, radius CORNER_R, 4 segments. One shared geometry.
@@ -94,7 +95,7 @@ Framing: the frustum is shifted down by `CAM_FRAME_OFFSET_Y` (22% of the visible
 - Right face (+x): inset `slabShade` panel and a round plaster badge (diameter 0.9 x SLAB_T) with the layer icon in graphite. Icon comes from the config path, drawn to a CanvasTexture.
 - Left face (+z): the layer number engraved in theme ink (light floors get dark ink, dark floors light ink; the CanvasTexture redraws on theme change). Registration crosses in graphite in two corners.
 - Thin `slabShade` band along the four bottom edges.
-- Floors are told apart by number, icon, layer-nav pill and room contents, never by side color.
+- Floors are told apart by number, icon, layer-nav row and room contents, never by side color.
 - Transparency is part of a material's identity, not a fade flag: the number engraving, the icon decal and the room AO strips are canvas textures with transparent backgrounds. Nothing may force `transparent = false` on them, because alpha blending off renders the empty pixels of those canvases black (src/scene/focus.ts).
 
 ## Light and render
@@ -144,18 +145,19 @@ Every sample points at a document. `Sample.doc` keys into `src/config/documents.
 - `doc.src` is empty for now. When a real file exists, the footer shows "Open the original file" and links to it, so the reader always has an exit to the source document.
 
 ## Layout
-One shell for every band. A 10% margin each side leaves the grid in the middle 80%, and that band is three flexible cells (`--shell-cols`); `src/styles/layout.css` holds the recipe and `src/config/layout.ts` the numbers. The HUD row is one item per cell (identity, nav, status). The stage is the default view grid: the canvas stays full-bleed behind it, the guides sit in the top band, the floor pills are centred in the end cell, and the hero copy fills the bottom band. The expanded floor view is the second grid, on the same band and the same gap. Nothing uses a bespoke sidebar inset.
+One shell for every band. A 10% margin each side leaves the grid in the middle 80%, and that band is three flexible cells (`--shell-cols`); `src/styles/layout.css` holds the recipe and `src/config/layout.ts` the numbers. The HUD row is one item per cell (identity, nav, status).
+The stage is the default view and composes the same margins as five parts (T39, user sketch 2026-11-08): 10% margin | 15% stage guide + hero copy | 50% tower | 15% layer nav | 10% margin, whose end margin carries the scroll ladder. Inside the band the columns are `15fr 50fr 15fr`; with the two shared gaps on top each cell lands at about 14.25% / 47.5% / 14.25% of the viewport. The canvas mounts into the middle cell so the frustum is its box; the tower sits centred in the cell. The floor info panel (the merged hover card) sits at the top of the right column, the nav docked at its end edge below it. The expanded floor view is the second grid, on the same band and the same gap. Nothing uses a bespoke sidebar inset.
 
 ## Sections
 - HUD header: name, role, links to Stack, Toolkit, About, Contact, availability, progress bar. Small and distinctive, not a SaaS bar.
-- Hero: full-width stack stage (no max-width wrapper) plus spatial labels and layer numbers. The canvas spans the window so shadows and glow never clip at a container edge.
+- Hero: full-width stack stage (no max-width wrapper) in the five-part composition; the left column carries the stage guide and the hero copy, the middle the tower, the right the layer nav and floor info panel.
 - About: two columns. Left: a short statement and a small diagram of the six layers. Right: three color panels.
 - Toolkit: seven tiles, one per layer, each with number, color swatch and tool chips.
 - Contact: an end-of-level panel with a big heading, a mailto button, social links and availability.
 - Footer: compact.
 
 ## Responsive
-Minimum width 360px. Breakpoints: 860px switches the expanded view and About to one column; 480px tightens small-phone rhythm; 760px hides the HUD progress bar, reflows the HUD to two rows and docks the hover card and the floor pills (and keeps a usable no-scene pill row). The shell keeps its three cells at every width; below 600px the margin tightens to 6vw so the reading column keeps its measure.
+Minimum width 360px. Breakpoints: 1280px is where the stage keeps its five-part composition (below it the stage grid drops to one cell); 860px switches the expanded view and About to one column; 480px tightens small-phone rhythm; 760px hides the HUD progress bar, reflows the HUD to two rows, docks the layer nav as a horizontal strip along the stage's bottom edge and docks the floor info panel as a bottom sheet. The shell keeps its three cells at every width; below 600px the margin tightens to 6vw so the reading column keeps its measure.
 - Mobile keeps its own camera framing (zoomed in on the exposed room), shadow map 1024, pixel ratio 1.25, fewer particles.
 - The expanded view is a deliberate vertical composition (floor on top, card, samples), never a squeezed 50/50 split. `focus.ts` uses the same 860px breakpoint as the CSS, and `focus-pose.ts` takes the floor share from `src/config/layout.ts` so the camera and the grid cannot drift.
 - The sticky HUD reflows to two rows on narrow screens (below 760px); `Hud.astro` publishes its measured height as `--hud-offset`, and anchor `scroll-margin-top` uses it, so section links never land under the bar. `--hud-h` (56px) stays the row minimum and must not be fed from the measurement (feedback loop).

@@ -3,8 +3,8 @@
 Layers are indexed 0 (top) to N-1 (bottom). N = 6. LAYER_STEPS = N - 1 = 5 open one floor each; OVERVIEW_STEPS = 2 more pull the camera right back and explode the column, so the scroll range is STEPS = 7.
 
 ## Scroll mapping
-- `#stage` height = 100svh + STEPS x STEP_VH (STEP_VH = 80svh). Total about 700svh.
-- Its child is `position: sticky; top: 0; height: 100svh` and holds the canvas, labels and HUD.
+- `#stage` height = 100svh + STEPS x STEP_VH (STEP_VH = 80svh). Total about 660svh.
+- Its child is `position: sticky; top: 0; height: 100svh` and holds the canvas, the stage columns and the HUD.
 - progress s = (scrollY - stageTop) / STEP_PX, where STEP_PX = 0.8 x innerHeight. Clamp to 0..STEPS.
 - Wanted step m uses hysteresis so edges do not flicker: open to m+1 when s >= m + 0.35. Close to m-1 when s < m - 1 + 0.15. The step only ever runs 0..LAYER_STEPS.
 - Step m means layers 0..m-1 are lifted. Layer m is exposed. Layers below it stay closed.
@@ -36,14 +36,14 @@ Restacking must feel quicker and harder than separating.
 - Orthographic (see DESIGN.md). Target Y follows the exposed layer: `floorY[m] + 0.9`, damped (lambda 6). View height = LIFT + 3 x SLAB_T + 4. Tune both in tuning.ts by screenshot until the exposed room is fully visible with the lifted stack docked at the top of the frame.
 - The jolt adds to target Y only.
 
-## Pick, hover, touch (scene/stack/pick.ts, labels.ts, ui/preview.ts)
+## Pick, hover, touch (scene/stack/pick.ts, ui/preview.ts)
 - Every slab is a raycast target at all times, including while closed. Its side faces are the click surface.
-- Each slab also has a DOM label button, positioned from `getLayerRect(id)`, aligned to the slab's right face. Labels and slabs behave the same.
+- The layer nav is a static vertical menu in the right column (T39); it does not follow the slabs. Its rows mark the current floor (`aria-current`) and clicking one opens that floor.
 - Hover movement is derived from stack state, never from a layer index: a slab with a gap above it (exposed floor, or a lifted floor docked at the top, including the first floor once scrolled) moves up 0.35 within its gap; a closed floor below the exposed one nudges 0.25 out along the view-right direction. Before any scroll the top floor therefore nudges right. Movement eases (damped), is reversible and never accumulates: state.apply writes base positions each frame, pick adds the offsets.
 - Other slabs lose 6 percent lightness. An animated neutral edge highlight runs along the hovered slab (no per-floor color in the scene).
-- The hover info card (T29) is a `.layer-card` fixed on the right edge of the stage, in the vertical band the layer-nav pills never occupy at any scroll step. It shows number, title and a short explanation with a thin accent rule. It never follows the slab, never overlaps the nav titles, and has no "View work" control (clicking the floor opens the detail view). Its surface, radius, hairline border and accent rule are the visual seed for the T30 expanded card.
-- Touch: first tap selects and shows the card (docked above the label zone on mobile). A second tap on the same layer opens the detail view. A tap elsewhere dismisses.
-- Keyboard: layer-nav buttons are in the Tab order; focusing one shows the card. ArrowUp and ArrowDown move the selection. Enter opens. Escape closes the card or detail. Tabbing out of the nav clears the card. Focus returns to the originating button.
+- The floor info panel (T29 card, merged with the old stage-guide-right in T39) is a `.layer-card` at the top of the right column, always on: it names the floor the scroll is on (count, title, short line, intro) and swaps to any hovered or keyboard-selected floor, returning to the scroll's floor when the hover ends. It never follows the slab and has no "View work" control (clicking the floor opens the detail view). Its surface, radius, hairline border and accent rule are the visual seed for the T30 expanded card.
+- Touch: first tap selects and shows the floor's info in the panel (bottom sheet on mobile). A second tap on the same layer opens the detail view. A tap elsewhere dismisses.
+- Keyboard: layer-nav buttons are in the Tab order; focusing one swaps the panel to that floor. ArrowUp and ArrowDown move the selection. Enter opens. Escape and Tabbing out of the nav return the panel to the scroll's floor (it hides only while the detail view is open). Focus returns to the originating button.
 
 ## Detail view (ui/detail.ts, scene/focus.ts)
 The expanded layout switches to the mobile column at 860px, and `focus.ts` uses the same breakpoint for its framing, so the camera and the CSS never disagree.
@@ -51,7 +51,7 @@ Open (about 0.9s total):
 1. Camera whoosh onto the selected floor, 0.5s, `expo.out`. Zoom x1.45 desktop, x1.35 mobile. The camera target starts at its current follow height, so there is no jump.
 2. Detach: the selected slab travels to the floor share of the page band (0.22 of the visible width along the view-left axis, `expo.out`, same 0.5s) while the tower stays in place. It is not re-parented: `state.apply` and `pick` write base positions, then `focus.applyDetach` writes the x/z offset every frame, so slab/room association and the restore path stay intact. On mobile the floor travels to the top band instead (no lateral move).
 3. During the whoosh: a brief blur on the canvas wrapper (0 to 3px to 0). Skip it for reduced motion.
-4. Other slabs and their rooms fade to opacity 0 in 0.25s and then leave the scene (`visible = false`: invisible geometry would still cast shadows and write depth). The selected room shows at e = 1. Every room owns its own material kit, so the fade never touches the floor it keeps (src/scene/stack/stack.ts). The layer pills, hero copy and hover card leave the frame (`[data-detail]` on the stage).
+4. Other slabs and their rooms fade to opacity 0 in 0.25s and then leave the scene (`visible = false`: invisible geometry would still cast shadows and write depth). The selected room shows at e = 1. Every room owns its own material kit, so the fade never touches the floor it keeps (src/scene/stack/stack.ts). The layer nav, hero copy, stage guide and info panel leave the frame (`[data-detail]` on the stage).
 5. The card enters on the right half (0.42s, rises 22px, `power3.out`, 0.08s delay), then the sample strip (heading 0.3s, cards 0.34s, 0.05s stagger). Surface, radius, border and accent rule match the T29 hover card, so it reads as the same component in a second state.
 Close: 0.42s reverse. The card fades out in 0.24s while the camera whooshes back and the floor returns to its slot; back button, Escape and browser Back all close it.
 - pushState to `/work/<id>` on open and back on close.

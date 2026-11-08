@@ -6,23 +6,19 @@ import { t } from '@/lib/i18n';
 
 <script>
   import { bus } from '@/lib/bus';
-  import { LAYERS } from '@/config/layers';
 
-  const count = document.querySelector<HTMLElement>('[data-guide-count]');
-  const title = document.querySelector<HTMLElement>('[data-guide-title]');
-  const short = document.querySelector<HTMLElement>('[data-guide-short]');
-  const note = document.querySelector<HTMLElement>('[data-guide-note]');
-
-  // The right guide names the floor the scroll is on: it is the caption for the
-  // tower, and the reason the empty space either side of it earns its keep.
-  bus.on('step:change', ({ step }) => {
-    const layer = LAYERS[Math.min(step, LAYERS.length - 1)];
-    if (!layer) return;
-    if (count) count.textContent = layer.number;
-    if (title) title.textContent = layer.title;
-    if (short) short.textContent = layer.short;
-    if (note) note.textContent = layer.intro;
-  });
+  // The layer-nav column carries the current-floor marker: one button at a time
+  // is aria-current="step", matching the ladder's marker. The floor's info lives
+  // in the always-on panel (src/ui/preview.ts), the merged hover card (T39).
+  const navButtons = [...document.querySelectorAll<HTMLButtonElement>('.layer-nav button')];
+  const markStep = (step: number): void => {
+    navButtons.forEach((btn, i) => {
+      if (i === step) btn.setAttribute('aria-current', 'step');
+      else btn.removeAttribute('aria-current');
+    });
+  };
+  markStep(0); // step:change only fires on a change; floor 01 starts marked
+  bus.on('step:change', ({ step }) => markStep(step));
 
   // If three.js has not mounted anything shortly after load, mark the mount so a
   // quiet placeholder shows: on a slow line the stage must not look broken.
@@ -65,12 +61,6 @@ import { t } from '@/lib/i18n';
       <p class="sg-line">{t('guide.line')}</p>
       <p class="sg-hint"><span class="sg-arrow" aria-hidden="true">&#8594;</span>{t('guide.hint')}</p>
       <p class="sg-skip"><a href="#about">{t('guide.skip')}</a></p>
-    </aside>
-    <aside class="stage-guide stage-guide--right">
-      <p class="sg-count"><span data-guide-count>{LAYERS[0].number}</span><span class="sg-of">/ {String(LAYERS.length).padStart(2, '0')}</span></p>
-      <p class="sg-title" data-guide-title>{LAYERS[0].title}</p>
-      <p class="sg-short" data-guide-short>{LAYERS[0].short}</p>
-      <p class="sg-note" data-guide-note>{LAYERS[0].intro}</p>
     </aside>
   </div>
   <div class="stack-fallback">

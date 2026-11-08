@@ -30,7 +30,6 @@ export function initDetail(): void {
   host.appendChild(dialog.panel);
 
   bus.on('layer:open', ({ id }) => open(id));
-  bus.on('layer:close', () => close());
   window.addEventListener('popstate', () => {
     if (isOpen) close({ fromPop: true });
   });
@@ -134,6 +133,10 @@ function close(opts: { fromPop?: boolean; quick?: boolean } = {}): void {
   isOpen = false;
   currentId = null;
   closeDocument(); // never leave the reader behind the closing panel
+
+  // The floor info panel (preview.ts) listens for this to come back with the
+  // scroll's floor; the scene side has its own release path below.
+  bus.emit('layer:close', undefined);
 
   releaseFocus();
 

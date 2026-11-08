@@ -1,11 +1,12 @@
 /* @module styles/ladder: the scroll ladder down the end side of the stage. @see src/sections/Ladder.astro, docs/MOTION.md (Scroll mapping) */
 
-/* The rail moved from the start side to the end side (user review 2026-11-07): in
-   the left column it sat on the hero h1 and its lede. The layout is mirrored, so
-   the titles read back toward the page and the numbers stay next to the rail. */
+/* T39 (user sketch): the rail lives in the right 10% margin, vertically centred
+   -- the layer nav owns the 15% column beside it, so the ladder no longer hugs
+   the viewport edge. The layout is mirrored, so the titles read back toward the
+   page and the numbers stay next to the rail. */
 .ladder {
   position: fixed;
-  inset-inline-end: clamp(10px, 1.4vw, 24px);
+  inset-inline-end: calc(var(--page-inset) / 2);
   top: 50%;
   translate: 0 -50%;
   z-index: 40;
@@ -76,11 +77,14 @@
 }
 
 /* The floor title is a helper, not chrome: it appears on hover and focus. It
-   slides out of the rail from the end side, so the mirrored rail reads whole. */
+   slides out of the rail from the end side, so the mirrored rail reads whole.
+   visibility (not just opacity) keeps a hidden title out of the hit-testing and
+   out of the nav column it would otherwise quietly span. */
 .ladder-label {
   font-size: var(--fs-12);
   font-weight: 600;
   white-space: nowrap;
+  visibility: hidden;
   opacity: 0;
   translate: 4px 0;
   transition: opacity 0.18s, translate 0.18s;
@@ -93,6 +97,7 @@
 
 .ladder-rung:hover .ladder-label,
 .ladder-rung:focus-visible .ladder-label {
+  visibility: visible;
   opacity: 1;
   translate: 0 0;
 }
@@ -108,6 +113,7 @@
 }
 
 .ladder-rung[aria-current='step'] .ladder-label {
+  visibility: visible;
   opacity: 1;
   translate: 0 0;
 }

@@ -26,3 +26,5 @@ Move the DOM layer-name pills farther to the right so they sit visibly outside t
 - `npm run check`: blocked by absent installed type packages and Astro config.
 - `npm run build`: blocked because Astro is not installed in this workspace.
 - Visual/browser verification: pending; package installation and compatible Node runtime bootstrap timed out.
+
+> Superseded by T39 (2026-11-09): labels.ts and layer-rect.ts were deleted; the nav is a static column menu (no slab pinning, no clamp).

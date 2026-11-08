@@ -1,4 +1,4 @@
-/* @module styles/hud: HUD header, progress bar, layer nav. @see src/sections/Hud.astro, src/sections/Hero.astro, docs/DESIGN.md (HUD and UI style) */
+/* @module styles/hud: HUD header, progress bar, layer nav, floor info panel, detail view chrome. @cap-exempt: the header, nav, panel and detail chrome share one HUD surface language (T31); splitting it would cut the shared tokens away from their users. @see src/sections/Hud.astro, src/sections/Hero.astro, docs/DESIGN.md (HUD and UI style) */
 
 .hud {
   position: sticky;
@@ -171,15 +171,20 @@ html[data-theme='dark'] .theme-toggle .icon-moon {
 }
 
 /* Layer nav: real buttons, one per layer (AGENTS accessibility rules) */
-/* Floors' pills: the end cell of the stage grid, vertically centred. The scene
-   (src/scene/stack/labels.ts) later pins each button to its slab face and leaves
-   the list itself static, so this placement is what the pre-boot/no-WebGL state
-   shows. */
+/* T39 (user sketch): the nav is a static vertical menu in the right 15% column,
+   docked to the cell's end edge. It no longer follows the slabs (labels.ts is
+   gone); the current floor is marked with aria-current below, and clicking a
+   row opens that floor (keyboard.ts wires the clicks). This placement is the
+   only one -- it holds before boot, without WebGL, and with the scene live. */
 .layer-nav {
   grid-column: 3;
   grid-row: 2;
-  align-self: center;
-  justify-self: end;
+  align-self: end;
+  /* Stretch, not end: the longest floor title wraps to two lines, and an even
+     row width keeps the six buttons reading as one menu. The bottom margin keeps
+     the last pill off the stage's bottom edge. */
+  justify-self: stretch;
+  margin-block-end: clamp(12px, 2vh, 24px);
   z-index: 4;
   display: flex;
   flex-direction: column;
@@ -190,7 +195,7 @@ html[data-theme='dark'] .theme-toggle .icon-moon {
   display: flex;
   align-items: center;
   gap: 10px;
-  min-width: 170px;
+  min-width: 0;
   padding: 8px 14px;
   background: var(--surface);
   border: 1px solid var(--line);
@@ -215,6 +220,16 @@ html[data-theme='dark'] .theme-toggle .icon-moon {
   box-shadow: var(--shadow-card);
 }
 
+/* The floor the scroll is on, marked from the step:change listener in Hero.astro.
+   Quiet: a firmer border and the number going full ink, no second accent. */
+.layer-nav button[aria-current='step'] {
+  border-color: color-mix(in srgb, var(--ink) 40%, var(--line));
+}
+
+.layer-nav button[aria-current='step'] .ln-num {
+  color: var(--ink);
+}
+
 /* Floors are told apart by number and title, not by a colored chip (T28/T31). */
 .ln-num {
   font-family: var(--font-display);
@@ -225,10 +240,8 @@ html[data-theme='dark'] .theme-toggle .icon-moon {
   min-inline-size: 1.6ch;
 }
 
-/* These dock rules only apply when JS has not pinned the pills to the slabs
-   (labels.ts does that once the scene boots); they keep the no-WebGL/no-scene
-   case usable on narrow screens. The pills and the hero copy share the bottom
-   row: the pills sit on the stage edge, the copy lifts clear of them. */
+  /* Below 760px the nav leaves the (collapsed) side cell and docks as a
+     horizontal strip along the stage's bottom edge. */
 @media (max-width: 760px) {
   .progress {
     display: none;
@@ -268,33 +281,85 @@ html[data-theme='dark'] .theme-toggle .icon-moon {
   }
 }
 
-/* --- Layer info card (T29): hover preview; T30 expands it into the detail card ---
-   Deliberate fixed spot on the right edge of the stage, in the vertical band the
-   layer-nav pills never occupy at any scroll step (pills hug the slab faces).
-   Inset cleared past the scroll ladder (user review 2026-11-07, the rail moved to
-   the end side): the card and the ladder own separate columns.
+/* --- Floor info panel (T29 card, merged with the old stage-guide-right in T39) ---
+   An always-on panel in the right 15% column: it names the floor the scroll is
+   on, and while a floor is hovered (or keyboard-selected) it swaps to that one.
+   It sits at the top of the column; the layer nav is docked to the column's end
+   edge below it, so the two never overlap.
    Shares its visual language with the T30 expanded card: same surface, radius,
    hairline border, accent rule, soft shadow. No hard cartoon offsets. */
 .layer-card {
   position: absolute;
   z-index: 6;
   inset-inline-end: var(--page-inset);
-  top: clamp(96px, 24vh, 220px);
-  width: min(320px, calc(100vw - 2 * var(--page-inset)));
+  top: clamp(96px, 16vh, 180px);
+  width: min(320px, calc(15vw - var(--page-gap)));
   background: var(--surface-grad);
   border: 1px solid var(--line);
   border-radius: var(--radius-l);
   box-shadow: var(--edge-highlight), var(--shadow-lift);
-  padding: 18px 20px 20px;
+  padding: 16px 18px 18px;
   pointer-events: none;
   opacity: 0;
   transform: translateY(6px);
   transition: opacity 0.18s ease, transform 0.18s ease;
 }
 
+/* The stage grid is one cell below 1280px, so the 15% anchor is gone there. */
+@media (max-width: 1279px) {
+  .layer-card {
+    width: min(320px, calc(100vw - 2 * var(--page-inset)));
+  }
+}
+
 .layer-card[data-show='true'] {
   opacity: 1;
   transform: translateY(0);
+}
+
+/* Merged guide content: the count line the old sg-count carried, then title,
+   short line and the two-sentence intro the old sg-note carried. */
+.lc-count {
+  display: flex;
+  align-items: baseline;
+  gap: 6px;
+  font-family: var(--font-display);
+  font-size: var(--fs-20);
+  font-weight: 650;
+  font-variant-numeric: tabular-nums;
+  letter-spacing: var(--tracking-tight);
+}
+
+.lc-of {
+  font-size: var(--fs-12);
+  font-weight: 600;
+  letter-spacing: 0;
+  color: var(--ink-soft);
+}
+
+.lc-title {
+  margin-block-start: 2px;
+  font-family: var(--font-display);
+  font-size: var(--fs-16);
+  font-weight: 650;
+  letter-spacing: var(--tracking-tight);
+}
+
+.lc-short {
+  margin-block-start: 6px;
+  font-size: var(--fs-12);
+  line-height: 1.45;
+  color: var(--ink-soft);
+}
+
+/* Two more sentences that explain what the floor actually holds. */
+.lc-note {
+  margin-block-start: 10px;
+  padding-block-start: 10px;
+  border-block-start: 1px solid var(--line);
+  font-size: var(--fs-12);
+  line-height: 1.5;
+  color: var(--ink-soft);
 }
 
 .layer-card::before {
@@ -305,35 +370,6 @@ html[data-theme='dark'] .theme-toggle .icon-moon {
   border-radius: 1px;
   background: var(--layer-c, var(--c-butter));
   margin-block-end: 12px;
-}
-
-.lc-kicker {
-  display: flex;
-  align-items: baseline;
-  gap: 10px;
-  margin: 0;
-}
-
-.lc-num {
-  font-family: var(--font-display);
-  font-weight: 600;
-  font-size: var(--fs-14);
-  color: var(--ink-soft);
-  font-variant-numeric: tabular-nums;
-}
-
-.lc-title {
-  font-family: var(--font-display);
-  font-weight: 600;
-  font-size: var(--fs-20);
-  line-height: 1.2;
-}
-
-.lc-short {
-  margin-block-start: 8px;
-  font-size: var(--fs-14);
-  line-height: 1.5;
-  color: var(--ink-soft);
 }
 
 @media (prefers-reduced-motion: reduce) {

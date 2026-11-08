@@ -27,8 +27,8 @@ export interface RoomInstance {
 export type RoomBuilder = (ctx: RoomContext) => RoomInstance;
 ```
 Bus events: `layer:hover(id|null)`, `layer:select(id)`, `layer:open(id)`, `layer:close`, `step:change(step)`.
-scene/api.ts exports: `focusLayer(id)`, `releaseFocus()`, `setHover(id|null)`, `getLayerRect(id)` (screen rect for labels and cards), `getState()`.
-Debug state: `window.__stack = { step, u, e, restY, ids }`, refreshed every frame. Tests read it.
+scene/api.ts exports: `focusLayer(id)`, `releaseFocus()`, `setHover(id|null)`, `getState()`.
+Debug state: `window.__stack = { step, overview, u, e, restY, spreadY, ids }`, refreshed every frame. Tests read it.
 
 ## Routes
 - `/` : the experience.

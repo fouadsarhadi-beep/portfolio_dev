@@ -18,7 +18,8 @@ if (!exists('index.html')) {
 
 ok('home page ships', exists('index.html'));
 ok('six ladder rungs', count('index.html', 'ladder-rung') === 6, `${count('index.html', 'ladder-rung')} found`);
-ok('stage guides ship', count('index.html', 'stage-guide') >= 2);
+// T39: one stage guide (left column); the right one merged into the hover panel.
+ok('stage guide ships', count('index.html', 'stage-guide stage-guide--left') === 1);
 ok('404 page ships', exists('404.html'));
 ok('robots.txt ships', exists('robots.txt'));
 ok('sitemap.xml ships', exists('sitemap.xml'));

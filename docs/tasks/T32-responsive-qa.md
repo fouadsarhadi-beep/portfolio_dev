@@ -26,3 +26,4 @@ Left to the user's live pass (see the handoff checklist in the session report):
 ## Notes
 - The T32 commit hash cannot be written into this file by the same commit; it is reported in the session handoff and visible in `git log`.
 - Next task after this batch: none scheduled. Day/night theme redesign and explanatory onboarding popups are explicitly postponed by the user.
+> Superseded in part by T39 (2026-11-09): the pill-dock rules are now the only nav placement on mobile (labels.ts no longer pins pills); the guide became one left-column guide plus the merged info panel.

@@ -12,3 +12,5 @@ Done when
 - While closed, hovering the side of any slab previews it. While open, the same.
 - Touch behavior and keyboard behavior work as in MOTION.md. List which you tested.
 Do not touch: rooms/.
+
+> Superseded by T39 (2026-11-09): the slab-pinned labels system was removed; the layer nav is a static column menu and preview.ts owns the always-on floor info panel.
