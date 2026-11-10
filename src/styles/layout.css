@@ -30,13 +30,18 @@
    14.25% of the viewport. The left cell holds the stage guide and the hero
    copy, the middle cell the tower, the right cell the layer nav; the right
    10% margin additionally carries the scroll ladder (ladder.css).
+   The side cells never fall below 200px: the guide, the hero copy, the floor
+   panel and the nav need that room, and the tower's cell gives up the rest.
    The renderer mounts into the middle cell (#canvas-mount), so the frustum is
    built from the cell's own box and the tower can never spill into a side cell;
    overviewFitZoom (focus-pose.ts) keeps the enlarged tower inside it.
    Placement of the pieces lives with each piece (sections.css, hud.css). */
 .stage-grid {
   display: grid;
-  grid-template-columns: minmax(0, 15fr) minmax(0, 50fr) minmax(0, 15fr);
+  /* The side cells keep a readable minimum: below it they cannot hold the
+     guide, the hero copy, the floor panel and the nav without cramping. The
+     tower's cell gives up the difference. */
+  grid-template-columns: minmax(200px, 15fr) minmax(0, 50fr) minmax(200px, 15fr);
   grid-template-rows: auto minmax(0, 1fr) auto;
   column-gap: var(--page-gap);
   row-gap: clamp(8px, 2vh, 20px);
@@ -47,13 +52,13 @@
   align-items: start;
 }
 
-/* A viewport that cannot hold the 50% cell plus two readable side cells (or a
-   square-ish one, where the tower's vh width outgrows the band) drops to a single
-   cell: the side cells would be under ~200px (the guide hides at 1100, the nav
-   docks at 760). Wide: 1440x900 keeps all three. */
-@media (max-width: 1279px), (max-aspect-ratio: 1/1) {
-  .stage-grid,
-  html.no-webgl .stage-grid {
+/* A viewport that cannot hold the tower's cell plus two readable side cells
+   drops to a single cell: the tower takes the band, the hero copy sits over
+   it and the nav becomes a strip along the bottom (hud.css). Below 1024px the
+   two 200px side cells leave the tower less than half the band, so the single
+   cell is the better composition there. Wide: 1440x900 keeps all three. */
+@media (max-width: 1023px), (max-aspect-ratio: 1/1) {
+  .stage-grid {
     grid-template-columns: minmax(0, 1fr);
   }
 
@@ -61,11 +66,27 @@
     grid-column: 1;
   }
 
-  .stage-grid .layer-nav,
+  .stage-grid .stage-side,
   .stage-grid .hero-copy,
   .stage-grid .stage-guide {
     grid-column: 1;
   }
+}
+
+/* Without a scene the middle cell is empty and the side cells have nothing to
+   hold: the stage reads as one column at every width. */
+html.no-webgl .stage-grid,
+html:not(.js) .stage-grid {
+  grid-template-columns: minmax(0, 1fr);
+}
+
+html.no-webgl .stage-grid .stage-side,
+html.no-webgl .stage-grid .hero-copy,
+html.no-webgl .stage-grid .stage-guide,
+html:not(.js) .stage-grid .stage-side,
+html:not(.js) .stage-grid .hero-copy,
+html:not(.js) .stage-grid .stage-guide {
+  grid-column: 1;
 }
 
 /* Phones: the same margin, tighter, so the reading column keeps its measure. */

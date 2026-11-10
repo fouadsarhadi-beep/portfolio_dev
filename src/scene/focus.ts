@@ -3,8 +3,9 @@ import { gsap } from 'gsap';
 import * as THREE from 'three';
 import type { Object3D, OrthographicCamera } from 'three';
 import { CAM_DIR, CAM_DISTANCE, CAM_FRAME_OFFSET_Y } from '@/config/tuning';
-import { tweenFraming, tweenShift, stageShift, setShiftDetached, baseZoomOf } from './camera';
+import { tweenFraming, tweenShift, stageShift, setShiftDetached, baseZoomOf, resizeCamera } from './camera';
 import { createShade } from './focus-shade';
+import { markCanvas, markDetail } from './focus-marks';
 import { detailPose, VIEW_LEFT } from './focus-pose';
 import { prefersReducedMotion } from '@/lib/reduced-motion';
 
@@ -44,14 +45,6 @@ export function createFocus(opts: {
     return slab.children.find((c) => String(c.name).startsWith('room-')) as THREE.Group | undefined;
   }
 
-  /** The layer pills and the hover card leave the frame while a floor is expanded. */
-  function markDetail(on: boolean): void {
-    const host = document.querySelector<HTMLElement>('.stage-sticky');
-    if (!host) return;
-    if (on) host.dataset.detail = 'true';
-    else delete host.dataset.detail;
-  }
-
   return {
     open(id: string): void {
       if (state !== 'off') return;
@@ -66,8 +59,14 @@ export function createFocus(opts: {
       const y0 = slab.position.y;
       const z0 = slab.position.z;
       const mobile = opts.isMobile();
-      const aspect = (camera.right - camera.left) / (camera.top - camera.bottom);
-      const { zoom, shift, bias } = detailPose(aspect, mobile);
+      // The floor is framed against the page band, not against the tower's
+      // cell: the canvas fills the window first, then the pose is read from
+      // that box, so the camera and the CSS grid agree on the floor's column.
+      markCanvas(true);
+      const canvasW = canvasWrap.clientWidth;
+      const canvasH = canvasWrap.clientHeight;
+      resizeCamera(camera, canvasW, canvasH);
+      const { zoom, shift, bias } = detailPose(canvasW, canvasH, mobile);
 
       // Whoosh from wherever the follow camera left the target, never a jump.
       want.x = 0;
@@ -148,6 +147,9 @@ export function createFocus(opts: {
           detached = null;
           detach.set(0, 0, 0);
           state = 'off';
+          // The canvas goes back into the tower's stage cell now that the
+          // floor has landed; the tower keeps its size, so nothing jumps.
+          markCanvas(false);
         },
       });
       if (activeIdx >= 0) {

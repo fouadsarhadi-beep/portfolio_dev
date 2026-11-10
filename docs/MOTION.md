@@ -59,6 +59,12 @@ Close: 0.42s reverse. The card fades out in 0.24s while the camera whooshes back
 - Picking is paused while a floor is expanded (`pick.setEnabled(false)`), so no hover state survives behind the card.
 - Dialog semantics: role="dialog", aria-modal, focus moves to the back button on open and returns to the originating control on close.
 
+### Where the floor is framed (T40)
+The floor is framed against the page band, not against the tower's stage cell. While a floor is expanded the canvas leaves the cell and fills the window (`data-detail-canvas` on `.stage-sticky`), so the camera's box is the viewport and the CSS grid's first column can be measured inside it:
+- Desktop: the column is the band (80% of the viewport), minus the shared gap, times 45% (`config/layout.ts`). The floor fills 86% of that column and sits centred in it; the zoom and the travel are computed from the same numbers, so the floor keeps air on both sides and clear of the card.
+- Mobile (860px): the floor lives in the reserved strip at the top (`--detail-band`, 44svh). The zoom fits the strip's height and the page's width, whichever is tighter, and the vertical bias lifts it into the middle of the strip.
+- The canvas goes back into the stage cell only after the closing tween has landed, so the floor never jumps between two boxes. The tower keeps its size across the change.
+
 ## Idle animation
 One ticker (lib/ticker.ts) gives `time` and `dt`. Rooms animate through `update(time, dt, exposure)`. Pause when offscreen or the tab is hidden. Each room has at least four distinct loops (see ROOMS.md).
 

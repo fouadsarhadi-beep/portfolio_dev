@@ -8,7 +8,10 @@ let hoverId: string | null = null; // a hovered (or selected) floor wins while i
 let detail = false;                // the expanded view owns the stage
 
 export function initPreview(): void {
-  const host = document.querySelector<HTMLElement>('.stage-sticky');
+  // The card lives in the stage's side column (src/sections/Hero.astro): the
+  // column stacks it above the layer nav, so the two can never overlap.
+  const host = document.querySelector<HTMLElement>('.stage-side')
+    ?? document.querySelector<HTMLElement>('.stage-sticky');
   if (!host || card) return;
 
   // One card in the layer-nav column (the old stage-guide--right spot). It never
@@ -24,7 +27,7 @@ export function initPreview(): void {
     <p class="lc-title" data-lc-title></p>
     <p class="lc-short" data-lc-short></p>
     <p class="lc-note" data-lc-note></p>`;
-  host.appendChild(el);
+  host.prepend(el); // first child: the panel sits on top, the nav keeps the end edge
   card = el;
 
   // Hover (pointer or touch preview) and keyboard selection both win over the

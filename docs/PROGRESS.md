@@ -1,15 +1,13 @@
 # PROGRESS
 
-Current task: none. T39 (the sketched five-part stage composition) is code-verified; the live visual pass sits with the user.
+Current task: none. T40 (the responsive pass for scaled and smaller viewports) is code- and arithmetic-verified; the live visual pass sits with the user.
 
 ## Handoff note (max 8 lines, rewrite each session)
-State: main, nothing pushed. The stage is the five-part composition from the user's sketch (T39): 10% margin | 15% stage guide + hero copy | 50% tower | 15% layer nav | 10% margin (ladder); sections/footer keep the 3-cell shell band.
-Landed: layout.css stage columns 15fr 50fr 15fr; OVERVIEW_BASE_ZOOM 1.4 fitted per cell (overviewFitZoom, LOW_TIER_BASE_ZOOM min-capped); tower centred (stageShiftPx 0); labels.ts/layer-rect.ts/getLayerRect deleted; nav a static column menu with aria-current; stage-guide-right merged into the always-on .layer-card panel (hover swaps, detail close restores); ladder centred in the end margin; main.ts re-broadcasts step:change after UI init.
-Review round (two analyzer batches + harmony check, 2026-11-09): fixed the P0 -- detail.ts close() now emits layer:close (the panel used to stay hidden forever after the first detail view); <=1100px hero-copy takes over the guide's top inset (was sliding under the glass HUD); nav re-placed in the <=1279 collapse; ladder labels visibility-hidden when not shown; nav stretch + bottom margin; LOW_TIER_BASE_ZOOM renamed and fit-capped; docs truth pass (T33->T39 renames, MOTION keyboard wording, 660svh, WIRING __stack fields).
-Verified 2026-11-09: npm run check (0 errors, 0 warnings, 103 files), npm run build (8 pages), npm run smoke (26/26).
-Gotchas: focus.ts close() restores the base zoom via camera.userData (baseZoomOf), not 1; boot's ResizeObserver re-fits the zoom per cell; preview seeds step from window.__stack; smoke.mjs asserts exactly one stage-guide--left.
-Known tradeoff (user call): at zoom 1.4 the opening frame shows floors 01-04 fully, 05 half, 06 and the contact shadow below the fold until step 2 -- the price of the 40% bigger tower; reduce OVERVIEW_BASE_ZOOM or CAM_FRAME_OFFSET_Y if unwanted.
-Next: browser visual pass (desktop/tablet/phone, both themes), then commit(s), then git push.
+State: main, nothing pushed. T40 is the responsive pass for 1280x720 (a 13-inch laptop at 150% scaling) and every width below it.
+Landed: the right column is one flex stack (info panel on top, nav docked below, so they can never meet); the panel is sized from its cell, not from 15vw; the side cells keep a 200px minimum and the stage drops to one cell below 1024 (nav becomes a bottom strip, the copy no longer shares its cell); the expanded floor is framed in the detail grid's own column again (the canvas fills the window while a floor is open: 386px inside a 449px column at 1280, instead of 188px parked against the card); the mobile floor fits its 44svh strip; the HUD reflows at 900; the rail leaves the frame; the work pages join the band; body overflow-x: clip.
+Verified 2026-11-11: npm run check (0 errors, 104 files), npm run build (8 pages), npm run smoke (26/26), npm run layout (87 checks; new script, reads the source and computes every band at 13 widths).
+Gotchas: focus.ts sets data-detail-canvas before it reads the canvas box, so the pose matches the box the CSS just gave it; the panel drops its intro paragraph under an 800px window height; no browser starts in the agent sandbox, so pixels are the user's pass.
+Next: the user's live pass at 1280x720 (150% scaling), 1920x1080 and a phone, then commit(s), then git push.
 ## How to run
 - Open a terminal in the portfolio-kit folder (the one with package.json): `cd "C:\Users\ASUS\Desktop\personal\homepage\GLM 5.3_2\portfolio-kit"`
 - `npm install` (once, or after package.json changes)
@@ -21,6 +19,7 @@ Next: browser visual pass (desktop/tablet/phone, both themes), then commit(s), t
 - The folder left OneDrive on 2026-11-07; any `OneDrive - sternx.de` path in older notes is stale.
 
 ## Needs (changes requested outside a task's files)
+- Responsive pass (user request 2026-11-10): the layouts had to hold at 1280x720, the CSS viewport of a 13-inch laptop at 150% Windows scaling. Delivered as T40: the right column became one flex stack so the floor panel and the layer nav cannot overlap, the panel is sized from its cell instead of from the viewport, the stage's side cells keep a 200px minimum and the stage drops to one cell below 1024px, the expanded floor is framed in the detail grid's own column again (the camera had assumed a full-viewport canvas since T38), the mobile floor fits its reserved strip, the HUD reflows at 900px, the scroll rail leaves the frame, the work pages join the shell band, and `body { overflow-x: clip }` guards the whole page. New tool: `npm run layout` reads the source and checks every band at 13 widths. Card: docs/tasks/T40-responsive-scale-pass.md.
 - Layout shell (user request 2026-11-07): the whole page is one three-column grid inset 10% each side, with the grid in the middle 80%, and a second grid for the expanded floor view. Delivered: layout.ts + layout.css, every band moved onto the shell, camera derived from the same constants. Recorded in docs/DESIGN.md (Layout) and AGENTS.md (hard rules).
 - Review batch (user review 2026-11-07, six items, one commit each): dust colour, exploded overview, ladder position, "Simple view" guide link, room iconography, 200-line cap. All delivered; the handoff note above lists them, docs/ROOMS.md carries the rug-glyph rule and docs/MOTION.md the overview explosion.
 - Batch after the material fixes (user review 2026-11-06): delivered, one commit each, in T35-T36 (see the table). Pixel dust on the two front faces (8df65c2); the last floor holds and the camera pulls back over three extra steps, LAYER_STEPS 5 + OVERVIEW_STEPS 3 = the 8 in tokens.css (62f9cd7); a layered surface system with gradient cards, inset highlight, glass header, drawn grid, DM Sans display face and tighter tracking (0e4ae3c); a scroll ladder replacing the header step indicator (b02c0f3); side guides that explain the floors and caption the current one (431cc76); rooms that drop generic furniture and foreground one skill icon each (e41cf89); then all twenty council ideas from council_ideas.txt (parent folder, outside the repo) across 928a2c6..a770a3b. Nothing in this batch is left to build; only the user's live pass remains.
@@ -112,11 +111,14 @@ Next: browser visual pass (desktop/tablet/phone, both themes), then commit(s), t
   Three flexible cells inside a 10% margin each side; HUD, stage, sections, footer and 404 on the band; absent the old wrap/clamp insets; second grid 45/55 on the same band with the camera derived from `src/config/layout.ts`. check (0 warnings), build (8 pages), smoke (26/26) and an arithmetic + source-reading verification. Card: none (direct user request; recorded in DESIGN Layout and AGENTS hard rules). |
 | T39 | Stage five-part composition from the user sketch | done, code-verified (this commit) |
   10% margin \| 15% guide+copy \| 50% tower \| 15% nav \| 10% margin (ladder). Tower 40% bigger (OVERVIEW_BASE_ZOOM 1.4, overviewFitZoom cap, --tower-w 67.5vh) and centred (stageShiftPx 0); labels.ts/layer-rect.ts/getLayerRect removed; nav is a static column menu with aria-current; stage-guide-right merged into the always-on .layer-card panel (hover swaps, scroll returns); ladder centred in the end margin. check (0 errors, 103 files), build (8 pages), smoke (26/26). Card: none (direct user request from ui.jpg; recorded in DESIGN Layout/Camera, MOTION Pick, AGENTS hard rules). |
+| T40 | Responsive pass for scaled and smaller viewports | done, code-verified (this commit) |
+  The right column is one flex stack (the panel can never meet the nav); the panel is sized from its cell; the side cells keep a 200px minimum and the stage drops to one cell below 1024; the expanded floor is framed in the detail grid's own column again (the canvas fills the window while a floor is open) and the mobile floor fits its 44svh strip; the HUD reflows at 900; the rail leaves the frame; the work pages join the band. New: npm run layout (87 arithmetic checks over the source at 13 widths). check (0 errors, 104 files), build (8 pages), smoke (26/26). Card: docs/tasks/T40-responsive-scale-pass.md. |
 
 ## Blocked
 (none)
 
 ## Not verified yet
+- The T40 responsive composition (1280x720 at 150% scaling, and every width below it): code- and arithmetic-verified only. No browser starts in the agent sandbox, so the pixels are the user's pass.
 - Focused-canvas pixels (WebGL context loss under swiftshader; logic verified numerically).
 - Landing squash/jolt/prop-punch pixels (single-frame effects under software rendering; rings verified, code implemented per docs/MOTION.md).
 - Whoosh wall-clock and trackpad/real-touch-drag on real hardware.

@@ -22,11 +22,32 @@ export const SHELL_COLS = 3;
    The matching CSS split is 45fr 55fr in src/styles/hud.css (.detail-view). */
 export const DETAIL_FLOOR_SHARE = 0.45;
 
+/* The strip the expanded floor reserves at the top of a small screen. Mirrors
+   --detail-band in src/styles/tokens.css. */
+export const DETAIL_MOBILE_BAND = 0.44;
+
 /** Width of the band as a share of the viewport: 0.8. */
 export const SHELL_BAND = 1 - 2 * PAGE_INSET;
 
-/** The floor's slice of the viewport width in the expanded view: 0.36. */
-export const DETAIL_FLOOR_BAND = SHELL_BAND * DETAIL_FLOOR_SHARE;
+/**
+ * The gap between the shell's cells: clamp(12px, 2vw, 40px) in tokens.css.
+ * The camera needs it because the grid splits what is left after the gap.
+ */
+export function pageGapPx(viewportW: number): number {
+  return Math.min(Math.max(viewportW * 0.02, 12), 40);
+}
 
-/** Where the floor is centred across the viewport in the expanded view: 0.28. */
-export const DETAIL_FLOOR_CENTRE = PAGE_INSET + DETAIL_FLOOR_BAND / 2;
+/**
+ * The expanded view's floor column: the band, minus the shared gap, times the
+ * floor's share. This is the box the CSS grid gives the floor and the box the
+ * camera frames it in, so the two cannot drift.
+ */
+export function detailColumnPx(viewportW: number): number {
+  const band = viewportW * SHELL_BAND;
+  return (band - pageGapPx(viewportW)) * DETAIL_FLOOR_SHARE;
+}
+
+/** Where that column is centred, measured from the viewport's left edge. */
+export function detailColumnCentrePx(viewportW: number): number {
+  return viewportW * PAGE_INSET + detailColumnPx(viewportW) / 2;
+}

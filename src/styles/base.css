@@ -26,6 +26,9 @@ body {
     radial-gradient(1100px 720px at 50% -8%, var(--bg-glow), transparent 72%),
     linear-gradient(180deg, var(--bg-glow) 0%, var(--bg) 38%, var(--bg) 100%);
   -webkit-font-smoothing: antialiased;
+  /* Nothing may push the page sideways: clip, not hidden, so the sticky HUD
+     keeps working and no scroll container is created. */
+  overflow-x: clip;
 }
 
 /* A fine grid behind everything gives the page a drawn, technical feel with no

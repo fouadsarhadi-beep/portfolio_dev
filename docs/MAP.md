@@ -19,7 +19,7 @@ Search this file before creating anything.
   exports: LAYERS
   uses: src/config/types
 - layout.ts: config/layout: the page shell proportions, read by both the CSS bands and the camera that frames a floor inside one. @see src/styles/tokens.css (--page-inset), src/styles/layout.css, src/scene/focus-pose.ts
-  exports: PAGE_INSET, SHELL_COLS, DETAIL_FLOOR_SHARE, SHELL_BAND, DETAIL_FLOOR_BAND, DETAIL_FLOOR_CENTRE
+  exports: PAGE_INSET, SHELL_COLS, DETAIL_FLOOR_SHARE, DETAIL_MOBILE_BAND, SHELL_BAND, pageGapPx, detailColumnPx, detailColumnCentrePx
 - palette.ts: config/palette: the only place hex colors may live, plus lighten/darken and the theme palettes. @see docs/DESIGN.md (Dual theme), src/config/theme.ts
   exports: PALETTE, PaletteName, lighten, darken, LIGHT, DARK
   uses: src/config/theme
@@ -98,6 +98,8 @@ Search this file before creating anything.
 - camera.ts: scene/camera: orthographic camera locked to the (1,1,1) isometric view, with damped follow, the framing-offset tween and the stage's sideways shift. @see docs/DESIGN.md (Camera), docs/MOTION.md (Camera), src/config/tuning.ts
   exports: stageShift, createCamera, applyFraming, baseZoomOf, setBaseZoom, resizeCamera, currentFrameOffset, tweenFraming, tweenShift, setShiftDetached, followCamera
   uses: src/config/tuning, src/scene/focus-pose
+- focus-marks.ts: scene/focus-marks: the DOM flags the expanded floor sets: the tower chrome leaves the frame, the canvas fills the window so the floor can be framed against the page band, and the rail steps aside. @see src/scene/focus.ts, src/styles/hud.css, src/styles/ladder.css
+  exports: markDetail, markCanvas
 - focus-pose.ts: scene/focus-pose: pose maths for the tower's zoom and the detail view: the base zoom, the (zeroed) column shift and the vertical bias that put one floor in the band's floor share. @see src/scene/focus.ts, src/config/layout.ts, src/config/tuning.ts
   exports: stageShiftPx, overviewFitZoom, VIEW_LEFT, DetailPose, detailPose
   uses: src/config/tuning, src/config/layout
@@ -105,7 +107,7 @@ Search this file before creating anything.
   exports: Shade, createShade
 - focus.ts: scene/focus: the selected floor leaves the stack into the left 45% column, the rest fades. @see docs/MOTION.md (Detail view), src/ui/detail.ts, src/scene/focus-pose.ts, src/scene/focus-shade.ts
   exports: Focus, createFocus
-  uses: src/config/tuning, src/scene/camera, src/scene/focus-shade, src/scene/focus-pose, src/lib/reduced-motion
+  uses: src/config/tuning, src/scene/camera, src/scene/focus-shade, src/scene/focus-marks, src/scene/focus-pose, src/lib/reduced-motion
 - lights.ts: scene/lights: hemisphere, warm key with soft shadows, weak cool fill. @see docs/DESIGN.md (Light and render), src/scene/renderer.ts, src/scene/scene-theme.ts
   exports: createLights
   uses: src/config/palette, src/lib/quality, src/scene/renderer, src/scene/scene-theme

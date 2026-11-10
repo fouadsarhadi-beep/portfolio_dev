@@ -33,6 +33,9 @@
 .hud-row nav {
   grid-column: 2;
   justify-self: center;
+  /* The cell may be narrower than the nav: it wraps instead of spilling into
+     the status cell. */
+  min-inline-size: 0;
 }
 
 .hud-status {
@@ -56,6 +59,9 @@
 
 .hud-nav {
   display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  row-gap: 2px;
   gap: 18px;
 }
 
@@ -176,19 +182,36 @@ html[data-theme='dark'] .theme-toggle .icon-moon {
    gone); the current floor is marked with aria-current below, and clicking a
    row opens that floor (keyboard.ts wires the clicks). This placement is the
    only one -- it holds before boot, without WebGL, and with the scene live. */
-.layer-nav {
+
+/* The side column: one flex stack with the floor info panel on top and the
+   layer nav docked at its end edge. Two absolute boxes could not promise they
+   would not meet on a short viewport; in one column they cannot overlap at
+   all, because the panel takes what is left and the nav keeps its own height. */
+.stage-side {
   grid-column: 3;
-  grid-row: 2;
-  align-self: end;
-  /* Stretch, not end: the longest floor title wraps to two lines, and an even
-     row width keeps the six buttons reading as one menu. The bottom margin keeps
-     the last pill off the stage's bottom edge. */
-  justify-self: stretch;
-  margin-block-end: clamp(12px, 2vh, 24px);
+  grid-row: 1 / -1;
+  /* The stage grid aligns its items to the start; this column has to fill the
+     stage so the nav can dock at its end edge. */
+  align-self: stretch;
+  display: flex;
+  flex-direction: column;
+  min-block-size: 0;
+  /* The panel sits on the stage's top inset, level with the stage guide. */
+  padding-block-start: clamp(96px, 16vh, 180px);
   z-index: 4;
+}
+
+.layer-nav {
+  /* Docked to the column's end edge; the auto margin pushes it down. */
+  flex: 0 0 auto;
+  margin-block-start: auto;
+  margin-block-end: clamp(12px, 2vh, 24px);
   display: flex;
   flex-direction: column;
   gap: 10px;
+  /* The column itself never takes pointer events (it spans the band in the
+     one-cell stage); the buttons take them back. */
+  pointer-events: auto;
 }
 
 .layer-nav button {
@@ -240,15 +263,10 @@ html[data-theme='dark'] .theme-toggle .icon-moon {
   min-inline-size: 1.6ch;
 }
 
-  /* Below 760px the nav leaves the (collapsed) side cell and docks as a
-     horizontal strip along the stage's bottom edge. */
-@media (max-width: 760px) {
-  .progress {
-    display: none;
-  }
-
-  /* Two rows instead of flex-wrap: identity and status on the first, the nav
-     under them across the whole band. */
+/* The HUD nav needs about 220px on one line. Below 900px its cell cannot hold
+   it, so the bar reflows to two rows: identity and status on the first, the
+   nav under them across the whole band. */
+@media (max-width: 900px) {
   .hud-row {
     grid-template-columns: 1fr auto;
     row-gap: 4px;
@@ -264,52 +282,42 @@ html[data-theme='dark'] .theme-toggle .icon-moon {
     grid-row: 2;
     justify-self: start;
   }
+}
 
-  .layer-nav {
-    grid-column: 1 / -1;
-    grid-row: 3;
-    align-self: end;
-    justify-self: stretch;
-    flex-direction: row;
-    overflow-x: auto;
-    padding-block-end: 6px;
-  }
-
-  .layer-nav button {
-    min-width: 130px;
-    flex: 0 0 auto;
+@media (max-width: 760px) {
+  .progress {
+    display: none;
   }
 }
 
 /* --- Floor info panel (T29 card, merged with the old stage-guide-right in T39) ---
-   An always-on panel in the right 15% column: it names the floor the scroll is
-   on, and while a floor is hovered (or keyboard-selected) it swaps to that one.
-   It sits at the top of the column; the layer nav is docked to the column's end
+   The always-on panel at the top of the side column: it names the floor the
+   scroll is on, and while a floor is hovered (or keyboard-selected) it swaps to
+   that one. It sits above the layer nav, which is docked to the column's end
    edge below it, so the two never overlap.
    Shares its visual language with the T30 expanded card: same surface, radius,
    hairline border, accent rule, soft shadow. No hard cartoon offsets. */
 .layer-card {
-  position: absolute;
   z-index: 6;
-  inset-inline-end: var(--page-inset);
-  top: clamp(96px, 16vh, 180px);
-  width: min(320px, calc(15vw - var(--page-gap)));
+  /* In the column's flow now, so it takes the room the nav leaves. */
+  position: static;
+  flex: 0 1 auto;
+  min-block-size: 0;
+  inline-size: 100%;
+  max-inline-size: min(320px, 100%);
+  /* A short viewport gives the column less than the panel needs: it shrinks
+     and scrolls inside itself rather than reaching for the nav. */
+  overflow-y: auto;
+  overscroll-behavior: contain;
   background: var(--surface-grad);
   border: 1px solid var(--line);
   border-radius: var(--radius-l);
   box-shadow: var(--edge-highlight), var(--shadow-lift);
   padding: 16px 18px 18px;
-  pointer-events: none;
+  pointer-events: auto;
   opacity: 0;
   transform: translateY(6px);
   transition: opacity 0.18s ease, transform 0.18s ease;
-}
-
-/* The stage grid is one cell below 1280px, so the 15% anchor is gone there. */
-@media (max-width: 1279px) {
-  .layer-card {
-    width: min(320px, calc(100vw - 2 * var(--page-inset)));
-  }
 }
 
 .layer-card[data-show='true'] {
@@ -372,6 +380,76 @@ html[data-theme='dark'] .theme-toggle .icon-moon {
   margin-block-end: 12px;
 }
 
+/* --- The stage in one column (layout.css) --------------------------------
+   Below the width where two readable side cells fit, the stage is a single
+   cell: the tower takes the band, the hero copy sits over it, and the layer
+   nav becomes a horizontal strip along the bottom edge. The info panel floats
+   over the scene again, where the band has room for it. */
+@media (max-width: 1023px), (max-aspect-ratio: 1/1) {
+  .stage-side {
+    padding-block-start: 0;
+    /* The column spans the whole band here, so it must not eat the tower's
+       clicks; only the nav takes pointer events back. */
+    pointer-events: none;
+  }
+
+  .layer-nav {
+    flex-direction: row;
+    overflow-x: auto;
+    padding-block-end: 6px;
+    margin-block-end: 0;
+  }
+
+  .layer-nav button {
+    min-width: 130px;
+    flex: 0 0 auto;
+  }
+
+  .layer-card {
+    position: absolute;
+    inset-inline-end: var(--page-inset);
+    top: clamp(96px, 16vh, 180px);
+    inline-size: min(300px, calc(100vw - 2 * var(--page-inset)));
+    max-inline-size: none;
+    /* It floats over the scene here, so it must not catch the tower's clicks. */
+    pointer-events: none;
+  }
+}
+
+/* A short window gives the side column less than the panel and the nav need
+   together. The nav tightens first (it is a menu of six rows), then the
+   panel's extra paragraph goes: the count, the title and the short line still
+   name the floor, and the expanded card holds the full text. */
+@media (max-height: 900px) {
+  .layer-nav {
+    gap: 8px;
+  }
+
+  .layer-nav button {
+    padding-block: 6px;
+  }
+
+  .lc-note {
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    line-clamp: 3;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+}
+
+/* Below that the panel's top inset comes down to the HUD's clearance, and the
+   intro drops out: the column cannot hold panel, nav and intro together. */
+@media (max-height: 800px) {
+  .stage-side {
+    padding-block-start: 96px;
+  }
+
+  .lc-note {
+    display: none;
+  }
+}
+
 @media (prefers-reduced-motion: reduce) {
   .layer-card {
     transition: opacity 0.15s;
@@ -384,7 +462,7 @@ html[data-theme='dark'] .theme-toggle .icon-moon {
     inset-inline: 16px;
     top: auto;
     bottom: 118px;
-    width: auto;
+    inline-size: auto;
   }
 }
 
@@ -394,7 +472,7 @@ html[data-theme='dark'] .theme-toggle .icon-moon {
    border and accent rule as the T29 hover card, so it reads as one component.
    fr units, not percentages, so the gap comes out of the shared space and the
    split stays exactly 45 / 55. The scene frames the floor in that left column
-   (LEFT_COL in src/scene/focus.ts). */
+   (src/scene/focus-pose.ts, against the numbers in src/config/layout.ts). */
 .detail-view {
   position: absolute;
   inset: 0;
@@ -407,8 +485,18 @@ html[data-theme='dark'] .theme-toggle .icon-moon {
   grid-template-rows: minmax(0, 1fr);
   column-gap: var(--page-gap);
   padding-inline: var(--page-inset);
-  padding-block: clamp(16px, 2.4vw, 34px);
+  /* The card clears the sticky HUD: the bar measures itself into --hud-offset. */
+  padding-block: calc(var(--hud-offset, var(--hud-h)) + 12px) clamp(16px, 2.4vw, 34px);
   pointer-events: none;
+}
+
+/* While a floor is expanded the canvas leaves the tower's stage cell and fills
+   the window. The floor is then framed against the page band -- the detail
+   grid's first column -- instead of against the cell the tower shares with the
+   side columns. The scene reads the same box (src/scene/focus.ts). */
+.stage-sticky[data-detail-canvas='true'] #canvas-mount {
+  position: fixed;
+  inset: 0;
 }
 
 .detail-view[hidden] {
@@ -580,18 +668,33 @@ html[data-theme='dark'] .theme-toggle .icon-moon {
   gap: 8px;
 }
 
-/* A work tile: small and slightly wide, glyph over title, Windows-tile read. */
+/* A work tile: small and slightly wide, glyph over title, Windows-tile read.
+   The ratio is a floor, not a lid: on a narrow card the tile grows with its
+   text instead of clipping the blurb. */
 .dv-sample {
   display: flex;
   flex-direction: column;
   gap: 5px;
   aspect-ratio: 16 / 10;
+  min-block-size: 96px;
   padding: 8px 9px;
   background: var(--surface-grad);
   border: 1px solid var(--line);
   border-radius: 9px;
   box-shadow: var(--edge-highlight);
   overflow: hidden;
+}
+
+/* Three across is only roomy enough above 1024px; below that two across keeps
+   the tile's text whole. */
+@media (max-width: 1023px) {
+  .dv-sample-row {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .dv-sample {
+    aspect-ratio: auto;
+  }
 }
 
 .dv-sample-icon {
@@ -686,7 +789,9 @@ button.dv-sample:focus-visible {
 }
 
 /* Mobile: a deliberate vertical composition, not a squeezed 50/50:
-   floor on top (the camera frames it there), card, then the samples. */
+   floor on top (the camera frames it there), card, then the samples.
+   --detail-band is the reserved strip; the camera frames the floor in the same
+   band (src/config/layout.ts DETAIL_MOBILE_BAND). */
 @media (max-width: 860px) {
   .detail-view {
     display: block;
@@ -695,8 +800,13 @@ button.dv-sample:focus-visible {
     pointer-events: auto;
     padding-block: 0 28px;
     padding-inline: var(--page-inset);
-    padding-block-start: 44svh;
-    background: linear-gradient(to bottom, transparent 0 38svh, var(--bg) 46svh, var(--bg) 100%);
+    padding-block-start: var(--detail-band);
+    background: linear-gradient(
+      to bottom,
+      transparent 0 calc(var(--detail-band) - 6svh),
+      var(--bg) calc(var(--detail-band) + 2svh),
+      var(--bg) 100%
+    );
   }
 
   .dv-card {
@@ -729,7 +839,6 @@ button.dv-sample:focus-visible {
   }
 
   .detail-view {
-    padding-block-start: 40svh;
     padding-block-end: 20px;
   }
 

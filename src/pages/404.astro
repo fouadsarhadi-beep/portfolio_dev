@@ -48,9 +48,13 @@ import { t } from '@/lib/i18n';
 
   .nf-list {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    grid-template-columns: repeat(auto-fill, minmax(min(200px, 100%), 1fr));
     gap: 10px;
     margin-block: 28px;
+  }
+
+  .nf-list li {
+    min-inline-size: 0;
   }
 
   .nf-list a {
@@ -82,5 +86,6 @@ import { t } from '@/lib/i18n';
     font-family: var(--font-display);
     font-weight: 650;
     letter-spacing: var(--tracking-tight);
+    overflow-wrap: anywhere;
   }
 </style>

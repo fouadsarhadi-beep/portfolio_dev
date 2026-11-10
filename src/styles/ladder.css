@@ -118,6 +118,19 @@
   translate: 0 0;
 }
 
+/* The floor the scroll is on is named by the info panel too, and the panel sits
+   in the column right next to this rail. A title that runs the full width
+   would cross into it, so the rail keeps its number and its dot. */
+body:has(.layer-card[data-show='true']) .ladder-rung[aria-current='step'] .ladder-label {
+  visibility: hidden;
+  opacity: 0;
+}
+
+/* An expanded floor owns the frame: the rail would float over its card. */
+html[data-detail='true'] .ladder {
+  display: none;
+}
+
 @media (max-width: 860px) {
   .ladder {
     display: none;

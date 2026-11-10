@@ -1,12 +1,12 @@
 /** @module scene/focus-pose: pose maths for the tower's zoom and the detail view: the base zoom, the (zeroed) column shift and the vertical bias that put one floor in the band's floor share. @see src/scene/focus.ts, src/config/layout.ts, src/config/tuning.ts */
-import { CAM_VIEW_HEIGHT, FOOTPRINT, OVERVIEW_BASE_ZOOM } from '@/config/tuning';
-import { DETAIL_FLOOR_BAND, DETAIL_FLOOR_CENTRE } from '@/config/layout';
+import { CAM_VIEW_HEIGHT, FOOTPRINT, OVERVIEW_BASE_ZOOM, SLAB_T } from '@/config/tuning';
+import { DETAIL_MOBILE_BAND, detailColumnCentrePx, detailColumnPx } from '@/config/layout';
 
 const ZOOM_DESKTOP = 1.45;
 const ZOOM_MOBILE = 1.35;
 const COL_FILL = 0.86;        // the floor fills most of, not all of, its share
 const FLOOR_W = FOOTPRINT * Math.SQRT2; // 8.49: projected slab width in the isometric view
-const UP_BIAS_MOBILE = 0.16;  // lift it into the top band on mobile
+const FLOOR_H = (FOOTPRINT + SLAB_T) * 0.8165; // 6.37: projected slab height with its walls
 const TOWER_FILL = 0.94;      // share of its cell's width the tower may fill
 
 /**
@@ -43,14 +43,30 @@ export interface DetailPose {
   bias: number;
 }
 
-/** Pose for one floor at the given viewport aspect. Pure maths, no scene access. */
-export function detailPose(aspect: number, mobile: boolean): DetailPose {
-  // Visible world box at the detail zoom. The desktop zoom is capped so the
-  // floor always fits the share of the page band the detail grid gives it.
-  const fit = (CAM_VIEW_HEIGHT * aspect * DETAIL_FLOOR_BAND * COL_FILL) / FLOOR_W;
-  const zoom = mobile ? ZOOM_MOBILE : Math.min(ZOOM_DESKTOP, fit);
-  const effH = CAM_VIEW_HEIGHT / zoom;
-  const shift = mobile ? 0 : effH * aspect * (0.5 - DETAIL_FLOOR_CENTRE);
-  const bias = mobile ? effH * UP_BIAS_MOBILE : 0; // 0 = vertically centred
-  return { zoom, shift, bias };
+/**
+ * Pose for one floor in the expanded view. The canvas fills the window while a
+ * floor is open (src/styles/hud.css), so the box it draws in is the viewport
+ * and the CSS grid's floor column can be measured inside it.
+ */
+export function detailPose(canvasW: number, canvasH: number, mobile: boolean): DetailPose {
+  if (mobile) {
+    // The floor lives in the strip reserved at the top (--detail-band): it has
+    // to fit that strip's height and the page's width, whichever is tighter.
+    const band = canvasH * DETAIL_MOBILE_BAND;
+    const fitW = (COL_FILL * canvasW * CAM_VIEW_HEIGHT) / (FLOOR_W * canvasH);
+    const fitH = (COL_FILL * band * CAM_VIEW_HEIGHT) / (FLOOR_H * canvasH);
+    const zoom = Math.min(ZOOM_MOBILE, fitW, fitH);
+    // Lift the floor into the middle of that strip.
+    const bias = ((0.5 - DETAIL_MOBILE_BAND / 2) * CAM_VIEW_HEIGHT) / zoom;
+    return { zoom, shift: 0, bias };
+  }
+  // The floor owns the detail grid's first column: the page band, minus the
+  // shared gap, times the floor's share (src/config/layout.ts).
+  const column = detailColumnPx(canvasW);
+  const centre = detailColumnCentrePx(canvasW);
+  const fit = (COL_FILL * column * CAM_VIEW_HEIGHT) / (FLOOR_W * canvasH);
+  const zoom = Math.min(ZOOM_DESKTOP, fit);
+  // Travel: from the middle of the canvas to the middle of that column.
+  const shift = ((canvasW / 2 - centre) * CAM_VIEW_HEIGHT) / (canvasH * zoom);
+  return { zoom, shift, bias: 0 };
 }

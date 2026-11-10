@@ -10,6 +10,7 @@
     "astro": "astro",
     "check": "tsc --noEmit && node scripts/check.mjs",
     "map": "node scripts/check.mjs --map-only",
+    "layout": "node scripts/layout.mjs",
     "smoke": "node scripts/smoke.mjs"
   },
   "dependencies": {

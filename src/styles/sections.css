@@ -32,7 +32,7 @@ html.no-webgl .stage {
 }
 
 html.no-webgl .stage-sticky {
-  position: static;
+  position: relative;
   height: auto;
 }
 
@@ -44,6 +44,14 @@ html.no-webgl .hero-copy {
   padding: 24px clamp(16px, 4vw, 32px) 0;
 }
 
+/* Without a scene the expanded card has no floor to show, but it still opens
+   over the page: it must sit in the viewport, not inside the tall fallback
+   column. */
+html.no-webgl .detail-view {
+  position: fixed;
+  inset: 0;
+}
+
 html.no-webgl .layer-card,
 html:not(.js) .layer-card {
   display: none;
@@ -53,9 +61,10 @@ html.no-webgl .stack-fallback {
   display: grid;
 }
 
+/* Without JavaScript the nav buttons do nothing, and the fallback cards below
+   carry the same links. */
 html:not(.js) .layer-nav {
-  flex-direction: column;
-  align-items: flex-start;
+  display: none;
 }
 
 .stage-sticky {
@@ -145,6 +154,14 @@ html:not(.js) .layer-nav {
   text-transform: uppercase;
   letter-spacing: 0.08em;
   color: var(--ink-soft);
+}
+
+/* In the single-cell stage the copy sits over the tower, so it keeps to its
+   own corner instead of running across the scene. */
+@media (max-width: 1023px), (max-aspect-ratio: 1/1) {
+  .hero-copy {
+    max-inline-size: min(30rem, 46%);
+  }
 }
 
 /* --- No-JS fallback cards --- */
@@ -274,6 +291,8 @@ html:not(.js) .layer-nav {
   border-block-end: 1px solid var(--line);
   font-size: var(--fs-14);
   font-weight: 600;
+  /* The rule runs the full column: the global list measure would cut it short. */
+  max-inline-size: none;
 }
 
 .layer-diagram li:first-child {
@@ -325,9 +344,11 @@ html:not(.js) .layer-nav {
 }
 
 /* Toolkit */
+/* auto-fill, not auto-fit: the last row keeps the column width instead of
+   stretching two tiles across the whole band. */
 .tiles {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
+  grid-template-columns: repeat(auto-fill, minmax(min(230px, 100%), 1fr));
   gap: 12px;
   margin-block-start: 32px;
 }
@@ -467,8 +488,11 @@ html:not(.js) .layer-nav {
 }
 
 /* Work pages */
+/* The work page is a band like every other: the same 10% margin as the header
+   and the footer above and below it. */
 .work {
   padding-block: 32px 96px;
+  padding-inline: var(--page-inset);
 }
 
 .work-num {
@@ -491,7 +515,7 @@ html:not(.js) .layer-nav {
 }
 
 .work h1 {
-  font-size: clamp(var(--fs-44), 7vw, var(--fs-72));
+  font-size: clamp(var(--fs-28), 5vw, var(--fs-72));
   margin-block-start: 14px;
 }
 
@@ -513,7 +537,7 @@ html:not(.js) .layer-nav {
 
 .cap-list {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  grid-template-columns: repeat(auto-fill, minmax(min(220px, 100%), 1fr));
   gap: 10px;
   margin-block-start: 16px;
 }
@@ -530,7 +554,7 @@ html:not(.js) .layer-nav {
 
 .samples {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  grid-template-columns: repeat(auto-fill, minmax(min(260px, 100%), 1fr));
   gap: 12px;
   margin-block-start: 16px;
 }
@@ -725,6 +749,8 @@ html:not(.js) .layer-nav {
   color: var(--ink-soft);
   text-decoration: underline;
   text-underline-offset: 3px;
+  /* The guide is pointer-events: none, but this link is a real control. */
+  pointer-events: auto;
 }
 
 .sg-skip a:hover {
