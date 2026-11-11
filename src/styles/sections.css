@@ -6,9 +6,7 @@
 }
 
 html.js .stage {
-  /* The extra --stage-tail pixels at the bottom are empty space after the
-     overview: the sticky stage holds through them before the next section. */
-  height: calc(100svh + var(--steps) * var(--step-vh) + var(--stage-tail));
+  height: calc(100svh + var(--steps) * var(--step-vh));
 }
 
 html.js .stack-fallback {
