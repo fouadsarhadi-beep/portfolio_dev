@@ -54,7 +54,7 @@ const DETAIL_FLOOR_FR = DETAIL_SPLIT;
 const NAV_GAP = grab(hudCss, /\.layer-nav \{[^}]*gap:\s*(\d+)px/, 'nav gap');
 const NAV_PAD = grabAll(hudCss, /\.layer-nav button \{[^}]*padding:\s*(\d+)px\s+(\d+)px/, 'nav padding');
 const CARD_PAD = grabAll(hudCss, /\.layer-card \{[^}]*padding:\s*(\d+)px\s+(\d+)px\s+(\d+)px/, 'card padding');
-const HUD_REFLOW = grab(hudCss, /@media \(max-width: (\d+)px\) \{\s*\.hud-row \{/, 'HUD reflow breakpoint');
+const HUD_COLLAPSE = grab(hudCss, /@media \(max-width: (\d+)px\) \{\s*\.isle \{/, 'island collapse breakpoint');
 
 // The scene constants the detail framing uses.
 const CAM_VIEW_HEIGHT = grab(tuningTs, /CAM_VIEW_HEIGHT = LIFT \+ 3 \* SLAB_T \+ (\d+)/, 'CAM_VIEW_HEIGHT');
@@ -89,7 +89,7 @@ const ok = (name, pass, detail = '') => checks.push({ name, pass, detail });
 const SIZES = [1920, 1600, 1440, 1366, 1280, 1152, 1024, 900, 820, 768, 600, 480, 390];
 const HEIGHTS = { 1920: 1080, 1600: 900, 1440: 900, 1366: 768, 1280: 720, 1152: 720, 1024: 768, 900: 700, 820: 900, 768: 1024, 600: 800, 480: 800, 390: 844 };
 
-console.log(`layout: side cells >= ${SIDE_MIN}px, stage collapses below ${COLLAPSE + 1}px, HUD reflows below ${HUD_REFLOW + 1}px\n`);
+console.log(`layout: side cells >= ${SIDE_MIN}px, stage collapses below ${COLLAPSE + 1}px, header island collapses below ${HUD_COLLAPSE + 1}px\n`);
 
 for (const w of SIZES) {
   const h = HEIGHTS[w];
@@ -134,10 +134,12 @@ for (const w of SIZES) {
     ok(`${w}px info panel and nav do not meet`, slack >= 0, `${slack.toFixed(0)}px to spare (panel ${worst.toFixed(0)} + nav ${navH.toFixed(0)} in ${column.toFixed(0)})`);
   }
 
-  // 3. The HUD: the nav fits its cell, or the bar has reflowed.
-  const cell = (band - 2 * gap) / 3;
-  const navW = 220; // Stack + About + Toolkit + Contact, measured
-  ok(`${w}px HUD nav fits its cell`, w <= HUD_REFLOW || navW <= cell, `${navW}px nav in a ${cell.toFixed(0)}px cell`);
+  // 3. The header island: on wide screens it is a centered pill capped at 1080px
+  //    plus a 24px gutter; its content (brand+nav+status) needs about 700px.
+  //    Below the collapse breakpoint it is a burger circle, which always fits.
+  const pillW = Math.min(1080, w - 24);
+  ok(`${w}px header island fits the viewport`, w <= HUD_COLLAPSE || pillW >= 700,
+    w <= HUD_COLLAPSE ? 'burger circle' : `pill ${pillW}px in ${w}px`);
 
   // 4. The expanded floor: the camera frames it inside the CSS column.
   if (w > 860) {

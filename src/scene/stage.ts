@@ -1,7 +1,8 @@
-/** @module scene/stage: the environment around the floating tower (T28): contact shadow, under-glow, under-light, ambient dust. @see docs/DESIGN.md (Environment), src/scene/loop.ts, src/scene/scene-theme.ts */
+/** @module scene/stage: the environment around the floating tower (T28): contact shadow, under-glow, under-light, ambient dust, plus slow orbiting rings and drifting plates (T55). @see docs/DESIGN.md (Environment), src/scene/loop.ts, src/scene/scene-theme.ts */
 import * as THREE from 'three';
 import { PALETTE, darken } from '@/config/palette';
 import { prefersReducedMotion } from '@/lib/reduced-motion';
+import { createDecor } from './stage-decor';
 import { registerColor, registerLight, registerValue } from './scene-theme';
 
 /** World y of the soft shadow plane under the floating tower (slab bottom = STACK_BASE_Y - SLAB_T/2). */
@@ -23,6 +24,8 @@ export function createStage(tier: 'high' | 'low'): Stage {
 
   const dust = makeDust(DUST_COUNT);
   group.add(dust.mesh);
+  const decor = createDecor(tier === 'high' ? 8 : 5);
+  group.add(decor.group);
   const tmp = {
     m: new THREE.Matrix4(),
     q: new THREE.Quaternion(),
@@ -47,6 +50,7 @@ export function createStage(tier: 'high' | 'low'): Stage {
         dust.mesh.setMatrixAt(i, tmp.m);
       }
       dust.mesh.instanceMatrix.needsUpdate = true;
+      decor.update(time);
     },
   };
 }

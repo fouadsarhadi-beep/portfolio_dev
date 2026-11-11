@@ -122,9 +122,12 @@ Search this file before creating anything.
 - scene-theme.ts: scene/scene-theme: material, light and value registry that applies theme changes in place. @see docs/DESIGN.md (Dual theme), src/config/theme.ts, docs/WIRING.md
   exports: registerColor, registerMaterial, registerEmissive, registerLight, registerValue, currentTheme, initSceneTheme
   uses: src/config/theme, src/lib/bus
-- stage.ts: scene/stage: the environment around the floating tower (T28): contact shadow, under-glow, under-light, ambient dust. @see docs/DESIGN.md (Environment), src/scene/loop.ts, src/scene/scene-theme.ts
+- stage-decor.ts: scene/stage-decor: the quiet props around the tower (T55): three thin orbit rings and a ring of drifting plates, all neutral and slow. @see src/scene/stage.ts, docs/DESIGN.md (Environment)
+  exports: Decor, createDecor
+  uses: src/config/palette, src/scene/scene-theme
+- stage.ts: scene/stage: the environment around the floating tower (T28): contact shadow, under-glow, under-light, ambient dust, plus slow orbiting rings and drifting plates (T55). @see docs/DESIGN.md (Environment), src/scene/loop.ts, src/scene/scene-theme.ts
   exports: CONTACT_Y, Stage, createStage
-  uses: src/config/palette, src/lib/reduced-motion, src/scene/scene-theme
+  uses: src/config/palette, src/lib/reduced-motion, src/scene/stage-decor, src/scene/scene-theme
 
 ## src/scene/rooms/
 - index.ts: scene/rooms/index: room registry; keys match LayerConfig.room. @see docs/WIRING.md (How to add a layer), src/config/layers.ts
@@ -285,9 +288,12 @@ Search this file before creating anything.
 - pick.ts: scene/stack/pick: raycasts slab sides, hover lift or nudge, dims others, edge highlight. @see docs/MOTION.md (Pick, hover, touch), src/lib/bus.ts
   exports: Pick, createPick
   uses: src/lib/bus, src/config/layers, src/config/palette, src/config/theme, src/scene/scene-theme
+- plaster.ts: scene/stack/plaster: a procedural craft texture for the slab body: a near-white base with seeded speckles and brushed strokes, so the material color shows through and the theme re-tints it in place. @see src/scene/stack/slab.ts, src/config/palette.ts (colors only there)
+  exports: PlasterTexture, makePlasterTexture, makeWoodTexture
+  uses: src/config/palette
 - slab.ts: scene/stack/slab: builds one chunky slab per LayerConfig (T28: unified material family). @see docs/DESIGN.md (Slab), src/scene/stack/stack.ts, src/scene/stack/icons.ts
   exports: makeSlab
-  uses: src/config/tuning, src/config/palette, src/config/theme, src/config/types, src/scene/stack/icons, src/scene/scene-theme
+  uses: src/config/tuning, src/config/palette, src/config/theme, src/config/types, src/scene/stack/icons, src/scene/stack/plaster, src/scene/scene-theme
 - stack.ts: scene/stack/stack: builds the six-slab column from config in locked order. @see src/scene/stack/slab.ts, src/scene/rooms/index.ts, docs/MOTION.md (State)
   exports: restY, Stack, createStack
   uses: src/config/tuning, src/config/layers, src/scene/stack/slab, src/scene/rooms/index, src/scene/rooms/shell, src/scene/rooms/props/index, src/config/types

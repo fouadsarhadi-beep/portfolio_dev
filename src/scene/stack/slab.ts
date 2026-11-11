@@ -6,6 +6,7 @@ import { PALETTE, lighten } from '@/config/palette';
 import type { ThemeColors } from '@/config/theme';
 import type { LayerConfig } from '@/config/types';
 import { makeIconTexture, makeNumberTexture } from './icons';
+import { makePlasterTexture, makeWoodTexture } from './plaster';
 import { registerMaterial, registerValue } from '../scene-theme';
 
 const HALF = FOOTPRINT / 2;
@@ -41,15 +42,46 @@ export function makeSlab(layer: LayerConfig): THREE.Group {
   return group;
 }
 
-/** Warm plaster body; floors are distinguished by number, icon and contents, not color. */
+// One shared craft texture for every slab body (T54): procedural plaster,
+// redrawn in place on a theme switch.
+let plaster: ReturnType<typeof makePlasterTexture> | null = null;
+function getPlaster() {
+  if (!plaster) {
+    plaster = makePlasterTexture();
+    registerValue((c) => plaster?.redraw(c?.slab ?? PALETTE.slab));
+  }
+  return plaster;
+}
+
+/** Warm plaster body with a subtle brushed texture; floors are distinguished by number, icon and contents, not color. */
 function bodyMaterial(): THREE.MeshStandardMaterial {
-  return new THREE.MeshStandardMaterial({ color: PALETTE.slab, roughness: 0.55, metalness: 0.04 });
+  return new THREE.MeshStandardMaterial({
+    color: PALETTE.slab,
+    roughness: 0.62,
+    metalness: 0.03,
+    map: getPlaster().tex,
+  });
+}
+
+// One shared wood plank texture for every slab deck (T54).
+let woodTex: ReturnType<typeof makeWoodTexture> | null = null;
+function getWood() {
+  if (!woodTex) {
+    woodTex = makeWoodTexture();
+    registerValue((c) => woodTex?.redraw(c?.wood ?? PALETTE.wood));
+  }
+  return woodTex;
 }
 
 /** Inset wood deck floor with a quiet shade rim running around it. */
 function addTop(group: THREE.Group): void {
   const floorGeo = new THREE.BoxGeometry((FLAT - 0.12) * 2, 0.04, (FLAT - 0.12) * 2);
-  const floorMat = new THREE.MeshStandardMaterial({ color: PALETTE.wood, roughness: 0.7, metalness: 0 });
+  const floorMat = new THREE.MeshStandardMaterial({
+    color: PALETTE.wood,
+    roughness: 0.65,
+    metalness: 0,
+    map: getWood().tex,
+  });
   registerMaterial((c) => c.wood, floorMat);
   const floor = new THREE.Mesh(floorGeo, floorMat);
   floor.position.y = TOP + 0.015;
