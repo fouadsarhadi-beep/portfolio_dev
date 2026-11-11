@@ -73,7 +73,7 @@ export const FOOTPRINT = 6;            // slab width and depth, world units
 export const SLAB_T = 1.8;             // slab thickness
 export const WALL_H = SLAB_T;          // wall height equals slab thickness (locked)
 export const WALL_THICK = 0.14;
-export const CORNER_R = 0.14;
+export const CORNER_R = 0;             // sharp corners: the slabs are cut stone
 export const LIFT = FOOTPRINT + SLAB_T + 0.4; // 8.2: how far a lifted layer rises
 export const STACK_BASE_Y = 1.35;      // T28: the whole tower floats this high (see below)
 ```
@@ -86,10 +86,10 @@ Why these numbers
 ## Camera
 Orthographic. Position = target + (1,1,1) x 30. Looks at target. Visible faces: top, +x (right face), +z (left face). Back walls sit on the -x and -z sides. Never rotate the camera or the stack.
 Framing: the frustum is shifted down by `CAM_FRAME_OFFSET_Y` (22% of the visible height, ≈200px at 900px tall), which draws the whole scene that much higher on screen so the opening view sits above the fold. The hero copy sits at the top of the left column (T39), so the lift only frames the tower.
-Base zoom (T39/T54, user sketch; resized 2026-11-11 three times: 15%, 10%, 10% smaller): the tower renders at `OVERVIEW_BASE_ZOOM` = 0.96 (0.9 low tier) on wide cells, and otherwise fills 58.5% of its cell's width — a constant margin on each side, so the air around the tower never changes as the viewport shrinks. `overviewFitZoom` (focus-pose.ts) computes that fit; boot re-fits it on resize. `--tower-w` (tokens.css) mirrors the width.
+Base zoom (T39/T54, user sketch; resized several times and the camera zoomed out 10% on 2026-11-11): the tower renders at `OVERVIEW_BASE_ZOOM` = 0.86 (0.81 low tier) on wide cells, and otherwise fills 53% of its cell's width — a constant margin on each side, so the air around the tower never changes as the viewport shrinks. `overviewFitZoom` (focus-pose.ts) computes that fit; boot re-fits it on resize. `--tower-w` (tokens.css) mirrors the width.
 
 ## Slab (scene/stack/slab.ts) — T28 unified family, T54 craft finish
-- Body: rounded box FOOTPRINT x SLAB_T x FOOTPRINT, radius CORNER_R, 4 segments. One shared geometry.
+- Body: box FOOTPRINT x SLAB_T x FOOTPRINT with sharp corners (CORNER_R = 0: cut stone, not rounded plastic). One shared geometry.
 - Material: warm clay plaster (`slab` role, roughness 0.62, metalness 0.03) with a procedural plaster texture (`scene/stack/plaster.ts`: seeded speckles and brushed strokes on a near-white base, so the role color shows through and a theme switch redraws it in place). Identical on all six floors.
 - Top: warm oak deck (plank texture, same file) inset 0.18 from the edge, with a quiet `slabShade` rim around it.
 - Right face (+x): inset `slabShade` panel and a round plaster badge (diameter 0.9 x SLAB_T) with the layer icon in graphite. Icon comes from the config path, drawn to a CanvasTexture.
@@ -117,7 +117,7 @@ Base zoom (T39/T54, user sketch; resized 2026-11-11 three times: 15%, 10%, 10% s
 - Repeated elements (books, LEDs, floor tiles, cables) use InstancedMesh.
 
 ## Environment around the stack (T28, dressed up in T55)
-The tower floats (STACK_BASE_Y = 1.35) above a soft radial contact shadow, an `underGlow` halo and a dim under light; it reads as deliberately suspended, not misplaced. No platform, no ground plane. The page frames the stage with a faint warm radial glow (`.stage-sticky::before`, tokens-driven) and the existing vignette. 18 to 36 slow dust particles (instanced, opacity 0.35) drift around the tower, plus three thin graphite orbit rings and 5 to 8 small `slabShade` plates on slow paths (`scene/stage-decor.ts`) — quiet set dressing, never competing with the tower. Keep it calm.
+The tower floats (STACK_BASE_Y = 1.35) above a soft radial contact shadow, an `underGlow` halo and a dim under light; it reads as deliberately suspended, not misplaced. No platform, no ground plane. The page frames the stage with a faint warm radial glow (`.stage-sticky::before`, tokens-driven) and the existing vignette. 18 to 36 slow dust particles (instanced, opacity 0.35) drift around the tower, plus 5 to 8 small `slabShade` plates on slow paths (`scene/stage-decor.ts`; the orbit rings were removed on user review) — quiet set dressing, never competing with the tower. Keep it calm.
 
 ## HUD and UI style (T29/T30/T31 system, T50 island header)
 One surface language across the whole page. Implemented in `tokens.css` (`--shadow-card`, `--shadow-lift`), `sections.css`, `hud.css`, `picker.css`:

@@ -13,10 +13,15 @@ const HALF = FOOTPRINT / 2;
 const TOP = SLAB_T / 2;
 const FLAT = HALF - CORNER_R; // body side faces are flat within this bound
 
-// One shared body geometry: all slabs have the same dimensions.
-let bodyGeo: RoundedBoxGeometry | null = null;
-function getBodyGeo(): RoundedBoxGeometry {
-  if (!bodyGeo) bodyGeo = new RoundedBoxGeometry(FOOTPRINT, SLAB_T, FOOTPRINT, 4, CORNER_R);
+// One shared body geometry: all slabs have the same dimensions. CORNER_R is 0
+// (sharp stone-slab edges), so this is a plain box.
+let bodyGeo: THREE.BufferGeometry | null = null;
+function getBodyGeo(): THREE.BufferGeometry {
+  if (!bodyGeo) {
+    bodyGeo = CORNER_R > 0
+      ? new RoundedBoxGeometry(FOOTPRINT, SLAB_T, FOOTPRINT, 4, CORNER_R)
+      : new THREE.BoxGeometry(FOOTPRINT, SLAB_T, FOOTPRINT);
+  }
   return bodyGeo;
 }
 

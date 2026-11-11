@@ -122,7 +122,7 @@ Search this file before creating anything.
 - scene-theme.ts: scene/scene-theme: material, light and value registry that applies theme changes in place. @see docs/DESIGN.md (Dual theme), src/config/theme.ts, docs/WIRING.md
   exports: registerColor, registerMaterial, registerEmissive, registerLight, registerValue, currentTheme, initSceneTheme
   uses: src/config/theme, src/lib/bus
-- stage-decor.ts: scene/stage-decor: the quiet props around the tower (T55): three thin orbit rings and a ring of drifting plates, all neutral and slow. @see src/scene/stage.ts, docs/DESIGN.md (Environment)
+- stage-decor.ts: scene/stage-decor: the quiet props around the tower (T55): a ring of drifting plates (the orbit rings were removed on user review). @see src/scene/stage.ts, docs/DESIGN.md (Environment)
   exports: Decor, createDecor
   uses: src/config/palette, src/scene/scene-theme
 - stage.ts: scene/stage: the environment around the floating tower (T28): contact shadow, under-glow, under-light, ambient dust, plus slow orbiting rings and drifting plates (T55). @see docs/DESIGN.md (Environment), src/scene/loop.ts, src/scene/scene-theme.ts

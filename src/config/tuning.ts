@@ -6,7 +6,8 @@ export const FOOTPRINT = 6;            // slab width and depth, world units
 export const SLAB_T = 1.8;             // slab thickness; wall height equals it
 export const WALL_H = SLAB_T;
 export const WALL_THICK = 0.14;
-export const CORNER_R = 0.14;
+// Sharp corners: the slabs read as cut stone, not rounded plastic (user review).
+export const CORNER_R = 0;
 export const LIFT = FOOTPRINT + SLAB_T + 0.4; // 8.2: how far a lifted layer rises
 
 // Floating tower (T28): the whole stack is suspended this high above the
@@ -40,14 +41,14 @@ export const OVERVIEW_ZOOM = 0.5;
 // (WALL_H = 1.8) or the exploded floors would clip the slab above them.
 export const OVERVIEW_GAP = 2.2;
 
-// Base view zoom (user sketch 2026-11-08, resized three times: 15%, 10%, 10%
-// smaller): the tower renders this much bigger than the raw frustum fit, so
-// the 50% stage column carries a taller stack.
+// Base view zoom (user sketch 2026-11-08, resized four times: 15%, 10%, 10%,
+// then the camera zoomed out 10% from the tower): the tower renders this much
+// bigger than the raw frustum fit, so the 50% stage column carries the stack.
 // Mirrors --tower-w in tokens.css; capped per cell by overviewFitZoom
 // (src/scene/focus-pose.ts) so the silhouette never bleeds out of its column.
-export const OVERVIEW_BASE_ZOOM = 0.96; // 1.4 x 0.85 x 0.9 x 0.9
+export const OVERVIEW_BASE_ZOOM = 0.86; // 0.96 x 0.9
 // The low tier keeps its own, smaller zoom: fewer pixels, wider safety margin.
-export const LOW_TIER_BASE_ZOOM = 0.9; // 1.3 x 0.85 x 0.9 x 0.9
+export const LOW_TIER_BASE_ZOOM = 0.81; // 0.9 x 0.9
 
 // Render
 export const EXPOSURE = 1.05;

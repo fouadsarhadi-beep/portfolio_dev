@@ -99,15 +99,15 @@
   --shell-cols: minmax(0, 1fr) minmax(0, 1fr) minmax(0, 1fr);
   --hud-h: 56px;
 
-  /* The tower's projected width, in vh, at the base zoom (0.96 after the three
-     2026-11-11 resizes): the camera is height-driven, so the isometric
-     silhouette of the 6-unit footprint is 6*sqrt(2) world units wide and a
-     world unit is (100vh / CAM_VIEW_HEIGHT) tall:
-     (6*sqrt(2) / 17.6) * 100vh * 0.96 = 46.5vh. Doc-only mirror of
+  /* The tower's projected width, in vh, at the base zoom (0.86 after the
+     resizes and the 10% camera zoom-out): the camera is height-driven, so the
+     isometric silhouette of the 6-unit footprint is 6*sqrt(2) world units wide
+     and a world unit is (100vh / CAM_VIEW_HEIGHT) tall:
+     (6*sqrt(2) / 17.6) * 100vh * 0.86 = 41.6vh. Doc-only mirror of
      OVERVIEW_BASE_ZOOM and FOOTPRINT / CAM_VIEW_HEIGHT in src/config/tuning.ts
      -- no rule consumes it; the real fit is overviewFitZoom (focus-pose.ts),
      which caps the zoom per cell. */
-  --tower-w: 46.5vh;
+  --tower-w: 41.6vh;
 }
 
 /* Persian: the document flips to RTL and the fonts come from the alt slots. */
