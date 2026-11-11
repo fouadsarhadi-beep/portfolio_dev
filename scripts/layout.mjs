@@ -46,6 +46,9 @@ const DETAIL_BAND = grab(tokens, /--detail-band:\s*(\d+)svh/, '--detail-band') /
 
 // The stage grid: the side cells' minimum and the three shares.
 const SIDE_MIN = grab(layoutCss, /grid-template-columns:\s*minmax\((\d+)px,\s*15fr\)/, 'side cell minimum');
+const STAGE_GAP_HALVED = /column-gap:\s*calc\(var\(--page-gap\)\s*\/\s*2\)/.test(layoutCss);
+const SIDE_PULL = grabAll(hudCss, /margin-inline-start:\s*clamp\((-?\d+)px,\s*(-?[\d.]+)vw,\s*(-?\d+)px\)/, 'side column pull');
+const TOWER_FILL = grab(poseTs, /TOWER_FILL = ([\d.]+)/, 'TOWER_FILL');
 const SIDE_FR = 15;
 const TOWER_FR = 50;
 const COLLAPSE = grab(layoutCss, /@media \(max-width: (\d+)px\), \(max-aspect-ratio/, 'stage collapse breakpoint');
@@ -102,12 +105,19 @@ for (const w of SIZES) {
 
   // 1. The stage: the side cells hold their content, or the stage is one cell.
   if (fivePart) {
-    const gap = stageGapPx(w);
+    const gap = STAGE_GAP_HALVED ? stageGapPx(w) : gapPx(w);
     const usable = band - 2 * gap;
     const side = Math.max(SIDE_MIN, (usable * SIDE_FR) / (SIDE_FR * 2 + TOWER_FR));
     const tower = usable - 2 * side;
     ok(`${w}px stage side cell holds a floor title`, side >= 200, `${side.toFixed(0)}px`);
     ok(`${w}px stage keeps the tower readable`, tower >= usable * 0.4, `${tower.toFixed(0)}px of ${usable.toFixed(0)}px`);
+
+    // The side column's content is pulled toward the tower with a negative
+    // margin; it may only use the air the tower leaves inside its own cell.
+    const pull = Math.min(-SIDE_PULL[0], Math.max(-SIDE_PULL[2], (w * -SIDE_PULL[1]) / 100));
+    const air = ((1 - TOWER_FILL) / 2) * tower;
+    ok(`${w}px side-column pull stays inside the tower's air`, pull <= air - 8,
+      `pull ${pull.toFixed(0)}px, air ${air.toFixed(0)}px`);
   } else {
     // One cell: the nav becomes a strip and scrolls instead of overflowing.
     const strip = LAYERS.length * 130 + (LAYERS.length - 1) * 10;
@@ -116,7 +126,7 @@ for (const w of SIZES) {
 
   // 2. The side column: the info panel and the nav must not meet.
   if (fivePart) {
-    const gap = stageGapPx(w);
+    const gap = STAGE_GAP_HALVED ? stageGapPx(w) : gapPx(w);
     const usable = band - 2 * gap;
     const side = Math.max(SIDE_MIN, (usable * SIDE_FR) / (SIDE_FR * 2 + TOWER_FR));
     const inner = side - 2 * CARD_PAD[1] - 2;
