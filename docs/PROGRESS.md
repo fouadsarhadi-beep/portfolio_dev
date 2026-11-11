@@ -1,13 +1,13 @@
 # PROGRESS
 
-Current task: none. T40 (the responsive pass for scaled and smaller viewports) is code- and arithmetic-verified; the live visual pass sits with the user.
+Current task: none. The 2026-11-11 redesign batch (batches 1-3) is code- and arithmetic-verified; the live visual pass sits with the user.
 
 ## Handoff note (max 8 lines, rewrite each session)
-State: main, nothing pushed. T40 is the responsive pass for 1280x720 (a 13-inch laptop at 150% scaling) and every width below it.
-Landed: the right column is one flex stack (info panel on top, nav docked below, so they can never meet); the panel is sized from its cell, not from 15vw; the side cells keep a 200px minimum and the stage drops to one cell below 1024 (nav becomes a bottom strip, the copy no longer shares its cell); the expanded floor is framed in the detail grid's own column again (the canvas fills the window while a floor is open: 386px inside a 449px column at 1280, instead of 188px parked against the card); the mobile floor fits its 44svh strip; the HUD reflows at 900; the rail leaves the frame; the work pages join the band; body overflow-x: clip.
-Verified 2026-11-11: npm run check (0 errors, 104 files), npm run build (8 pages), npm run smoke (26/26), npm run layout (87 checks; new script, reads the source and computes every band at 13 widths).
-Gotchas: focus.ts sets data-detail-canvas before it reads the canvas box, so the pose matches the box the CSS just gave it; the panel drops its intro paragraph under an 800px window height; no browser starts in the agent sandbox, so pixels are the user's pass.
-Next: the user's live pass at 1280x720 (150% scaling), 1920x1080 and a phone, then commit(s), then git push.
+State: main, nothing pushed. Batch commits: a5025ec (name, hover card, tower sizing, floor-6, fast overview, no toolkit, leveled nav), f13fdda (island header, bento About, contact form, En/fa pickers, /simple/, sample plan), 90b94d3 (tower recolor + procedural textures, orbit decor).
+Landed: identity is Fouad Sarhadi (site.ts only); the floor card is hover-only and 100px off the rail; the tower fills 85% of its cell (7.5% margins) capped at zoom 1.4; floor 6 frames lower; the exploded overview lands one scroll past floor 6 (STEPS 6, ~580svh); Toolkit removed; nav pills leveled with floors per frame; header is a floating island pill (burger circle + dropdown below 1024); About is a bento; Contact has a form; first visit shows En/فا then Interactive/Simple popups (blur + 20% black, two big pills); full fa dictionary + RTL + Vazirmatn + header lang button; /simple/ tiles build; per-floor sample plan (3-6 signature samples, docs/COPY.md); tower recolored with procedural plaster/plank textures; orbit rings + plates around the tower.
+Verified 2026-11-11: npm run check (0 errors, 108 files), npm run build (9 pages), npm run smoke (26/26), npm run layout (87 checks).
+Gotchas: t() renders at build time, so the locale switch is client-side (applyLocaleDom walks data-t / data-layer-id / data-sample-i hooks); fa layer text merges over the English config in layersView(); document bodies stay English placeholders; no browser starts in the agent sandbox, so pixels are the user's pass.
+Next: the user's live pass (desktop/phone, both themes, fa RTL, both pickers, /simple/), then git push.
 ## How to run
 - Open a terminal in the portfolio-kit folder (the one with package.json): `cd "C:\Users\ASUS\Desktop\personal\homepage\GLM 5.3_2\portfolio-kit"`
 - `npm install` (once, or after package.json changes)
@@ -113,12 +113,14 @@ Next: the user's live pass at 1280x720 (150% scaling), 1920x1080 and a phone, th
   10% margin \| 15% guide+copy \| 50% tower \| 15% nav \| 10% margin (ladder). Tower 40% bigger (OVERVIEW_BASE_ZOOM 1.4, overviewFitZoom cap, --tower-w 67.5vh) and centred (stageShiftPx 0); labels.ts/layer-rect.ts/getLayerRect removed; nav is a static column menu with aria-current; stage-guide-right merged into the always-on .layer-card panel (hover swaps, scroll returns); ladder centred in the end margin. check (0 errors, 103 files), build (8 pages), smoke (26/26). Card: none (direct user request from ui.jpg; recorded in DESIGN Layout/Camera, MOTION Pick, AGENTS hard rules). |
 | T40 | Responsive pass for scaled and smaller viewports | done, code-verified (this commit) |
   The right column is one flex stack (the panel can never meet the nav); the panel is sized from its cell; the side cells keep a 200px minimum and the stage drops to one cell below 1024; the expanded floor is framed in the detail grid's own column again (the canvas fills the window while a floor is open) and the mobile floor fits its 44svh strip; the HUD reflows at 900; the rail leaves the frame; the work pages join the band. New: npm run layout (87 arithmetic checks over the source at 13 widths). check (0 errors, 104 files), build (8 pages), smoke (26/26). Card: docs/tasks/T40-responsive-scale-pass.md. |
+| T41-T55 | Redesign batch (user brief 2026-11-11) | done, code-verified (a5025ec, f13fdda, 90b94d3) |
+  Identity -> Fouad Sarhadi; hover-only floor card 100px off the rail; tower fills 85% of its cell (7.5% margins), capped at zoom 1.4; floor 6 frames lower; overview one scroll past floor 6 (STEPS 6); Toolkit removed; nav pills leveled with their floors per frame (ui/nav-level.ts); island header (floating pill, burger circle + dropdown below 1024, from the header sample); About bento; Contact form; first-visit En/فا + Interactive/Simple pickers (blur + 20% black, two large pills) with full fa dictionary, RTL, Vazirmatn and a header language button; /simple/ tiles build; per-floor sample plan (docs/COPY.md); tower recolored with procedural plaster/plank textures (scene/stack/plaster.ts); orbit rings + drifting plates (scene/stage-decor.ts). check (108 files), build (9 pages), smoke (26/26), layout (87). Card: none (direct user requests; recorded in DESIGN/MOTION/COPY). |
 
 ## Blocked
 (none)
 
 ## Not verified yet
-- The T40 responsive composition (1280x720 at 150% scaling, and every width below it): code- and arithmetic-verified only. No browser starts in the agent sandbox, so the pixels are the user's pass.
+- The whole 2026-11-11 batch (T41-T55) and the T40 composition: code- and arithmetic-verified only. No browser starts in the agent sandbox, so the pixels (both themes, fa RTL, pickers, /simple/, tower texture) are the user's pass.
 - Focused-canvas pixels (WebGL context loss under swiftshader; logic verified numerically).
 - Landing squash/jolt/prop-punch pixels (single-frame effects under software rendering; rings verified, code implemented per docs/MOTION.md).
 - Whoosh wall-clock and trackpad/real-touch-drag on real hardware.

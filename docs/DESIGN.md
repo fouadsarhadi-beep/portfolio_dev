@@ -11,8 +11,8 @@ Look (T28 redesign): a restrained architectural diorama. One warm plaster-and-wo
 | ink | #3D4339 | text (never pure black) |
 | inkSoft | #6B7566 | secondary text |
 | line | #E3E6D6 | borders |
-| slab | #EDE9DE | unified slab body (T28; both themes register it) |
-| slabShade | #D9D4C6 | slab trims, bottom band, inset panels |
+| slab | #EAE0CB | unified slab body (warm clay plaster; both themes register it) |
+| slabShade | #CFC1A3 | slab trims, bottom band, inset panels |
 | underGlow | #D8C9A3 | restrained glow beneath the floating tower |
 | butter | #F5C64F | layer accent: content (DOM labels/cards only) |
 | lilac | #B9A8EE | layer accent: translation (DOM only) |
@@ -23,7 +23,7 @@ Look (T28 redesign): a restrained architectural diorama. One warm plaster-and-wo
 | steel | #A9B8CC | layer accent: infrastructure (DOM only) |
 | wall | #F4F2EA | room back walls |
 | wallShade | #E6E3D8 | right-hand wall |
-| wood | #F0D5A8 | slab deck floors and room floors |
+| wood | #EFC98F | slab deck floors and room floors (plank texture) |
 | white | #FBFBF6 | props, slab badges |
 | graphite | #59606B | icons, engraved numbers, small details |
 | glow | #BFE3FF | screens |
@@ -86,12 +86,12 @@ Why these numbers
 ## Camera
 Orthographic. Position = target + (1,1,1) x 30. Looks at target. Visible faces: top, +x (right face), +z (left face). Back walls sit on the -x and -z sides. Never rotate the camera or the stack.
 Framing: the frustum is shifted down by `CAM_FRAME_OFFSET_Y` (22% of the visible height, ≈200px at 900px tall), which draws the whole scene that much higher on screen so the opening view sits above the fold. The hero copy sits at the top of the left column (T39), so the lift only frames the tower.
-Base zoom (T39, user sketch): the tower renders at `OVERVIEW_BASE_ZOOM` = 1.4 (1.3 low tier), stored as the camera's base zoom and blended with `OVERVIEW_ZOOM` during the overview. `overviewFitZoom` (focus-pose.ts) caps it so the silhouette keeps 6% air inside the 50% stage column at any box shape (near-square desktop slivers excepted, accepted); boot re-fits it on resize. `--tower-w` (tokens.css) mirrors the enlarged width.
+Base zoom (T39/T54, user sketch): the tower renders at `OVERVIEW_BASE_ZOOM` = 1.4 (1.3 low tier) on wide cells, and otherwise fills 85% of its cell's width — a constant 7.5% margin on each side, so the air around the tower never changes as the viewport shrinks. `overviewFitZoom` (focus-pose.ts) computes that fit; boot re-fits it on resize. `--tower-w` (tokens.css) mirrors the enlarged width.
 
-## Slab (scene/stack/slab.ts) — T28 unified family
+## Slab (scene/stack/slab.ts) — T28 unified family, T54 craft finish
 - Body: rounded box FOOTPRINT x SLAB_T x FOOTPRINT, radius CORNER_R, 4 segments. One shared geometry.
-- Material: warm plaster (`slab` role, roughness 0.55, metalness 0.04). Identical on all six floors.
-- Top: warm wood deck inset 0.18 from the edge, with a quiet `slabShade` rim around it.
+- Material: warm clay plaster (`slab` role, roughness 0.62, metalness 0.03) with a procedural plaster texture (`scene/stack/plaster.ts`: seeded speckles and brushed strokes on a near-white base, so the role color shows through and a theme switch redraws it in place). Identical on all six floors.
+- Top: warm oak deck (plank texture, same file) inset 0.18 from the edge, with a quiet `slabShade` rim around it.
 - Right face (+x): inset `slabShade` panel and a round plaster badge (diameter 0.9 x SLAB_T) with the layer icon in graphite. Icon comes from the config path, drawn to a CanvasTexture.
 - Left face (+z): the layer number engraved in theme ink (light floors get dark ink, dark floors light ink; the CanvasTexture redraws on theme change). Registration crosses in graphite in two corners.
 - Thin `slabShade` band along the four bottom edges.
@@ -116,15 +116,17 @@ Base zoom (T39, user sketch): the tower renders at `OVERVIEW_BASE_ZOOM` = 1.4 (1
 - Screens use CanvasTexture and update at 12 fps at most.
 - Repeated elements (books, LEDs, floor tiles, cables) use InstancedMesh.
 
-## Environment around the stack (T28)
-The tower floats (STACK_BASE_Y = 1.35) above a soft radial contact shadow, an `underGlow` halo and a dim under light; it reads as deliberately suspended, not misplaced. No platform, no ground plane. The page frames the stage with a faint warm radial glow (`.stage-sticky::before`, tokens-driven) and the existing vignette. 18 to 36 slow dust particles (instanced, opacity 0.35) drift around the tower; floating colored shapes were removed. Keep it calm; the environment never competes with the tower.
+## Environment around the stack (T28, dressed up in T55)
+The tower floats (STACK_BASE_Y = 1.35) above a soft radial contact shadow, an `underGlow` halo and a dim under light; it reads as deliberately suspended, not misplaced. No platform, no ground plane. The page frames the stage with a faint warm radial glow (`.stage-sticky::before`, tokens-driven) and the existing vignette. 18 to 36 slow dust particles (instanced, opacity 0.35) drift around the tower, plus three thin graphite orbit rings and 5 to 8 small `slabShade` plates on slow paths (`scene/stage-decor.ts`) — quiet set dressing, never competing with the tower. Keep it calm.
 
-## HUD and UI style (T29/T30/T31 system)
-One surface language across the whole page. Implemented in `tokens.css` (`--shadow-card`, `--shadow-lift`), `sections.css`, `hud.css`:
+## HUD and UI style (T29/T30/T31 system, T50 island header)
+One surface language across the whole page. Implemented in `tokens.css` (`--shadow-card`, `--shadow-lift`), `sections.css`, `hud.css`, `picker.css`:
 - Surfaces: `--surface`, a 1px `--line` border, radius 14px (`--radius-m`) for cards/tiles/panels or a pill for controls, one soft two-layer shadow (`--shadow-card`; `--shadow-lift` on hover). No 2px ink outlines, no hard offset shadows, no 10px colored side bars — all removed in T31.
-- Controls: `.btn` is one solid ink pill with `--bg` text and a soft shadow; it lifts 1px on hover. Layer pills (`.layer-nav button`) are surface pills with a hairline border that lift 1px and deepen their border on hover. The theme toggle follows the same rule. Chips are 1px hairlines with `--ink-soft` text, weight 500.
+- Header (T50, from the header sample): a floating glass island pill fixed at the top centre (max 1080px), holding brand, nav, language toggle, availability and theme toggle. Below 1024px it collapses to a hamburger circle; opening it expands the pill and drops the nav as a card underneath. The island's measured height feeds `--hud-offset` for anchor offsets.
+- First-visit pickers (`ui/picker.ts`, `styles/picker.css`): the page sits blurred under 20% black, with two large rounded-square pills — language (En /فا), then view mode (Interactive / Simple). Saved choices skip them; the header language button flips the locale live.
+- Controls: `.btn` is one solid ink pill with `--bg` text and a soft shadow; it lifts 1px on hover. Layer pills (`.layer-nav button`) are surface pills with a hairline border that lift 1px and deepen their border on hover; in the five-part stage they are leveled with their floors every frame (`ui/nav-level.ts`). The theme toggle follows the same rule. Chips are 1px hairlines with `--ink-soft` text, weight 500.
 - Color: the only per-layer echo is a 2px accent rule or a small number tint (hover card, expanded card, About panels, no-WebGL cards, work pages). Floors are told apart by number, title and icon; the HUD progress bar is neutral (`--line` → `--ink`).
-- Type: display font for headings, no oversized decorative numerals (the work page number is a 14px kicker with an accent rule). Section headings carry a 28x2 hairline rule above them.
+- Type: display font for headings, no oversized decorative numerals (the work page number is a 14px kicker with an accent rule). Section headings carry a 28x2 hairline rule above them. Persian (`html[lang='fa']`) switches to Vazirmatn through the `--font-*-fa` slots.
 - Focus: the global 3px ink focus ring stays; hover states never rely on color alone.
 - Dark theme uses the same rules through tokens; nothing in the system is hard-coded to a theme.
 
@@ -155,6 +157,7 @@ The right column is one flex stack (`.stage-side`): the floor panel on top, the 
 - About: bento grid on the shell band (statement, a stacked-bar diagram of the six layers, three panels).
 - Contact: an end-of-level panel with a big heading, a contact form, social links and availability.
 - Footer: compact.
+- Simple build: `/simple/` (chosen in the first-visit mode popup) replaces the 3D stage with a 2x3 grid of floor tiles; clicking one opens the same expanded card without the 3D floor (`html.simple` makes the detail view full-width).
 
 ## Responsive
 Minimum width 360px. Breakpoints: 1100px hides the stage guide and the hero copy takes over its top inset; 1024px is where the stage drops from its five-part composition to one cell and the layer nav becomes a horizontal strip along the stage's bottom edge; 900px reflows the HUD to two rows; 860px switches the expanded view and About to one column; 760px hides the HUD progress bar and docks the floor info panel as a bottom sheet; 600px tightens the page margin to 6vw; 480px tightens small-phone rhythm. The shell keeps its three cells at every width.
