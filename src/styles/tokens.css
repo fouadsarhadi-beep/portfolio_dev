@@ -85,6 +85,12 @@
   --step-vh: 20svh;
   --steps: 9;
 
+  /* Empty space after the last scroll step, at the bottom of section 1: the
+     sticky stage holds for this much of extra background past STEPS before it
+     unpins into the next section. Sized in svh so it stays a visible slice of
+     section 1 at any viewport, leaving room for decorative elements. */
+  --stage-tail: 45svh;
+
   /* The strip the expanded floor reserves at the top of a small screen. The
      camera frames the floor inside the same band (src/config/layout.ts
      DETAIL_MOBILE_BAND), so the two cannot drift. */

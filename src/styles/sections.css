@@ -6,7 +6,9 @@
 }
 
 html.js .stage {
-  height: calc(100svh + var(--steps) * var(--step-vh));
+  /* The --stage-tail is empty space after the overview: the sticky stage
+     holds its own background through it before the next section scrolls in. */
+  height: calc(100svh + var(--steps) * var(--step-vh) + var(--stage-tail));
 }
 
 html.js .stack-fallback {
@@ -86,14 +88,18 @@ html:not(.js) .layer-nav {
     linear-gradient(to top, color-mix(in srgb, var(--under-glow) 14%, transparent), transparent 36%);
 }
 
-/* Faint vignette around the stage (docs/DESIGN.md: keep it calm) */
+/* Faint vignette around the stage (docs/DESIGN.md: keep it calm). The bottom
+   also fades into the page background over the last slice, so section 1's
+   darker stage does not end abruptly against the next section. */
 .stage-sticky::after {
   content: '';
   position: absolute;
   inset: 0;
   z-index: 4;
   pointer-events: none;
-  background: radial-gradient(120% 90% at 50% 45%, transparent 55%, color-mix(in srgb, var(--ink) 9%, transparent) 100%);
+  background:
+    linear-gradient(to top, var(--bg) 0, transparent 16svh),
+    radial-gradient(120% 90% at 50% 45%, transparent 55%, color-mix(in srgb, var(--ink) 9%, transparent) 100%);
 }
 
 /* The scene mounts into the middle cell of the stage grid, so the tower is
