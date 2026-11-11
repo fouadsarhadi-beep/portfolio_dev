@@ -42,7 +42,9 @@
      guide, the hero copy, the floor panel and the nav without cramping. The
      tower's cell gives up the difference. */
   grid-template-columns: minmax(200px, 15fr) minmax(0, 50fr) minmax(200px, 15fr);
-  grid-template-rows: auto minmax(0, 1fr) auto;
+  /* The last row is an empty spacer at the bottom of the sticky stage: 50-100px
+     of the stage's own background below the tower (user review 2026-11-11). */
+  grid-template-rows: auto minmax(0, 1fr) clamp(50px, 8vh, 100px);
   /* Half the shell's gap: the side columns sit closer to the tower (user
      review 2026-11-11) without touching it. */
   column-gap: calc(var(--page-gap) / 2);

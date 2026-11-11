@@ -88,27 +88,24 @@ html:not(.js) .layer-nav {
     linear-gradient(to top, color-mix(in srgb, var(--under-glow) 14%, transparent), transparent 36%);
 }
 
-/* Faint vignette around the stage (docs/DESIGN.md: keep it calm). The bottom
-   also fades into the page background over the last slice, so section 1's
-   darker stage does not end abruptly against the next section. */
+/* Faint vignette around the stage (docs/DESIGN.md: keep it calm) */
 .stage-sticky::after {
   content: '';
   position: absolute;
   inset: 0;
   z-index: 4;
   pointer-events: none;
-  background:
-    linear-gradient(to top, var(--bg) 0, transparent 16svh),
-    radial-gradient(120% 90% at 50% 45%, transparent 55%, color-mix(in srgb, var(--ink) 9%, transparent) 100%);
+  background: radial-gradient(120% 90% at 50% 45%, transparent 55%, color-mix(in srgb, var(--ink) 9%, transparent) 100%);
 }
 
 /* The scene mounts into the middle cell of the stage grid, so the tower is
    nested between the two text cells and its frustum is built from this box
    (boot.ts observes it and calls resizeFrustum with its size). It spans all
-   three rows, so the tower's full height is available. */
+   rows except the bottom spacer, so the tower's framing does not change when
+   the spacer grows. */
 #canvas-mount {
   grid-column: 2;
-  grid-row: 1 / -1;
+  grid-row: 1 / -2;
   position: relative;
   z-index: 2;
   align-self: stretch;
