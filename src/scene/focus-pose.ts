@@ -7,7 +7,7 @@ const ZOOM_MOBILE = 1.35;
 const COL_FILL = 0.86;        // the floor fills most of, not all of, its share
 const FLOOR_W = FOOTPRINT * Math.SQRT2; // 8.49: projected slab width in the isometric view
 const FLOOR_H = (FOOTPRINT + SLAB_T) * 0.8165; // 6.37: projected slab height with its walls
-const TOWER_FILL = 0.65;      // share of its cell's width the tower fills (0.85 x 0.85 x 0.9: the tower is 15% then 10% smaller, with air around it)
+const TOWER_FILL = 0.585;     // share of its cell's width the tower fills (0.85 x 0.85 x 0.9 x 0.9: three resizes smaller, air around it)
 
 /**
  * T39: the floor pills left the stage cell for their own column, so the tower

@@ -86,7 +86,7 @@ Why these numbers
 ## Camera
 Orthographic. Position = target + (1,1,1) x 30. Looks at target. Visible faces: top, +x (right face), +z (left face). Back walls sit on the -x and -z sides. Never rotate the camera or the stack.
 Framing: the frustum is shifted down by `CAM_FRAME_OFFSET_Y` (22% of the visible height, ≈200px at 900px tall), which draws the whole scene that much higher on screen so the opening view sits above the fold. The hero copy sits at the top of the left column (T39), so the lift only frames the tower.
-Base zoom (T39/T54, user sketch; resized 2026-11-11 so the whole tower is 15% then 10% smaller): the tower renders at `OVERVIEW_BASE_ZOOM` = 1.07 (1.0 low tier) on wide cells, and otherwise fills 65% of its cell's width — a constant margin on each side, so the air around the tower never changes as the viewport shrinks. `overviewFitZoom` (focus-pose.ts) computes that fit; boot re-fits it on resize. `--tower-w` (tokens.css) mirrors the width.
+Base zoom (T39/T54, user sketch; resized 2026-11-11 three times: 15%, 10%, 10% smaller): the tower renders at `OVERVIEW_BASE_ZOOM` = 0.96 (0.9 low tier) on wide cells, and otherwise fills 58.5% of its cell's width — a constant margin on each side, so the air around the tower never changes as the viewport shrinks. `overviewFitZoom` (focus-pose.ts) computes that fit; boot re-fits it on resize. `--tower-w` (tokens.css) mirrors the width.
 
 ## Slab (scene/stack/slab.ts) — T28 unified family, T54 craft finish
 - Body: rounded box FOOTPRINT x SLAB_T x FOOTPRINT, radius CORNER_R, 4 segments. One shared geometry.
