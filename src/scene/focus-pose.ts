@@ -1,5 +1,5 @@
 /** @module scene/focus-pose: pose maths for the tower's zoom and the detail view: the base zoom, the (zeroed) column shift and the vertical bias that put one floor in the band's floor share. @see src/scene/focus.ts, src/config/layout.ts, src/config/tuning.ts */
-import { CAM_VIEW_HEIGHT, FOOTPRINT, OVERVIEW_BASE_ZOOM, SLAB_T } from '@/config/tuning';
+import { CAM_VIEW_HEIGHT, FOOTPRINT, OVERVIEW_BASE_ZOOM, OVERVIEW_GAP, SLAB_T, STACK_BASE_Y, WALL_H } from '@/config/tuning';
 import { DETAIL_MOBILE_BAND, detailColumnCentrePx, detailColumnPx } from '@/config/layout';
 
 const ZOOM_DESKTOP = 1.45;
@@ -28,6 +28,26 @@ export function stageShiftPx(): number {
 export function overviewFitZoom(cellW: number, cellH: number): number {
   const fit = (TOWER_FILL * cellW * CAM_VIEW_HEIGHT) / (cellH * FLOOR_W);
   return Math.min(OVERVIEW_BASE_ZOOM, fit);
+}
+
+/**
+ * The exploded column's full height in world units: from the bottom slab's
+ * underside to the top room's wall caps at overview = 1.
+ */
+export function explodedColumnHeight(n: number): number {
+  const top = STACK_BASE_Y + (n - 1) * (SLAB_T + OVERVIEW_GAP) + SLAB_T / 2 + WALL_H;
+  const bottom = STACK_BASE_Y - SLAB_T / 2;
+  return top - bottom;
+}
+
+/**
+ * Where the overview camera stops (user review 2026-11-11): the zoom at which
+ * the fully separated tower is completely visible with 10% empty space on top
+ * and bottom. Computed from the real exploded height, so it holds at any slab
+ * thickness or gap.
+ */
+export function overviewStopZoom(n: number): number {
+  return CAM_VIEW_HEIGHT / (explodedColumnHeight(n) * 1.2);
 }
 
 // Screen-left in world space; screen-right is (SQRT1_2, 0, -SQRT1_2) (src/scene/stack/pick.ts).

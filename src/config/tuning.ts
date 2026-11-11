@@ -33,8 +33,11 @@ export const WALL_FACE = WALL_CENTER - WALL_THICK / 2;
 /** A back wall spans the slab's full width. */
 export const WALL_LEN = FOOTPRINT;
 
-// Scroll mapping (docs/MOTION.md)
-export const STEP_VH = 80;             // one scroll step, in svh units
+// Scroll mapping (docs/MOTION.md). STEP_VH and STEP_PX_FACTOR (state.ts) must
+// agree: the stage is 100svh + STEPS x STEP_VH tall and one step is
+// STEP_PX_FACTOR x innerHeight of scroll, so the sticky child stays pinned
+// until s reaches STEPS. 2026-11-11: a quarter of the old length.
+export const STEP_VH = 20;             // one scroll step, in svh units
 
 // Camera: orthographic, direction locked at (1,1,1). Never rotate camera or stack.
 export const CAM_DIR: Vec3 = { x: 1, y: 1, z: 1 };
@@ -59,7 +62,9 @@ export const CAM_FRAME_OFFSET_Y = CAM_VIEW_HEIGHT * 0.22; // ≈ 200px at 900px 
 export const OVERVIEW_STEPS = 4;
 /** The exploded view ramps in over this many steps, then holds at 1. */
 export const OVERVIEW_RAMP = 1;
-export const OVERVIEW_ZOOM = 0.5;
+// The overview's stop zoom is not a constant: it is computed from the exploded
+// column's real height (overviewStopZoom in src/scene/focus-pose.ts), so the
+// separated tower always fills the frame with 10% air top and bottom.
 // Extra air between floors in the overview. It has to clear a room's back walls
 // (WALL_H = SLAB_T = 2.34) or the exploded floors would clip the slab above them.
 export const OVERVIEW_GAP = 2.6;

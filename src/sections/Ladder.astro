@@ -23,9 +23,9 @@ import { t } from '@/lib/i18n';
 <script>
   import { bus } from '@/lib/bus';
 
-  // Mirrors STEP_PX_FACTOR in scene/stack/state.ts (0.8 x innerHeight). Kept
+  // Mirrors STEP_PX_FACTOR in scene/stack/state.ts (0.2 x innerHeight). Kept
   // local on purpose: importing that module would pull three.js into this script.
-  const STEP_PX_FACTOR = 0.8;
+  const STEP_PX_FACTOR = 0.2;
 
   const nav = document.querySelector<HTMLElement>('.ladder');
   const rungs = [...document.querySelectorAll<HTMLButtonElement>('.ladder-rung')];

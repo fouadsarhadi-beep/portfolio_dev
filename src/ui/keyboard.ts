@@ -52,8 +52,8 @@ export function initKeyboard(): void {
       const stage = document.querySelector<HTMLElement>('.stage');
       if (!stage) return;
       e.preventDefault();
-      // One step is 0.8 x the viewport (docs/MOTION.md Scroll mapping).
-      const px = 0.8 * window.innerHeight * (e.key === ']' ? 1 : -1);
+      // One step is a quarter of the viewport (STEP_PX_FACTOR in stack/state.ts).
+      const px = 0.2 * window.innerHeight * (e.key === ']' ? 1 : -1);
       window.scrollBy({ top: px, behavior: 'smooth' });
     }
   });

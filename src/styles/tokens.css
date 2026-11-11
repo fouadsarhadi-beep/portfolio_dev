@@ -82,7 +82,7 @@
   /* Scroll mapping (docs/MOTION.md): 5 steps open the floors, then 4 overview
      steps: the exploded view ramps in over the first and holds for the rest.
      Mirrors LAYER_STEPS + OVERVIEW_STEPS. */
-  --step-vh: 80svh;
+  --step-vh: 20svh;
   --steps: 9;
 
   /* The strip the expanded floor reserves at the top of a small screen. The

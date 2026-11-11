@@ -31,7 +31,7 @@ Search this file before creating anything.
   exports: ThemeName, ThemeColors, THEMES
   uses: src/config/palette
 - tuning.ts: config/tuning: geometry, scroll step, camera and render tuning constants. @see docs/DESIGN.md, docs/MOTION.md, src/config/types.ts
-  exports: FOOTPRINT, SLAB_T, WALL_H, WALL_THICK, CORNER_R, LIFT, STACK_BASE_Y, FLOOR_HALF, WALL_CENTER, WALL_FACE, WALL_LEN, STEP_VH, CAM_DIR, CAM_DISTANCE, CAM_TARGET_OFFSET_Y, CAM_VIEW_HEIGHT, CAM_DAMP_LAMBDA, CAM_FRAME_OFFSET_Y, OVERVIEW_STEPS, OVERVIEW_RAMP, OVERVIEW_ZOOM, OVERVIEW_GAP, OVERVIEW_BASE_ZOOM, LOW_TIER_BASE_ZOOM, EXPOSURE, MAX_PIXEL_RATIO, SHADOW_MAP_DESKTOP, SHADOW_MAP_MOBILE
+  exports: FOOTPRINT, SLAB_T, WALL_H, WALL_THICK, CORNER_R, LIFT, STACK_BASE_Y, FLOOR_HALF, WALL_CENTER, WALL_FACE, WALL_LEN, STEP_VH, CAM_DIR, CAM_DISTANCE, CAM_TARGET_OFFSET_Y, CAM_VIEW_HEIGHT, CAM_DAMP_LAMBDA, CAM_FRAME_OFFSET_Y, OVERVIEW_STEPS, OVERVIEW_RAMP, OVERVIEW_GAP, OVERVIEW_BASE_ZOOM, LOW_TIER_BASE_ZOOM, EXPOSURE, MAX_PIXEL_RATIO, SHADOW_MAP_DESKTOP, SHADOW_MAP_MOBILE
   uses: src/config/types
 - types.ts: config/types: shared contracts for config, scene and UI. @see docs/WIRING.md, src/config/layers.ts
   exports: PaletteKey, LayerId, Vec3, DocKind, SampleDocument, Sample, LayerConfig, MaterialKit, PropFactory, PropKit, RoomContext, RoomInstance, RoomBuilder, StackEvents, StackDebugState
@@ -103,7 +103,7 @@ Search this file before creating anything.
 - focus-marks.ts: scene/focus-marks: the DOM flags the expanded floor sets: the tower chrome leaves the frame, the canvas fills the window so the floor can be framed against the page band, and the rail steps aside. @see src/scene/focus.ts, src/styles/hud.css, src/styles/ladder.css
   exports: markDetail, markCanvas
 - focus-pose.ts: scene/focus-pose: pose maths for the tower's zoom and the detail view: the base zoom, the (zeroed) column shift and the vertical bias that put one floor in the band's floor share. @see src/scene/focus.ts, src/config/layout.ts, src/config/tuning.ts
-  exports: stageShiftPx, overviewFitZoom, VIEW_LEFT, DetailPose, detailPose
+  exports: stageShiftPx, overviewFitZoom, explodedColumnHeight, overviewStopZoom, VIEW_LEFT, DetailPose, detailPose
   uses: src/config/tuning, src/config/layout
 - focus-shade.ts: scene/focus-shade: fades every floor except the expanded one, then takes the invisible floors out of the scene. @see src/scene/focus.ts, docs/MOTION.md (Detail view)
   exports: Shade, createShade
@@ -115,7 +115,7 @@ Search this file before creating anything.
   uses: src/config/palette, src/lib/quality, src/scene/renderer, src/scene/scene-theme
 - loop.ts: scene/loop: the per-frame update: state, pick, camera follow, rooms, render. @see src/scene/boot.ts, docs/MOTION.md (Camera), src/lib/ticker.ts
   exports: LoopParts, startLoop
-  uses: src/config/tuning, src/lib/ticker, src/lib/reduced-motion, src/scene/camera, src/scene/focus, src/scene/stack/state, src/scene/stack/landing, src/scene/stack/pick, src/scene/stack/stack, src/scene/stage
+  uses: src/config/tuning, src/lib/ticker, src/lib/reduced-motion, src/scene/camera, src/scene/focus-pose, src/scene/focus, src/scene/stack/state, src/scene/stack/landing, src/scene/stack/pick, src/scene/stack/stack, src/scene/stage
 - renderer.ts: scene/renderer: transparent WebGL renderer with capped pixel ratio and soft shadows. @see docs/DESIGN.md (Light and render), src/scene/boot.ts
   exports: createRenderer, shadowMapSize
   uses: src/config/tuning, src/lib/quality

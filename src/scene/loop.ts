@@ -1,8 +1,9 @@
 /** @module scene/loop: the per-frame update: state, pick, camera follow, rooms, render. @see src/scene/boot.ts, docs/MOTION.md (Camera), src/lib/ticker.ts */
-import { CAM_FRAME_OFFSET_Y, LIFT, OVERVIEW_ZOOM, SLAB_T, WALL_H } from '@/config/tuning';
+import { CAM_FRAME_OFFSET_Y, LIFT, SLAB_T, WALL_H } from '@/config/tuning';
 import { ticker } from '@/lib/ticker';
 import { prefersReducedMotion } from '@/lib/reduced-motion';
 import { followCamera, baseZoomOf } from './camera';
+import { overviewStopZoom } from './focus-pose';
 import type { Focus } from './focus';
 import type { OrthographicCamera, Scene, WebGLRenderer } from 'three';
 import type { StackState } from './stack/state';
@@ -70,11 +71,15 @@ export function startLoop(parts: LoopParts): () => void {
     } else {
       // The overview blends the follow target toward the middle of the exploded
       // column and pulls the camera back, so all six floors read at once.
+      // The stop zoom is computed from the exploded column's real height with
+      // 10% air top and bottom (overviewStopZoom), so the separated tower is
+      // fully visible at an acceptable margin on both ends, never too small.
       // Reduced motion cuts between the two framings instead of gliding.
       const raw = parts.state.overview;
       const o = prefersReducedMotion() ? Math.round(raw) : raw;
-      // The tier fit boot stored (1.4 desktop, 1.3 low tier; re-fitted on resize).
-      const zoom = baseZoomOf(parts.camera) * (1 + (OVERVIEW_ZOOM - 1) * o);
+      const base = baseZoomOf(parts.camera);
+      const stop = overviewStopZoom(parts.state.restY.length);
+      const zoom = base + (stop - base) * o;
       // The hero framing offset is a fixed pixel push that the zoom converts to
       // world units, so it covers more screen as the camera pulls back. Add it
       // back to the target at full overview, or the column would sit off centre

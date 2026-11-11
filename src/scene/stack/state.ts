@@ -8,7 +8,7 @@ export const N = LAYERS.length;
 export const LAYER_STEPS = N - 1;
 /** The scroll range also covers the overview pull-back after the last floor. */
 export const STEPS = LAYER_STEPS + OVERVIEW_STEPS;
-export const STEP_PX_FACTOR = 0.8; // STEP_PX = 0.8 x innerHeight (docs/MOTION.md)
+export const STEP_PX_FACTOR = 0.2; // STEP_PX = 0.2 x innerHeight, a quarter of the old 0.8 (docs/MOTION.md)
 
 // Separation starts early in each step (user review 2026-11-11): the first
 // scroll begins lifting the top floor well before the step's midpoint, so by
