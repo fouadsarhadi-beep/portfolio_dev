@@ -10,8 +10,12 @@ export const LAYER_STEPS = N - 1;
 export const STEPS = LAYER_STEPS + OVERVIEW_STEPS;
 export const STEP_PX_FACTOR = 0.8; // STEP_PX = 0.8 x innerHeight (docs/MOTION.md)
 
-const OPEN_AT = 0.35;  // open to m+1 when s >= m + 0.35
-const CLOSE_AT = 0.15; // close to m-1 when s < m - 1 + 0.15
+// Separation starts early in each step (user review 2026-11-11): the first
+// scroll begins lifting the top floor well before the step's midpoint, so by
+// the time the scroll reaches the sixth floor the column is already spread and
+// that floor sits lower and more centred in the frame.
+const OPEN_AT = 0.2;   // open to m+1 when s >= m + 0.2
+const CLOSE_AT = 0.1;  // close to m-1 when s < m - 1 + 0.1
 
 const easeOutCubic = (x: number): number => 1 - Math.pow(1 - x, 3);
 const clamp01 = (x: number): number => Math.min(1, Math.max(0, x));

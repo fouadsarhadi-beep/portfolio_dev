@@ -6,7 +6,7 @@ Layers are indexed 0 (top) to N-1 (bottom). N = 6. LAYER_STEPS = N - 1 = 5 open 
 - `#stage` height = 100svh + STEPS x STEP_VH (STEP_VH = 80svh). Total about 580svh.
 - Its child is `position: sticky; top: 0; height: 100svh` and holds the canvas, the stage columns and the HUD.
 - progress s = (scrollY - stageTop) / STEP_PX, where STEP_PX = 0.8 x innerHeight. Clamp to 0..STEPS.
-- Wanted step m uses hysteresis so edges do not flicker: open to m+1 when s >= m + 0.35. Close to m-1 when s < m - 1 + 0.15. The step only ever runs 0..LAYER_STEPS.
+- Wanted step m uses hysteresis so edges do not flicker: open to m+1 when s >= m + 0.2 (early, so the stack starts separating on the first scroll and the sixth floor lands lower and centred). Close to m-1 when s < m - 1 + 0.1. The step only ever runs 0..LAYER_STEPS.
 - Step m means layers 0..m-1 are lifted. Layer m is exposed. Layers below it stay closed.
 - Past the last floor the step holds and `overview` ramps 0 to 1 across OVERVIEW_STEPS (one step: the scroll after the sixth floor lands the exploded view): every layer's height blends from the opened stack to `spreadY`, an evenly gapped column (SLAB_T + OVERVIEW_GAP apart), every room opens (e ramps up on a cubic so walls never poke through the slab above), the camera target follows the middle of the spread column and the zoom pulls right back to OVERVIEW_ZOOM (0.5). The floors read as the exploded hamburger-ad stack: one room per band, air between them.
 - Triggered, not scrubbed: a step change starts timed tweens. Scroll never drives the tween position directly.
@@ -33,7 +33,7 @@ Lifted layers drop. Duration 0.42s, `power4.in` (accelerating). The lowest lifte
 Restacking must feel quicker and harder than separating.
 
 ## Camera
-- Orthographic (see DESIGN.md). Target Y follows the exposed layer: `floorY[m] + 0.9`, damped (lambda 6). View height = LIFT + 3 x SLAB_T + 4. Tune both in tuning.ts by screenshot until the exposed room is fully visible with the lifted stack docked at the top of the frame.
+- Orthographic (see DESIGN.md). Target Y follows the exposed layer: `floorY[m] + 0.9`, damped (lambda 6); the last floor uses `+ 0.1` so it sits centred instead of high. View height = LIFT + 3 x SLAB_T + 4. Tune both in tuning.ts by screenshot until the exposed room is fully visible with the lifted stack docked at the top of the frame.
 - The jolt adds to target Y only.
 
 ## Pick, hover, touch (scene/stack/pick.ts, ui/preview.ts)

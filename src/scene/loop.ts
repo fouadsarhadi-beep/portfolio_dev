@@ -34,7 +34,7 @@ export function startLoop(parts: LoopParts): () => void {
   const wantY = (): number => {
     const st = parts.state;
     const last = st.restY.length - 1;
-    const off = st.step >= last ? 0.25 : 0.9;
+    const off = st.step >= last ? 0.1 : 0.9;
     return st.restY[st.step] + SLAB_T / 2 + off;
   };
   // Middle of the fully exploded column at the current overview. At overview 0
