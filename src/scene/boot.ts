@@ -136,7 +136,12 @@ export async function boot(): Promise<void> {
     camera,
     slabs: stack.slabs,
     canvasWrap: mount,
-    getFollowY: () => state.restY[state.step] + SLAB_T / 2 + 0.9,
+    getFollowY: () => {
+      // Same rule as the loop (src/scene/loop.ts): the bottom floor sits lower.
+      const last = state.restY.length - 1;
+      const off = state.step >= last ? 0.25 : 0.9;
+      return state.restY[state.step] + SLAB_T / 2 + off;
+    },
     // Must match the expanded-layout breakpoint in hud.css (max-width: 860px).
     isMobile: () => matchMedia('(max-width: 860px)').matches,
   });

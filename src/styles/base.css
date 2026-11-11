@@ -129,7 +129,6 @@ button {
   .hud,
   .hud-nav a,
   .btn,
-  .tile,
   .panel,
   .contact-panel,
   .dv-card,
@@ -190,7 +189,6 @@ button {
   }
 
   .panel,
-  .tile,
   .contact-panel,
   .stack-fallback article {
     box-shadow: none;

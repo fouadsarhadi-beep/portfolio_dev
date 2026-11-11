@@ -214,6 +214,41 @@ html[data-theme='dark'] .theme-toggle .icon-moon {
   pointer-events: auto;
 }
 
+/* Leveled mode (ui/nav-level.ts): in the five-part stage the pills are placed
+   at their floor's projected height, so each pill sits level with its slab.
+   The container becomes a full-height overlay; the items are positioned by JS
+   with min-gap spreading. Without JS (or before the scene boots) the nav keeps
+   the plain flow layout above. */
+@media (min-width: 1024px) and (min-aspect-ratio: 1/1) {
+  .stage-side {
+    position: relative;
+  }
+
+  .layer-nav.leveled {
+    position: absolute;
+    inset: 0;
+    display: block;
+    margin: 0;
+    pointer-events: none;
+  }
+
+  .layer-nav.leveled li {
+    position: absolute;
+    inset-inline: 0;
+    top: 0;
+    will-change: transform;
+  }
+
+  .layer-nav.leveled button {
+    pointer-events: auto;
+  }
+}
+
+html:not(.js) .layer-nav,
+html.no-webgl .layer-nav {
+  position: static;
+}
+
 .layer-nav button {
   display: flex;
   align-items: center;
@@ -299,12 +334,13 @@ html[data-theme='dark'] .theme-toggle .icon-moon {
    hairline border, accent rule, soft shadow. No hard cartoon offsets. */
 .layer-card {
   z-index: 6;
-  /* In the column's flow now, so it takes the room the nav leaves. */
+  /* In the column's flow now, so it takes the room the nav leaves. The user
+     asked for it 100px off the column's end edge, clear of the scroll rail. */
   position: static;
   flex: 0 1 auto;
   min-block-size: 0;
-  inline-size: 100%;
-  max-inline-size: min(320px, 100%);
+  inline-size: calc(100% - 100px);
+  max-inline-size: min(320px, calc(100% - 100px));
   /* A short viewport gives the column less than the panel needs: it shrinks
      and scrolls inside itself rather than reaching for the nav. */
   overflow-y: auto;
@@ -407,9 +443,9 @@ html[data-theme='dark'] .theme-toggle .icon-moon {
 
   .layer-card {
     position: absolute;
-    inset-inline-end: var(--page-inset);
+    inset-inline-end: calc(var(--page-inset) + 100px);
     top: clamp(96px, 16vh, 180px);
-    inline-size: min(300px, calc(100vw - 2 * var(--page-inset)));
+    inline-size: min(300px, calc(100vw - 2 * var(--page-inset) - 100px));
     max-inline-size: none;
     /* It floats over the scene here, so it must not catch the tower's clicks. */
     pointer-events: none;

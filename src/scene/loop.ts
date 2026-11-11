@@ -29,7 +29,14 @@ export interface LoopParts {
  * the lookAt target only.
  */
 export function startLoop(parts: LoopParts): () => void {
-  const wantY = (): number => parts.state.restY[parts.state.step] + SLAB_T / 2 + 0.9;
+  // The exposed floor's frame sits this far above the slab; the bottom floor
+  // gets a smaller lift so it does not ride high on the screen (user review).
+  const wantY = (): number => {
+    const st = parts.state;
+    const last = st.restY.length - 1;
+    const off = st.step >= last ? 0.25 : 0.9;
+    return st.restY[st.step] + SLAB_T / 2 + off;
+  };
   // Middle of the fully exploded column at the current overview. At overview 0
   // this is the empty-point average (top lifted, bottom seated); as the column
   // expands it follows the spread heights, so the six floors stay centred.

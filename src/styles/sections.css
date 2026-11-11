@@ -1,4 +1,4 @@
-/* @module styles/sections: stage, hero, about, toolkit, contact, footer, work pages. @see src/sections/*.astro, docs/DESIGN.md (Sections) */
+/* @module styles/sections: stage, hero, about, contact, footer, work pages, simple-build tiles. @see src/sections/*.astro, docs/DESIGN.md (Sections) */
 
 /* --- Stage (docs/MOTION.md scroll mapping) --- */
 .stage {
@@ -240,7 +240,7 @@ html:not(.js) .layer-nav {
 }
 
 /* --- Sections --- */
-#about, #toolkit, #contact {
+#about, #contact {
   padding-block: clamp(64px, 12vh, 120px);
 }
 
@@ -343,77 +343,7 @@ html:not(.js) .layer-nav {
   color: var(--ink-soft);
 }
 
-/* Toolkit */
-/* auto-fill, not auto-fit: the last row keeps the column width instead of
-   stretching two tiles across the whole band. */
-.tiles {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(min(230px, 100%), 1fr));
-  gap: 12px;
-  margin-block-start: 32px;
-}
-
-.tile {
-  background: var(--surface-grad);
-  border: 1px solid var(--line);
-  border-radius: var(--radius-m);
-  box-shadow: var(--edge-highlight), var(--shadow-card);
-  padding: 18px 20px;
-  transition: border-color 0.2s, box-shadow 0.2s, transform 0.2s;
-}
-
-.tile:hover {
-  border-color: color-mix(in srgb, var(--ink) 18%, var(--line));
-  box-shadow: var(--edge-highlight), var(--shadow-hover);
-  transform: translateY(-2px);
-}
-
-.tile-head {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-}
-
-.tile-num {
-  font-family: var(--font-display);
-  font-weight: 600;
-  font-size: var(--fs-12);
-  color: var(--ink-soft);
-  font-variant-numeric: tabular-nums;
-}
-
-/* Icon instead of a colored swatch: floors differ by number, title and icon. */
-.tile-icon {
-  width: 18px;
-  height: 18px;
-  margin-inline-start: auto;
-  fill: none;
-  stroke: var(--ink-soft);
-  stroke-width: 1.6;
-  stroke-linecap: round;
-  stroke-linejoin: round;
-}
-
-.tile h3 {
-  font-size: var(--fs-16);
-}
-
-.chips {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 6px;
-  margin-block-start: 12px;
-}
-
-.chip {
-  font-size: var(--fs-12);
-  font-weight: 500;
-  padding: 3px 10px;
-  border: 1px solid var(--line);
-  border-radius: var(--radius-pill);
-  color: var(--ink-soft);
-  background: var(--bg);
-}
+/* Toolkit tiles are gone (T46): the toolkit lives in each floor's detail card. */
 
 /* Contact */
 .contact-panel {
@@ -595,7 +525,6 @@ html:not(.js) .layer-nav {
 /* Small phones (360-480): tighter rhythm, nothing allowed to overflow. */
 @media (max-width: 480px) {
   #about,
-  #toolkit,
   #contact {
     padding-block: 56px;
   }
@@ -606,7 +535,6 @@ html:not(.js) .layer-nav {
   }
 
   .panel,
-  .tile,
   .sample-card,
   .stack-fallback article {
     padding: 16px 18px;

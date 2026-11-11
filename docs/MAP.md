@@ -3,7 +3,7 @@
 Search this file before creating anything.
 
 ## src/
-- main.ts: main: page entry; resolves the locale, boots the scene, then wires the UI layer to it. @see src/scene/boot.ts, src/lib/i18n.ts, src/ui/preview.ts, src/ui/detail.ts, src/ui/keyboard.ts
+- main.ts: main: page entry; resolves the locale, boots the scene, then wires the UI layer to it. @see src/scene/boot.ts, src/lib/i18n.ts, src/ui/preview.ts, src/ui/detail.ts, src/ui/keyboard.ts, src/ui/nav-level.ts
   uses: src/lib/i18n, src/lib/bus
 
 ## src/config/
@@ -65,7 +65,7 @@ Search this file before creating anything.
 - 404.astro: pages/404: not found: the six floors as an exit. @see src/layouts/Base.astro, src/config/layers.ts
   uses: src/layouts/Base.astro, src/config/layers, src/lib/i18n
 - index.astro: pages/index: the one-page experience, sections in order. @see src/layouts/Base.astro, src/sections/
-  uses: src/layouts/Base.astro, src/sections/Hud.astro, src/sections/Ladder.astro, src/sections/Hero.astro, src/sections/About.astro, src/sections/Toolkit.astro, src/sections/Contact.astro, src/sections/Footer.astro, src/config/site
+  uses: src/layouts/Base.astro, src/sections/Hud.astro, src/sections/Ladder.astro, src/sections/Hero.astro, src/sections/About.astro, src/sections/Contact.astro, src/sections/Footer.astro, src/config/site
 - robots.txt.ts: pages/robots.txt: crawl everything, point at the sitemap. @see src/pages/sitemap.xml.ts, src/config/site.ts
   exports: GET
   uses: src/config/site
@@ -306,8 +306,6 @@ Search this file before creating anything.
   uses: src/config/site, src/lib/i18n, src/ui/theme
 - Ladder.astro: sections/Ladder: the scroll ladder: one rung per floor, click to jump. @see src/styles/ladder.css, docs/MOTION.md (Scroll mapping), src/pages/index.astro
   uses: src/config/layers, src/lib/i18n, src/lib/bus
-- Toolkit.astro: sections/Toolkit: six tiles, one per layer, with tool chips. @see docs/DESIGN.md (Sections), src/config/layers.ts
-  uses: src/config/layers, src/lib/i18n
 
 ## src/ui/
 - detail-samples.ts: ui/detail-samples: work tiles for the expanded view: 3 across, 9 per page, slider pager. @see src/ui/detail.ts, src/config/detail.ts, src/config/sample-icons.ts, src/pages/work/[id]/samples/[page].json.ts
@@ -324,7 +322,10 @@ Search this file before creating anything.
 - keyboard.ts: ui/keyboard: layer-nav focus, ArrowUp/ArrowDown selection, Enter via native click, Escape. @see docs/MOTION.md (Pick, hover, touch), src/lib/bus.ts
   exports: initKeyboard
   uses: src/lib/bus, src/config/layers
-- preview.ts: ui/preview: the floor info panel: the old right-hand stage guide merged into the hover card (T39). It names the floor the scroll is on, and swaps to any hovered or keyboard-selected floor. @see src/sections/Hero.astro, src/lib/bus.ts, src/styles/hud.css (.layer-card)
+- nav-level.ts: ui/nav-level: levels the layer-nav pills with their floors: each frame, every slab's screen position is projected through the camera and its pill is placed at that height inside the side column (min-gap spreading keeps them readable when floors are stacked). Active only in the five-part stage; in the collapsed one-cell stage the nav is a bottom strip and the CSS owns it. @see src/sections/Hero.astro, src/lib/bus.ts, src/styles/hud.css (.layer-nav)
+  exports: initNavLevel
+  uses: src/config/layers, src/lib/bus
+- preview.ts: ui/preview: the floor hover card: appears only while a floor is hovered or keyboard-selected, and names that floor. @see src/sections/Hero.astro, src/lib/bus.ts, src/styles/hud.css (.layer-card)
   exports: initPreview
   uses: src/lib/bus, src/config/layers
 - theme.ts: ui/theme: the theme toggle; flips data-theme, persists the choice, emits on the bus. @see docs/DESIGN.md (Dual theme), src/config/theme.ts, src/sections/Hud.astro

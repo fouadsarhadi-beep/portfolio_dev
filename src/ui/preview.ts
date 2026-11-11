@@ -1,10 +1,9 @@
-/** @module ui/preview: the floor info panel: the old right-hand stage guide merged into the hover card (T39). It names the floor the scroll is on, and swaps to any hovered or keyboard-selected floor. @see src/sections/Hero.astro, src/lib/bus.ts, src/styles/hud.css (.layer-card) */
+/** @module ui/preview: the floor hover card: appears only while a floor is hovered or keyboard-selected, and names that floor. @see src/sections/Hero.astro, src/lib/bus.ts, src/styles/hud.css (.layer-card) */
 import { bus } from '@/lib/bus';
 import { LAYERS } from '@/config/layers';
 
 let card: HTMLElement | null = null;
-let step = 0;                      // the floor the scroll is on
-let hoverId: string | null = null; // a hovered (or selected) floor wins while it lasts
+let hoverId: string | null = null; // a hovered (or selected) floor shows the card
 let detail = false;                // the expanded view owns the stage
 
 export function initPreview(): void {
@@ -30,8 +29,8 @@ export function initPreview(): void {
   host.prepend(el); // first child: the panel sits on top, the nav keeps the end edge
   card = el;
 
-  // Hover (pointer or touch preview) and keyboard selection both win over the
-  // scroll's floor; when they end, the panel returns to the scroll's floor.
+  // Hover (pointer or touch preview) and keyboard selection show the card for
+  // that floor; when they end, the card hides. It is not an always-on panel.
   bus.on('layer:hover', ({ id }) => {
     hoverId = id;
     sync();
@@ -40,37 +39,28 @@ export function initPreview(): void {
     hoverId = id;
     sync();
   });
-  bus.on('step:change', ({ step: s }) => {
-    step = s;
-    sync();
+  bus.on('step:change', () => {
+    // The scroll moved: a stale hover card must not linger over the new floor.
+    if (!hoverId) sync();
   });
-  // While the detail view is open (or closing) the panel stays out of the way;
-  // on close it comes back with the floor the scroll is on.
+  // While the detail view is open (or closing) the card stays out of the way.
   bus.on('layer:open', () => {
     detail = true;
     hide();
   });
   bus.on('layer:close', () => {
     detail = false;
-    sync();
+    hide();
   });
-
-  // Seed the scroll's floor: a scrolled reload can emit step:change before this
-  // listener registers, and __stack is already published by then (boot.ts).
-  const debug = (window as unknown as Record<string, unknown>).__stack as { step?: number } | null;
-  step = typeof debug?.step === 'number' ? debug.step : 0;
-
-  sync(); // the panel is always on once the UI wires up: it names the scroll's floor
 }
 
-/** The hovered floor wins; otherwise the panel names the floor the scroll is on. */
+/** The card shows only for a hovered (or keyboard-selected) floor. */
 function sync(): void {
   if (detail || !card) {
     hide();
     return;
   }
-  const id = hoverId ?? LAYERS[Math.min(step, LAYERS.length - 1)]?.id;
-  const layer = LAYERS.find((l) => l.id === id);
+  const layer = LAYERS.find((l) => l.id === hoverId);
   if (!layer) {
     hide();
     return;

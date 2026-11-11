@@ -75,11 +75,11 @@
   --tracking-tight: -0.02em;
   --tracking-wide: 0.09em;
 
-  /* Scroll mapping (docs/MOTION.md): 5 steps open the floors, 2 more pull the
-     camera back and explode the column for the overview. Mirrors LAYER_STEPS +
+  /* Scroll mapping (docs/MOTION.md): 5 steps open the floors, 1 more pulls the
+     camera back and explodes the column for the overview. Mirrors LAYER_STEPS +
      OVERVIEW_STEPS. */
   --step-vh: 80svh;
-  --steps: 7;
+  --steps: 6;
 
   /* The strip the expanded floor reserves at the top of a small screen. The
      camera frames the floor inside the same band (src/config/layout.ts

@@ -10,7 +10,6 @@ export type LocaleOverrides = Loose<Dict>;
 export const fa: LocaleOverrides = {
   nav: {
     stack: 'برج',
-    toolkit: 'ابزارها',
     about: 'درباره',
     contact: 'تماس',
   },

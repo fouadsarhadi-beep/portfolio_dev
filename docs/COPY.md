@@ -1,6 +1,6 @@
 # COPY: voice and placeholder content
 
-Placeholder person: Alex Morgan, Web Generalist. One place to change it: src/config/site.ts. Do not invent clients, awards, jobs or results.
+Placeholder person: Fouad Sarhadi, Web Generalist. One place to change it: src/config/site.ts. Do not invent clients, awards, jobs or results.
 
 ## Rules
 - Active voice. A human or a concrete noun is the subject.
@@ -23,7 +23,7 @@ Sub: Alex Morgan is a web generalist. Scroll to take the stack apart and see eac
 - infrastructure, Infrastructure: Hosting, DNS, SSL, backups and monitoring that keep sites up.
 Write for each layer: a two-sentence intro, four capabilities and two sample projects (title, one-line blurb, three tags). Mark them placeholder in a code comment.
 
-## Toolkit placeholders
+## Toolkit placeholders (rendered as pills inside each floor's detail card)
 content: Briefs, Editorial calendars, Style guides, Interviews, Editing. translation: Persian, English, Glossaries, Localization QA, CAT tools. seo: Search Console, GA4, Screaming Frog, Ahrefs, Schema markup. web-design-development: Figma, HTML, CSS, TypeScript, Astro, Three.js. cms: WordPress, Gutenberg, ACF, WooCommerce, Custom themes. infrastructure: cPanel, Nginx, Cloudflare, SSL, Backups.
 
 ## About

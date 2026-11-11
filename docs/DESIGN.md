@@ -123,7 +123,7 @@ The tower floats (STACK_BASE_Y = 1.35) above a soft radial contact shadow, an `u
 One surface language across the whole page. Implemented in `tokens.css` (`--shadow-card`, `--shadow-lift`), `sections.css`, `hud.css`:
 - Surfaces: `--surface`, a 1px `--line` border, radius 14px (`--radius-m`) for cards/tiles/panels or a pill for controls, one soft two-layer shadow (`--shadow-card`; `--shadow-lift` on hover). No 2px ink outlines, no hard offset shadows, no 10px colored side bars — all removed in T31.
 - Controls: `.btn` is one solid ink pill with `--bg` text and a soft shadow; it lifts 1px on hover. Layer pills (`.layer-nav button`) are surface pills with a hairline border that lift 1px and deepen their border on hover. The theme toggle follows the same rule. Chips are 1px hairlines with `--ink-soft` text, weight 500.
-- Color: the only per-layer echo is a 2px accent rule or a small number tint (hover card, expanded card, About panels, no-WebGL cards, work pages). Floors are told apart by number, title and icon — the Toolkit swatch was replaced by the layer icon; the HUD progress bar is neutral (`--line` → `--ink`).
+- Color: the only per-layer echo is a 2px accent rule or a small number tint (hover card, expanded card, About panels, no-WebGL cards, work pages). Floors are told apart by number, title and icon; the HUD progress bar is neutral (`--line` → `--ink`).
 - Type: display font for headings, no oversized decorative numerals (the work page number is a 14px kicker with an accent rule). Section headings carry a 28x2 hairline rule above them.
 - Focus: the global 3px ink focus ring stays; hover states never rely on color alone.
 - Dark theme uses the same rules through tokens; nothing in the system is hard-coded to a theme.
@@ -150,11 +150,10 @@ The stage is the default view and composes the same margins as five parts (T39, 
 The right column is one flex stack (`.stage-side`): the floor panel on top, the layer nav docked to the column's end edge. The panel takes what is left and scrolls inside itself, so the two can never meet, whatever the viewport height. The side cells never fall below 200px (`minmax(200px, 15fr)`); below 1024px the stage drops to one cell, the tower takes the band and the nav becomes a horizontal strip along the bottom.
 
 ## Sections
-- HUD header: name, role, links to Stack, Toolkit, About, Contact, availability, progress bar. Small and distinctive, not a SaaS bar.
-- Hero: full-width stack stage (no max-width wrapper) in the five-part composition; the left column carries the stage guide and the hero copy, the middle the tower, the right the layer nav and floor info panel.
-- About: two columns. Left: a short statement and a small diagram of the six layers. Right: three color panels.
-- Toolkit: seven tiles, one per layer, each with number, color swatch and tool chips.
-- Contact: an end-of-level panel with a big heading, a mailto button, social links and availability.
+- HUD header: floating island pill with name, role, links to Stack, About, Contact, language, availability, theme toggle; below 1024px it collapses to a hamburger circle that opens a dropdown card. Small and distinctive, not a SaaS bar.
+- Hero: full-width stack stage (no max-width wrapper) in the five-part composition; the left column carries the stage guide and the hero copy, the middle the tower, the right the layer nav and floor hover card.
+- About: bento grid on the shell band (statement, a stacked-bar diagram of the six layers, three panels).
+- Contact: an end-of-level panel with a big heading, a contact form, social links and availability.
 - Footer: compact.
 
 ## Responsive
