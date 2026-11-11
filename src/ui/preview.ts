@@ -39,10 +39,6 @@ export function initPreview(): void {
     hoverId = id;
     sync();
   });
-  bus.on('step:change', () => {
-    // The scroll moved: a stale hover card must not linger over the new floor.
-    if (!hoverId) sync();
-  });
   // While the detail view is open (or closing) the card stays out of the way.
   bus.on('layer:open', () => {
     detail = true;

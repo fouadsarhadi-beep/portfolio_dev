@@ -41,6 +41,13 @@ import { t } from '@/lib/i18n';
   }
 
   if (nav && rungs.length) {
+    // The rail belongs to section 1: it stays fixed while the stage is on
+    // screen and fades out the moment the stage scrolls away.
+    if (stage) {
+      new IntersectionObserver(([entry]) => {
+        nav.classList.toggle('ladder--off', !entry.isIntersecting);
+      }, { threshold: 0.04 }).observe(stage);
+    }
     // The floor index lives in one place (the stack state); the ladder listens.
     // The same signal feeds a screen-reader line, so the change is announced
     // once, in words, instead of twice from the visible caption.

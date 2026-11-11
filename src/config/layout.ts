@@ -26,6 +26,11 @@ export const DETAIL_FLOOR_SHARE = 0.45;
    --detail-band in src/styles/tokens.css. */
 export const DETAIL_MOBILE_BAND = 0.44;
 
+/** The breakpoint where the expanded view switches to the mobile column.
+ *  Mirrors the media queries in src/styles/hud.css (max-width: 860px) and
+ *  src/styles/sections.css; the scene reads it for its mobile test (boot.ts). */
+export const DETAIL_BREAKPOINT = 860;
+
 /** Width of the band as a share of the viewport: 0.8. */
 export const SHELL_BAND = 1 - 2 * PAGE_INSET;
 

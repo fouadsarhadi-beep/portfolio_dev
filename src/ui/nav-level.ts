@@ -24,6 +24,8 @@ export function initNavLevel(): void {
 
   const frame = (): void => {
     requestAnimationFrame(frame);
+    // Nothing moves while the tab is hidden; skip the whole pass.
+    if (document.hidden) return;
     // three itself comes from the scene debug handle, so this module stays out
     // of the eager chunk (three loads after first paint, src/scene/boot.ts).
     const sc = (window as unknown as Record<string, unknown>).__scene as SceneDebug | undefined;

@@ -32,6 +32,7 @@ function fallback(reason: string): void {
 }
 
 async function makeScene(mount: HTMLElement, tier: 'high' | 'low'): Promise<SceneBundle> {
+  const { EXPOSURE } = await import('@/config/tuning');
   const THREE = await import('three');
   const [{ createRenderer }, { createCamera, resizeCamera }, { createLights }, { createStage }] =
     await Promise.all([
@@ -56,7 +57,9 @@ async function makeScene(mount: HTMLElement, tier: 'high' | 'low'): Promise<Scen
   scene.environmentIntensity = 0.5;
   pmrem.dispose();
   registerValue((_c: 'light' | 'dark' | ThemeColors, name: 'light' | 'dark') => {
-    scene.environmentIntensity = name === 'dark' ? 0.38 : 0.5;
+    scene.environmentIntensity = name === 'dark' ? 0.45 : 0.5;
+    // A touch more exposure in the dark so the warm plaster keeps its read.
+    renderer.toneMappingExposure = name === 'dark' ? 1.12 : EXPOSURE;
   });
 
   return { renderer, camera, scene, stage, three: THREE, tier, resizeFrustum: (w, h) => resizeCamera(camera, w, h) };
@@ -76,12 +79,12 @@ export async function boot(): Promise<void> {
 
   // Everything below pulls three.js in, so it all loads dynamically together.
   const [
-    { CAM_DIR, CAM_DISTANCE, SLAB_T, LOW_TIER_BASE_ZOOM }, { LAYERS }, { bus }, { PALETTE }, { createStack },
+    { CAM_DIR, CAM_DISTANCE, SLAB_T, LOW_TIER_BASE_ZOOM }, { DETAIL_BREAKPOINT }, { LAYERS }, { bus }, { PALETTE }, { createStack },
     { createState }, { createMotion }, { createLanding }, { createPick },
     { createFocus }, { bindSceneApi }, { startLoop }, { detectTier },
     { initSceneTheme }, { createDustPuffs }, { setBaseZoom }, { overviewFitZoom },
   ] = await Promise.all([
-    import('@/config/tuning'), import('@/config/layers'), import('@/lib/bus'), import('@/config/palette'),
+    import('@/config/tuning'), import('@/config/layout'), import('@/config/layers'), import('@/lib/bus'), import('@/config/palette'),
     import('./stack/stack'), import('./stack/state'), import('./stack/motion'),
     import('./stack/landing'), import('./stack/pick'),
     import('./focus'), import('./api'), import('./loop'), import('@/lib/quality'),
@@ -89,6 +92,12 @@ export async function boot(): Promise<void> {
   ]);
   // The registry applies the active theme to every material registered during build.
   initSceneTheme();
+
+  // The base zoom for a tier and a mount box: the tier's cap over the cell fit.
+  const fitBaseZoom = (w: number, h: number): number => {
+    const fit = overviewFitZoom(w, h);
+    return tier === 'low' ? Math.min(LOW_TIER_BASE_ZOOM, fit) : fit;
+  };
 
   let bundle: SceneBundle | null = null;
   try {
@@ -106,13 +115,9 @@ export async function boot(): Promise<void> {
 
   // Initial framing target (the loop takes over damping immediately).
   // The tower renders at the tier's base zoom, fitted to its cell so the
-  // enlarged tower (T39) never bleeds out of its column (docs/DESIGN.md Responsive).
+  // enlarged tower (T39) keeps its constant air inside the column.
   camera.position.set(CAM_DIR.x * CAM_DISTANCE, CAM_DISTANCE + CAM_DIR.y * CAM_DISTANCE, CAM_DIR.z * CAM_DISTANCE);
-  // The low tier keeps the smaller zoom but still respects the cell fit, so the
-  // tower never clips on a low-tier desktop with a square-ish window.
-  const base = tier === 'low'
-    ? Math.min(LOW_TIER_BASE_ZOOM, overviewFitZoom(mount.clientWidth, mount.clientHeight))
-    : overviewFitZoom(mount.clientWidth, mount.clientHeight);
+  const base = fitBaseZoom(mount.clientWidth, mount.clientHeight);
   camera.zoom = base;
   setBaseZoom(camera, base);
   camera.updateProjectionMatrix();
@@ -142,8 +147,9 @@ export async function boot(): Promise<void> {
       const off = state.step >= last ? 0.25 : 0.9;
       return state.restY[state.step] + SLAB_T / 2 + off;
     },
-    // Must match the expanded-layout breakpoint in hud.css (max-width: 860px).
-    isMobile: () => matchMedia('(max-width: 860px)').matches,
+    // Must match the expanded-layout breakpoint in hud.css (max-width: 860px;
+    // the constant lives in src/config/layout.ts).
+    isMobile: () => matchMedia(`(max-width: ${DETAIL_BREAKPOINT}px)`).matches,
   });
   bindSceneApi({
     setHover: (id) => pick.setHover(id),
@@ -178,9 +184,7 @@ export async function boot(): Promise<void> {
     if (!box || box.width === 0 || box.height === 0) return;
     renderer.setSize(box.width, box.height, false);
     resizeFrustum(box.width, box.height);
-    const z = tier === 'low'
-      ? Math.min(LOW_TIER_BASE_ZOOM, overviewFitZoom(box.width, box.height))
-      : overviewFitZoom(box.width, box.height);
+    const z = fitBaseZoom(box.width, box.height);
     setBaseZoom(camera, z);
     // While a floor is expanded the detail view owns the zoom; leave it alone.
     if (!focus.active() && Math.abs(camera.zoom - z) > 0.0005) {

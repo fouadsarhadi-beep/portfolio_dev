@@ -84,7 +84,7 @@ function addContactShadow(group: THREE.Group): void {
     depthWrite: false,
   });
   registerValue((c, name) => {
-    mat.opacity = name === 'dark' ? 0.42 : 0.3;
+    mat.opacity = name === 'dark' ? 0.5 : 0.3;
   });
   const mesh = new THREE.Mesh(new THREE.PlaneGeometry(11, 11), mat);
   mesh.rotation.x = -Math.PI / 2;

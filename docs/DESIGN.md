@@ -41,7 +41,7 @@ falls back to `prefers-color-scheme`. The 3D scene reads the active theme throug
 material role registry (docs/WIRING.md), so a theme switch updates materials, lights and
 canvas textures in place without rebuilding the scene.
 
-Dark starting values (to be contrast-checked on real surfaces in T17):
+Dark starting values (contrast-checked on real surfaces in T17; tower tones are derived from the light ones with `darken()` in `src/config/palette.ts`, so the dark building is the same material under less light — the plaster/wood textures in `src/scene/stack/plaster.ts` pick their fleck direction from the base luminance, and the key light warms up in the dark):
 
 | Token | Starting value |
 |---|---|
@@ -99,13 +99,13 @@ Base zoom (T39/T54, user sketch): the tower renders at `OVERVIEW_BASE_ZOOM` = 1.
 - Transparency is part of a material's identity, not a fade flag: the number engraving, the icon decal and the room AO strips are canvas textures with transparent backgrounds. Nothing may force `transparent = false` on them, because alpha blending off renders the empty pixels of those canvases black (src/scene/focus.ts).
 
 ## Light and render
-- ACESFilmic tone mapping, exposure 1.05, sRGB output.
-- Environment: RoomEnvironment through PMREM, intensity 0.5 (0.38 dark). No downloaded HDRI.
-- HemisphereLight sky follows bgGlow, ground follows the floor tone, intensity 0.7 (0.45 dark).
-- Key light: DirectionalLight from the top-left-front, warm white, intensity 2.2 (1.5 dark), soft shadows (PCFShadowMap, radius 4, bias -0.0004), shadow camera 16 world units wide for self-shadowing across the raised tower.
-- Fill light: weak cool DirectionalLight from the right, no shadows.
+- ACESFilmic tone mapping, exposure 1.05 (1.12 dark), sRGB output.
+- Environment: RoomEnvironment through PMREM, intensity 0.5 (0.45 dark). No downloaded HDRI.
+- HemisphereLight sky follows bgGlow, ground follows the floor tone, intensity 0.7 (0.52 dark).
+- Key light: DirectionalLight from the top-left-front, warm white (in the dark it takes a warm tint derived from the slab tone), intensity 2.2 (1.65 dark), soft shadows (PCFShadowMap, radius 4, bias -0.0004), shadow camera 16 world units wide for self-shadowing across the raised tower.
+- Fill light: weak cool DirectionalLight from the right, no shadows (0.3 / 0.3 dark).
 - Under light (T28): dim PointLight in `underGlow` beneath the floating tower; lifts the undersides.
-- Contact shadow (T28): soft radial-gradient plane 11x11 at y = -0.12 under the tower (opacity 0.3 light / 0.42 dark); a larger faint `underGlow` halo sits deeper. No platform, no ground plane, no hard shadow edges to clip.
+- Contact shadow (T28): soft radial-gradient plane 11x11 at y = -0.12 under the tower (opacity 0.3 light / 0.5 dark); a larger faint `underGlow` halo sits deeper. No platform, no ground plane, no hard shadow edges to clip.
 - Ambient occlusion by hand: a dark gradient strip (opacity 0.08 to 0.1) along the base of both back walls and under big props.
 
 ## Prop quality rules (this is what separates "game" from "toy")

@@ -3,12 +3,17 @@ import * as THREE from 'three';
 import { PALETTE, lighten } from '@/config/palette';
 import type { QualityTier } from '@/lib/quality';
 import { shadowMapSize } from './renderer';
-import { registerLight } from './scene-theme';
+import { registerLight, registerValue } from './scene-theme';
 
 export function createLights(tier: QualityTier): THREE.Light[] {
   // Hemisphere: sky follows the background glow, ground follows the floor tone.
   const hemi = new THREE.HemisphereLight(PALETTE.bgGlow, lighten(PALETTE.wood, 0.45), 0.7);
-  registerLight(hemi, (c) => c.bgGlow, { light: 0.7, dark: 0.45 });
+  registerLight(hemi, (c) => c.bgGlow, { light: 0.7, dark: 0.52 });
+  registerValue((c, name) => {
+    // In the dark the ground bounce follows the darker deck, so the undersides
+    // stay warm instead of going flat blue.
+    if (name === 'dark') hemi.groundColor.set(lighten(c.wood, 0.25));
+  });
 
   // Key light from the top-left-front of the screen; casts the soft shadows.
   const key = new THREE.DirectionalLight(PALETTE.bgGlow, 2.2);
@@ -23,12 +28,17 @@ export function createLights(tier: QualityTier): THREE.Light[] {
   key.shadow.camera.bottom = -16;
   key.shadow.camera.near = 1;
   key.shadow.camera.far = 60;
-  registerLight(key, (c) => c.bgGlow, { light: 2.2, dark: 1.5 });
+  registerLight(key, (c) => c.bgGlow, { light: 2.2, dark: 1.65 });
+  registerValue((c, name) => {
+    // Dark mode: the key goes warm (derived from the slab tone) so the plaster
+    // keeps its warm cast instead of reading cold.
+    if (name === 'dark') key.color.set(lighten(c.slab, 0.55));
+  });
 
   // Weak cool fill from the right, no shadows.
   const fill = new THREE.DirectionalLight(PALETTE.glow, 0.3);
   fill.position.set(14, 4, -4);
-  registerLight(fill, (c) => c.glow, { light: 0.3, dark: 0.22 });
+  registerLight(fill, (c) => c.glow, { light: 0.3, dark: 0.3 });
 
   return [hemi, key, fill];
 }

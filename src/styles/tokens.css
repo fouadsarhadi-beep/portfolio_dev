@@ -125,14 +125,16 @@ html[lang='fa'] {
   --line: #28313B;
   --ink: #EDEFEC;
   --ink-soft: #98A2AA;
-  --wall: #1A2029;
-  --wall-shade: #161B22;
-  --slab: #2B2A33;
-  --slab-shade: #1F1F28;
-  --under-glow: #31404E;
-  --wood: #54432F;
-  --c-white: #DDE1E6;
-  --graphite: #6B7480;
+  /* Tower tones mirror DARK in config/palette.ts, which derives them from the
+     light values with darken(), so the dark building is the same material. */
+  --wall: #222221;
+  --wall-shade: #1C1B1A;
+  --slab: #2A2825;
+  --slab-shade: #211F1A;
+  --under-glow: #3C382E;
+  --wood: #30281D;
+  --c-white: #DADAD6;
+  --graphite: #726A5A;
   --c-butter: #F6CE66;
   --c-lilac: #C5B6F2;
   --c-peach: #FBB894;

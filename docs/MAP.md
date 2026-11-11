@@ -19,7 +19,7 @@ Search this file before creating anything.
   exports: LAYERS
   uses: src/config/types
 - layout.ts: config/layout: the page shell proportions, read by both the CSS bands and the camera that frames a floor inside one. @see src/styles/tokens.css (--page-inset), src/styles/layout.css, src/scene/focus-pose.ts
-  exports: PAGE_INSET, SHELL_COLS, DETAIL_FLOOR_SHARE, DETAIL_MOBILE_BAND, SHELL_BAND, pageGapPx, detailColumnPx, detailColumnCentrePx
+  exports: PAGE_INSET, SHELL_COLS, DETAIL_FLOOR_SHARE, DETAIL_MOBILE_BAND, DETAIL_BREAKPOINT, SHELL_BAND, pageGapPx, detailColumnPx, detailColumnCentrePx
 - palette.ts: config/palette: the only place hex colors may live, plus lighten/darken and the theme palettes. @see docs/DESIGN.md (Dual theme), src/config/theme.ts
   exports: PALETTE, PaletteName, lighten, darken, LIGHT, DARK
   uses: src/config/theme

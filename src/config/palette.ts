@@ -115,15 +115,17 @@ export const DARK: ThemeColors = {
   accent: '#9AAEB4',
   accent2: '#B69B76',
   highlight: '#D1D8D5',
-  wall: '#1A2029',
-  wallShade: '#161B22',
-  slab: '#2B2A33',
-  slabShade: '#1F1F28',
-  underGlow: '#31404E',
-  wood: '#54432F',
-  woodDark: '#3B3023',
-  white: '#DDE1E6',
-  graphite: '#6B7480',
+  // The tower's dark tones are derived from the light ones (same hue, darker),
+  // so the building reads as the same material under less light, not a recolor.
+  wall: darken(LIGHT.wall, 0.86),       // #212221
+  wallShade: darken(LIGHT.wallShade, 0.88), // #1C1B1A
+  slab: darken(LIGHT.slab, 0.82),       // #2A2825
+  slabShade: darken(LIGHT.slabShade, 0.84), // #211F1A
+  underGlow: darken(LIGHT.underGlow, 0.72), // #3C382E
+  wood: darken(LIGHT.wood, 0.8),        // #30281D
+  woodDark: darken(LIGHT.woodDark, 0.85), // #211B14
+  white: darken(LIGHT.white, 0.13),     // #DADAD6
+  graphite: darken(LIGHT.slabShade, 0.45), // #726A5A
   glow: '#BFE3FF',
   ledGreen: '#7BE0A4',
   ledAmber: '#FFC857',

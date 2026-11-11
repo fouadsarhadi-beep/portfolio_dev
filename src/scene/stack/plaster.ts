@@ -17,6 +17,28 @@ function lcg(seed: number): () => number {
   };
 }
 
+/** Relative luminance of a #rrggbb color, 0..1. */
+function luminance(hex: string): number {
+  const h = hex.replace('#', '');
+  const r = parseInt(h.slice(0, 2), 16) / 255;
+  const g = parseInt(h.slice(2, 4), 16) / 255;
+  const b = parseInt(h.slice(4, 6), 16) / 255;
+  return 0.2126 * r + 0.7152 * g + 0.0722 * b;
+}
+
+/**
+ * Picks the two speckle directions for a base color: on a dark base the flecks
+ * must be lighter than the surface and the chips darker, on a light base the
+ * reverse, so the texture reads in both themes.
+ */
+function fleckColors(baseHex: string, rand: () => number): { fleck: (k: number) => string; chip: (k: number) => string } {
+  const dark = luminance(baseHex) < 0.5;
+  return {
+    fleck: dark ? (k) => lighten(baseHex, k) : (k) => darken(baseHex, k),
+    chip: dark ? (k) => darken(baseHex, k) : (k) => lighten(baseHex, k),
+  };
+}
+
 export function makePlasterTexture(): PlasterTexture {
   const SIZE = 256;
   const canvas = document.createElement('canvas');
@@ -30,6 +52,7 @@ export function makePlasterTexture(): PlasterTexture {
 
   function redraw(baseHex: string): void {
     const rand = lcg(20261111);
+    const fc = fleckColors(baseHex, rand);
     // Near-white base: the material color multiplies through.
     ctx.fillStyle = PALETTE.white;
     ctx.fillRect(0, 0, SIZE, SIZE);
@@ -38,7 +61,7 @@ export function makePlasterTexture(): PlasterTexture {
       const y = rand() * SIZE;
       const len = 30 + rand() * 120;
       const x = rand() * SIZE - 20;
-      ctx.strokeStyle = darken(baseHex, 0.05 + rand() * 0.06);
+      ctx.strokeStyle = fc.fleck(0.05 + rand() * 0.06);
       ctx.globalAlpha = 0.05 + rand() * 0.05;
       ctx.lineWidth = 0.6 + rand() * 1.2;
       ctx.beginPath();
@@ -46,13 +69,13 @@ export function makePlasterTexture(): PlasterTexture {
       ctx.lineTo(x + len, y + (rand() - 0.5) * 3);
       ctx.stroke();
     }
-    // Speckles: darker flecks and a few lighter chips.
+    // Speckles: flecks in the surface direction, a few chips in the other.
     for (let i = 0; i < 700; i++) {
       const x = rand() * SIZE;
       const y = rand() * SIZE;
       const r = 0.4 + rand() * 1.1;
       const dark = rand() > 0.22;
-      ctx.fillStyle = dark ? darken(baseHex, 0.1 + rand() * 0.12) : lighten(baseHex, 0.5 + rand() * 0.3);
+      ctx.fillStyle = dark ? fc.fleck(0.1 + rand() * 0.12) : fc.chip(0.5 + rand() * 0.3);
       ctx.globalAlpha = dark ? 0.05 + rand() * 0.07 : 0.08 + rand() * 0.08;
       ctx.beginPath();
       ctx.arc(x, y, r, 0, Math.PI * 2);
@@ -83,11 +106,13 @@ export function makeWoodTexture(): PlasterTexture {
 
   function redraw(baseHex: string): void {
     const rand = lcg(4242);
+    const fc = fleckColors(baseHex, rand);
     ctx.fillStyle = PALETTE.white;
     ctx.fillRect(0, 0, SIZE, SIZE);
-    // Plank seams: vertical dark lines every 64px, slightly wavy.
+    // Plank seams: vertical dark lines every 64px, slightly wavy. On a dark
+    // deck the seams read as light grooves instead (fleck direction).
     for (let p = 0; p <= SIZE; p += 64) {
-      ctx.strokeStyle = darken(baseHex, 0.28);
+      ctx.strokeStyle = fc.chip(0.28);
       ctx.globalAlpha = 0.35;
       ctx.lineWidth = 1.4;
       ctx.beginPath();
@@ -100,7 +125,7 @@ export function makeWoodTexture(): PlasterTexture {
       const plank = Math.floor(rand() * 4);
       const x = plank * 64 + 4 + rand() * 56;
       const y = rand() * SIZE;
-      ctx.strokeStyle = rand() > 0.5 ? darken(baseHex, 0.12 + rand() * 0.1) : lighten(baseHex, 0.35);
+      ctx.strokeStyle = rand() > 0.5 ? fc.fleck(0.12 + rand() * 0.1) : fc.chip(0.35);
       ctx.globalAlpha = 0.06 + rand() * 0.06;
       ctx.lineWidth = 0.5 + rand();
       ctx.beginPath();
