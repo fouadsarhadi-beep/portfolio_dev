@@ -335,11 +335,12 @@ html[data-theme='dark'] .theme-toggle .icon-moon {
     position: relative;
     /* The tower fills only 58.5% of its cell, so the air on its left side is
        free at every five-part width (about 20% of the tower cell). Let the
-       column's content use a slice of it and sit closer to the tower. The pull
-       is capped far below that air, so it can never touch the tower; in the
-       one-cell stage this rule does not apply, so nothing overflows smaller
-       screens. */
-    margin-inline-start: clamp(-72px, -4vw, -28px);
+       column's content use most of it (~75%) and sit closer to the tower.
+       The pull is capped far below the air at every five-part width (checked
+       per width in scripts/layout.mjs), so it can never touch the tower; in
+       the one-cell stage this rule does not apply, so nothing overflows
+       smaller screens. */
+    margin-inline-start: clamp(-120px, -6vw, -40px);
   }
 
   .layer-nav.leveled {
