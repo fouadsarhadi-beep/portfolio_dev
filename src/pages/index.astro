@@ -2,7 +2,6 @@
 /** @module pages/index: the one-page experience, sections in order. @see src/layouts/Base.astro, src/sections/*.astro */
 import Base from '@/layouts/Base.astro';
 import Hud from '@/sections/Hud.astro';
-import Ladder from '@/sections/Ladder.astro';
 import Hero from '@/sections/Hero.astro';
 import About from '@/sections/About.astro';
 import Contact from '@/sections/Contact.astro';
@@ -12,7 +11,6 @@ import { SITE } from '@/config/site';
 
 <Base title={`${SITE.name} — ${SITE.role}`}>
   <Hud />
-  <Ladder />
   <main id="main">
     <Hero />
     <About />

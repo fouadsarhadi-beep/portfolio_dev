@@ -1,15 +1,17 @@
-/* @module styles/ladder: the scroll ladder down the end side of the stage. @see src/sections/Ladder.astro, docs/MOTION.md (Scroll mapping) */
+/* @module styles/ladder: the scroll ladder in the stage's end-margin cell. @see src/sections/Ladder.astro, src/styles/layout.css, docs/MOTION.md (Scroll mapping) */
 
-/* T39 (user sketch): the rail lives in the right 10% margin, vertically centred
-   -- the layer nav owns the 15% column beside it, so the ladder no longer hugs
-   the viewport edge. The layout is mirrored, so the titles read back toward the
-   page and the numbers stay next to the rail. */
+/* The rail lives in the stage grid's last cell (the right 10% margin, now a
+   real column), spanning the same rows as the tower canvas, vertically centred
+   on it -- so it is attached to the tower's height and can never leave
+   section 1: it is part of the sticky stage, not fixed to the viewport.
+   The layout is mirrored, so the titles read back toward the page and the
+   numbers stay next to the rail. */
 .ladder {
-  position: fixed;
-  inset-inline-end: calc(var(--page-inset) / 2);
-  top: 50%;
-  translate: 0 -50%;
-  z-index: 40;
+  grid-column: 5;
+  grid-row: 1 / -2;
+  align-self: center;
+  justify-self: end;
+  margin-inline-end: calc(var(--page-gap) / 2);
   display: grid;
   grid-template-columns: auto 2px;
   grid-template-areas: 'rungs rail';
@@ -118,35 +120,11 @@
   translate: 0 0;
 }
 
-/* The floor the scroll is on is named by the info panel too, and the panel sits
-   in the column right next to this rail. A title that runs the full width
-   would cross into it, so the rail keeps its number and its dot. */
-body:has(.layer-card[data-show='true']) .ladder-rung[aria-current='step'] .ladder-label {
-  visibility: hidden;
-  opacity: 0;
-}
-
-/* An expanded floor owns the frame: the rail would float over its card. */
-html[data-detail='true'] .ladder {
+/* An expanded floor owns the frame: the rail would float over its card. The
+   ladder is inside the sticky stage, so the stage's own data-detail flag
+   reaches it. */
+.stage-sticky[data-detail='true'] .ladder {
   display: none;
-}
-
-/* The rail belongs to the stage section: when the stage has scrolled away the
-   rail fades out with it instead of riding the whole page (Ladder.astro). */
-.ladder {
-  transition: opacity 0.25s ease, visibility 0.25s;
-}
-
-.ladder--off {
-  opacity: 0;
-  visibility: hidden;
-  pointer-events: none;
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .ladder {
-    transition: none;
-  }
 }
 
 @media (max-width: 860px) {

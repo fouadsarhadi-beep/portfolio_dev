@@ -299,7 +299,7 @@ html[data-theme='dark'] .theme-toggle .icon-moon {
    would not meet on a short viewport; in one column they cannot overlap at
    all, because the panel takes what is left and the nav keeps its own height. */
 .stage-side {
-  grid-column: 3;
+  grid-column: 4;
   grid-row: 1 / -1;
   /* The stage grid aligns its items to the start; this column has to fill the
      stage so the nav can dock at its end edge. */

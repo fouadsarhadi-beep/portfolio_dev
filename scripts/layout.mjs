@@ -44,13 +44,25 @@ const GAP_HI = grab(tokens, /--page-gap:\s*clamp\([^,]+,[^,]+,\s*(\d+)px/, '--pa
 const HUD_H = grab(tokens, /--hud-h:\s*(\d+)px/, '--hud-h');
 const DETAIL_BAND = grab(tokens, /--detail-band:\s*(\d+)svh/, '--detail-band') / 100;
 
-// The stage grid: the side cells' minimum and the three shares.
-const SIDE_MIN = grab(layoutCss, /grid-template-columns:\s*minmax\((\d+)px,\s*15fr\)/, 'side cell minimum');
+// The stage grid: five parts of the full viewport -- 10fr margin | 15fr side |
+// 50fr tower | 15fr side | 10fr margin (the ladder's cell) -- with a 200px
+// minimum on the side cells and half the shell gap between columns.
+const SIDE_MIN = grab(layoutCss, /minmax\((\d+)px,\s*15fr\)/, 'side cell minimum');
 const STAGE_GAP_HALVED = /column-gap:\s*calc\(var\(--page-gap\)\s*\/\s*2\)/.test(layoutCss);
 const SIDE_PULL = grabAll(hudCss, /margin-inline-start:\s*clamp\((-?\d+)px,\s*(-?[\d.]+)vw,\s*(-?\d+)px\)/, 'side column pull');
 const TOWER_FILL = grab(poseTs, /TOWER_FILL = ([\d.]+)/, 'TOWER_FILL');
-const SIDE_FR = 15;
-const TOWER_FR = 50;
+const SIDE_FR = 0.15;
+const TOWER_FR = 0.5;
+const MARGIN_FR = 0.1;
+
+/** Width of the stage's middle (tower) cell at a viewport width. */
+function stageTowerCell(w, stageGap) {
+  const avail = w - 4 * stageGap; // four gaps between the five columns
+  const side = Math.max(SIDE_MIN, SIDE_FR * avail);
+  if (SIDE_FR * avail >= SIDE_MIN) return TOWER_FR * avail;
+  // Side minimums bind: the remaining space splits 10fr | 50fr | 10fr.
+  return ((avail - 2 * SIDE_MIN) * TOWER_FR) / (TOWER_FR + 2 * MARGIN_FR);
+}
 const COLLAPSE = grab(layoutCss, /@media \(max-width: (\d+)px\), \(max-aspect-ratio/, 'stage collapse breakpoint');
 const DETAIL_SPLIT = grab(hudCss, /grid-template-columns:\s*(\d+)fr\s+(\d+)fr/, 'detail split');
 const DETAIL_FLOOR_FR = DETAIL_SPLIT;
@@ -106,11 +118,12 @@ for (const w of SIZES) {
   // 1. The stage: the side cells hold their content, or the stage is one cell.
   if (fivePart) {
     const gap = STAGE_GAP_HALVED ? stageGapPx(w) : gapPx(w);
-    const usable = band - 2 * gap;
-    const side = Math.max(SIDE_MIN, (usable * SIDE_FR) / (SIDE_FR * 2 + TOWER_FR));
-    const tower = usable - 2 * side;
+    const avail = w - 4 * gap;
+    const side = Math.max(SIDE_MIN, SIDE_FR * avail);
+    const tower = stageTowerCell(w, gap);
     ok(`${w}px stage side cell holds a floor title`, side >= 200, `${side.toFixed(0)}px`);
-    ok(`${w}px stage keeps the tower readable`, tower >= usable * 0.4, `${tower.toFixed(0)}px of ${usable.toFixed(0)}px`);
+    ok(`${w}px stage keeps the tower readable`, tower >= avail * 0.4, `${tower.toFixed(0)}px of ${avail.toFixed(0)}px`);
+    ok(`${w}px ladder margin cell fits the rail`, MARGIN_FR * avail >= 40, `${(MARGIN_FR * avail).toFixed(0)}px`);
 
     // The side column's content is pulled toward the tower with a negative
     // margin; it may only use the air the tower leaves inside its own cell.
@@ -127,8 +140,8 @@ for (const w of SIZES) {
   // 2. The side column: the info panel and the nav must not meet.
   if (fivePart) {
     const gap = STAGE_GAP_HALVED ? stageGapPx(w) : gapPx(w);
-    const usable = band - 2 * gap;
-    const side = Math.max(SIDE_MIN, (usable * SIDE_FR) / (SIDE_FR * 2 + TOWER_FR));
+    const avail = w - 4 * gap;
+    const side = Math.max(SIDE_MIN, SIDE_FR * avail);
     const inner = side - 2 * CARD_PAD[1] - 2;
     const navInner = side - 2 * NAV_PAD[1] - 14 - 10; // minus the number and its gap
     // A short window tightens the nav, lifts the panel's top inset and then

@@ -24,43 +24,37 @@
 }
 
 /* --- The default view grid (the stage) -------------------------------------
-   T39 (user sketch 2026-11-08): five parts across the viewport. A 10% margin
-   each side, and the middle 80% band split 15fr 50fr 15fr -- of the band, so
-   with the two shared gaps on top each cell lands at about 14.25% / 47.5% /
-   14.25% of the viewport. The left cell holds the stage guide and the hero
-   copy, the middle cell the tower, the right cell the layer nav; the right
-   10% margin additionally carries the scroll ladder (ladder.css).
-   The side cells never fall below 200px: the guide, the hero copy, the floor
-   panel and the nav need that room, and the tower's cell gives up the rest.
-   The renderer mounts into the middle cell (#canvas-mount), so the frustum is
-   built from the cell's own box and the tower can never spill into a side cell;
-   overviewFitZoom (focus-pose.ts) keeps the enlarged tower inside it.
-   Placement of the pieces lives with each piece (sections.css, hud.css). */
+   T39 (user sketch 2026-11-08): five parts across the viewport -- 10% margin |
+   15% stage guide + hero copy | 50% tower | 15% layer nav | 10% margin -- with
+   the margins as real grid cells, so the scroll ladder can live in the last one
+   and stay inside section 1. The side cells never fall below 200px; the tower's
+   cell gives up the rest. The renderer mounts into the middle cell
+   (#canvas-mount), so the frustum is built from the cell's own box and the tower
+   can never spill into a side cell; overviewFitZoom (focus-pose.ts) keeps the
+   enlarged tower inside it. Placement of the pieces lives with each piece
+   (sections.css, hud.css, ladder.css). */
 .stage-grid {
   display: grid;
-  /* The side cells keep a readable minimum: below it they cannot hold the
-     guide, the hero copy, the floor panel and the nav without cramping. The
-     tower's cell gives up the difference. */
-  grid-template-columns: minmax(200px, 15fr) minmax(0, 50fr) minmax(200px, 15fr);
+  grid-template-columns: minmax(0, 10fr) minmax(200px, 15fr) minmax(0, 50fr) minmax(200px, 15fr) minmax(0, 10fr);
   /* The last row is an empty spacer at the bottom of the sticky stage: 50-100px
      of the stage's own background below the tower (user review 2026-11-11). */
   grid-template-rows: auto minmax(0, 1fr) clamp(50px, 8vh, 100px);
-  /* Half the shell's gap: the side columns sit closer to the tower (user
-     review 2026-11-11) without touching it. */
+  /* Half the shell's gap: the columns sit closer to the tower (user review
+     2026-11-11) without touching it. */
   column-gap: calc(var(--page-gap) / 2);
   row-gap: clamp(8px, 2vh, 20px);
   /* Inline only: the block edges belong to the pieces (sections.css), so the
      canvas in the middle cell keeps the stage's full height and the tower keeps
      its framed size. */
-  padding-inline: var(--page-inset);
   align-items: start;
 }
 
 /* A viewport that cannot hold the tower's cell plus two readable side cells
    drops to a single cell: the tower takes the band, the hero copy sits over
-   it and the nav becomes a strip along the bottom (hud.css). Below 1024px the
-   two 200px side cells leave the tower less than half the band, so the single
-   cell is the better composition there. Wide: 1440x900 keeps all three. */
+   it and the nav becomes a strip along the bottom (hud.css); the ladder has
+   no margin cell there and stays hidden. Below 1024px the two 200px side
+   cells leave the tower less than half the band, so the single cell is the
+   better composition there. Wide: 1440x900 keeps all five parts. */
 @media (max-width: 1023px), (max-aspect-ratio: 1/1) {
   .stage-grid {
     grid-template-columns: minmax(0, 1fr);
@@ -75,6 +69,10 @@
   .stage-grid .stage-guide {
     grid-column: 1;
   }
+
+  .stage-grid .ladder {
+    display: none;
+  }
 }
 
 /* Without a scene the middle cell is empty and the side cells have nothing to
@@ -87,10 +85,17 @@ html:not(.js) .stage-grid {
 html.no-webgl .stage-grid .stage-side,
 html.no-webgl .stage-grid .hero-copy,
 html.no-webgl .stage-grid .stage-guide,
+html.no-webgl .stage-grid .ladder,
 html:not(.js) .stage-grid .stage-side,
 html:not(.js) .stage-grid .hero-copy,
-html:not(.js) .stage-grid .stage-guide {
+html:not(.js) .stage-grid .stage-guide,
+html:not(.js) .stage-grid .ladder {
   grid-column: 1;
+}
+
+html.no-webgl .stage-grid .ladder,
+html:not(.js) .stage-grid .ladder {
+  display: none;
 }
 
 /* Phones: the same margin, tighter, so the reading column keeps its measure. */

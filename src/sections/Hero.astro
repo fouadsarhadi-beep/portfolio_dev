@@ -1,7 +1,8 @@
 ---
-/** @module sections/Hero: tall scroll stage, sticky canvas mount, layer nav, hero copy, no-JS fallback. @see docs/MOTION.md, src/styles/hud.css, src/styles/sections.css */
+/** @module sections/Hero: tall scroll stage, sticky canvas mount, layer nav, hero copy, scroll ladder, no-JS fallback. @see docs/MOTION.md, src/styles/hud.css, src/styles/sections.css, src/sections/Ladder.astro */
 import { LAYERS } from '@/config/layers';
 import { t } from '@/lib/i18n';
+import Ladder from '@/sections/Ladder.astro';
 ---
 
 <script>
@@ -65,6 +66,7 @@ import { t } from '@/lib/i18n';
       <p class="sg-hint"><span class="sg-arrow" aria-hidden="true">&#8594;</span><span data-t="guide.hint">{t('guide.hint')}</span></p>
       <p class="sg-skip"><a href="/simple/" data-t="guide.skip">{t('guide.skip')}</a></p>
     </aside>
+    <Ladder />
   </div>
   <div class="stack-fallback">
     {LAYERS.map((l) => (

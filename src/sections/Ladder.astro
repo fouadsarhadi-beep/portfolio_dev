@@ -1,5 +1,5 @@
 ---
-/** @module sections/Ladder: the scroll ladder: one rung per floor, click to jump. @see src/styles/ladder.css, docs/MOTION.md (Scroll mapping), src/pages/index.astro */
+/** @module sections/Ladder: the scroll ladder: one rung per floor, click to jump. It is a grid item of the stage's end-margin cell (src/styles/ladder.css), so it stays inside section 1. @see src/styles/ladder.css, docs/MOTION.md (Scroll mapping), src/sections/Hero.astro */
 import { LAYERS } from '@/config/layers';
 import { t } from '@/lib/i18n';
 ---
@@ -41,17 +41,6 @@ import { t } from '@/lib/i18n';
   }
 
   if (nav && rungs.length) {
-    // The rail belongs to section 1: it is visible only while the stage
-    // intersects the viewport, and fades out the moment section 1 is gone.
-    const syncVisibility = (): void => {
-      if (!stage) return;
-      const r = stage.getBoundingClientRect();
-      const onStage = r.bottom > 0 && r.top < window.innerHeight;
-      nav.classList.toggle('ladder--off', !onStage);
-    };
-    syncVisibility();
-    window.addEventListener('scroll', syncVisibility, { passive: true });
-    window.addEventListener('resize', syncVisibility, { passive: true });
     // The floor index lives in one place (the stack state); the ladder listens.
     // The same signal feeds a screen-reader line, so the change is announced
     // once, in words, instead of twice from the visible caption.

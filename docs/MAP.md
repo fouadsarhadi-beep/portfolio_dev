@@ -65,7 +65,7 @@ Search this file before creating anything.
 - 404.astro: pages/404: not found: the six floors as an exit. @see src/layouts/Base.astro, src/config/layers.ts
   uses: src/layouts/Base.astro, src/config/layers, src/lib/i18n
 - index.astro: pages/index: the one-page experience, sections in order. @see src/layouts/Base.astro, src/sections/
-  uses: src/layouts/Base.astro, src/sections/Hud.astro, src/sections/Ladder.astro, src/sections/Hero.astro, src/sections/About.astro, src/sections/Contact.astro, src/sections/Footer.astro, src/config/site
+  uses: src/layouts/Base.astro, src/sections/Hud.astro, src/sections/Hero.astro, src/sections/About.astro, src/sections/Contact.astro, src/sections/Footer.astro, src/config/site
 - robots.txt.ts: pages/robots.txt: crawl everything, point at the sitemap. @see src/pages/sitemap.xml.ts, src/config/site.ts
   exports: GET
   uses: src/config/site
@@ -308,11 +308,11 @@ Search this file before creating anything.
   uses: src/config/site, src/lib/i18n, src/lib/i18n
 - Footer.astro: sections/Footer: compact footer with name, note, top link. @see docs/DESIGN.md (Sections)
   uses: src/config/site, src/lib/i18n
-- Hero.astro: sections/Hero: tall scroll stage, sticky canvas mount, layer nav, hero copy, no-JS fallback. @see docs/MOTION.md, src/styles/hud.css, src/styles/sections.css
-  uses: src/config/layers, src/lib/i18n, src/lib/bus
+- Hero.astro: sections/Hero: tall scroll stage, sticky canvas mount, layer nav, hero copy, scroll ladder, no-JS fallback. @see docs/MOTION.md, src/styles/hud.css, src/styles/sections.css, src/sections/Ladder.astro
+  uses: src/config/layers, src/lib/i18n, src/sections/Ladder.astro, src/lib/bus
 - Hud.astro: sections/Hud: floating island header (floating pill on wide screens, hamburger circle with a dropdown card below 1024px, per the header sample). Brand, nav, language, availability, theme toggle. @see src/styles/hud.css, docs/DESIGN.md (HUD and UI style), header sample (parent folder)
   uses: src/config/site, src/lib/i18n, src/ui/theme
-- Ladder.astro: sections/Ladder: the scroll ladder: one rung per floor, click to jump. @see src/styles/ladder.css, docs/MOTION.md (Scroll mapping), src/pages/index.astro
+- Ladder.astro: sections/Ladder: the scroll ladder: one rung per floor, click to jump. It is a grid item of the stage's end-margin cell (src/styles/ladder.css), so it stays inside section 1. @see src/styles/ladder.css, docs/MOTION.md (Scroll mapping), src/sections/Hero.astro
   uses: src/config/layers, src/lib/i18n, src/lib/bus
 
 ## src/ui/

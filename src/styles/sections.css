@@ -104,7 +104,7 @@ html:not(.js) .layer-nav {
    rows except the bottom spacer, so the tower's framing does not change when
    the spacer grows. */
 #canvas-mount {
-  grid-column: 2;
+  grid-column: 3;
   grid-row: 1 / -2;
   position: relative;
   z-index: 2;
@@ -127,7 +127,7 @@ html:not(.js) .layer-nav {
   /* T39 (user sketch): the START-side cell stacks the whole left column -- the
      stage guide on top (grid-row 1), the h1 and its text right under it. The
      tower owns the middle cell, so the copy never crosses under it. */
-  grid-column: 1;
+  grid-column: 2;
   grid-row: 2;
   align-self: start;
   max-inline-size: 100%;
@@ -782,7 +782,7 @@ html:not(.js) .layer-nav {
 }
 
 .stage-guide--left {
-  grid-column: 1;
+  grid-column: 2;
 }
 
 /* It belongs to the tower, so it leaves when a floor expands. */
