@@ -16,18 +16,14 @@ export const LAYERS: LayerConfig[] = [
     capabilities: ['Editorial planning', 'Website copywriting', 'Style guides', 'Interviews and guides'],
     toolkit: ['Briefs', 'Editorial calendars', 'Style guides', 'Interviews', 'Editing'],
     samples: [
-      { title: 'Guide series for a service site', blurb: 'Twelve guides that answer the questions customers ask before they buy.', tags: ['Guides', 'Editorial plan', 'Style guide'], icon: 'doc', doc: 'content-1' },
+      // The plan per floor: each sample is one signature deliverable that
+      // stands for the skill on one look (docs/COPY.md, sample plan).
+      { title: 'Guide series for a service site', blurb: 'Six customer questions turned into six 900-word guides, in the order customers ask them.', tags: ['Guides', 'Editorial plan', 'SEO'], icon: 'doc', doc: 'content-1' },
       { title: 'Product pages rewrite', blurb: 'Clearer pages that explain the product and invite the next step.', tags: ['Copy', 'Structure', 'Tone'], icon: 'pen', doc: 'content-2' },
-      { title: 'Onboarding email sequence', blurb: 'Six emails that explain the first week in the product.', tags: ['Email', 'Sequence', 'Voice'], icon: 'doc', doc: 'content-3' },
-      { title: 'Case study library', blurb: 'Customer stories told on one page each, ready for sales.', tags: ['Case studies', 'Interviews', 'Structure'], icon: 'pen', doc: 'content-4' },
       { title: 'Help center rewrite', blurb: 'Answers written in the words customers search for.', tags: ['Help center', 'Search terms', 'Editing'], icon: 'search', doc: 'content-5' },
+      { title: 'Editorial calendar', blurb: 'A quarter of topics mapped to search demand, as a working sheet.', tags: ['Topics', 'Calendar', 'Demand'], icon: 'chart', doc: 'content-3' },
       { title: 'Tone of voice guide', blurb: 'One page of rules the whole team can apply.', tags: ['Voice', 'Rules', 'Examples'], icon: 'doc', doc: 'content-6' },
-      { title: 'Editorial calendar', blurb: 'A quarter of topics mapped to search demand.', tags: ['Topics', 'Calendar', 'Demand'], icon: 'chart', doc: 'content-7' },
-      { title: 'Landing page copy', blurb: 'Headlines and proof for one campaign, tested in two variants.', tags: ['Landing pages', 'Headlines', 'Variants'], icon: 'layout', doc: 'content-8' },
-      { title: 'Product naming', blurb: 'A shortlist of names checked for meaning and domain fit.', tags: ['Naming', 'Shortlist', 'Domains'], icon: 'bolt', doc: 'content-9' },
-      { title: 'Newsletter rewrite', blurb: 'A monthly note trimmed to one idea and one action.', tags: ['Newsletter', 'Editing', 'CTA'], icon: 'pen', doc: 'content-10' },
-      { title: 'Content audit', blurb: 'Every page scored for use, then kept, merged or cut.', tags: ['Audit', 'Inventory', 'Decisions'], icon: 'search', doc: 'content-11' },
-      { title: 'Glossary for a developer tool', blurb: 'Terms defined once so the docs and the UI agree.', tags: ['Glossary', 'Docs', 'Terms'], icon: 'code', doc: 'content-12' },
+      { title: 'Case study library', blurb: 'Customer stories told on one page each, ready for sales.', tags: ['Case studies', 'Interviews', 'Structure'], icon: 'pen', doc: 'content-4' },
     ],
     room: 'content',
   },
@@ -44,6 +40,7 @@ export const LAYERS: LayerConfig[] = [
     samples: [
       { title: 'Site localization, Persian', blurb: 'Full UI and content translation that keeps the brand voice.', tags: ['Localization', 'Glossary', 'QA'], icon: 'globe', doc: 'translation-1' },
       { title: 'Technical docs translation', blurb: 'Manuals translated with terms kept consistent across pages.', tags: ['Docs', 'CAT tools', 'Terminology'], icon: 'doc', doc: 'translation-2' },
+      { title: 'Glossary for a developer tool', blurb: 'Terms defined once in both languages so the docs and the UI agree.', tags: ['Glossary', 'Docs', 'Terms'], icon: 'code', doc: 'translation-3' },
     ],
     room: 'translation',
   },
@@ -60,6 +57,7 @@ export const LAYERS: LayerConfig[] = [
     samples: [
       { title: 'Technical audit and fixes', blurb: 'Crawl, index and speed issues found and fixed, tracked in Search Console.', tags: ['Audit', 'Core Web Vitals', 'Schema'], icon: 'chart', doc: 'seo-1' },
       { title: 'Keyword map', blurb: 'A page for every search that matters, mapped and measured.', tags: ['Keywords', 'GA4', 'Rankings'], icon: 'search', doc: 'seo-2' },
+      { title: 'Speed and Core Web Vitals pass', blurb: 'The heaviest pages made fast: images, fonts and scripts, measured before and after.', tags: ['Speed', 'CWV', 'Images'], icon: 'bolt', doc: 'seo-3' },
     ],
     room: 'seo',
   },
@@ -76,6 +74,7 @@ export const LAYERS: LayerConfig[] = [
     samples: [
       { title: 'Portfolio redesign', blurb: 'A type and color system rebuilt around one strong grid.', tags: ['Figma', 'Type scale', 'Color'], icon: 'layout', doc: 'web-design-development-1' },
       { title: '3D product viewer', blurb: 'An interactive Three.js viewer that runs on phones.', tags: ['Three.js', 'TypeScript', 'Motion'], icon: 'code', doc: 'web-design-development-2' },
+      { title: 'Design system build', blurb: 'Components, tokens and docs a team ships from on day one.', tags: ['Design system', 'Tokens', 'Docs'], icon: 'grid', doc: 'web-design-development-3' },
     ],
     room: 'web-design-development',
   },
@@ -92,6 +91,7 @@ export const LAYERS: LayerConfig[] = [
     samples: [
       { title: 'WordPress theme build', blurb: 'A custom theme editors run without touching code.', tags: ['WordPress', 'Gutenberg', 'ACF'], icon: 'cart', doc: 'cms-1' },
       { title: 'Shop setup', blurb: 'A WooCommerce store with a clear product flow.', tags: ['WooCommerce', 'Payments', 'Content'], icon: 'layout', doc: 'cms-2' },
+      { title: 'Editor workflow with custom blocks', blurb: 'Gutenberg blocks that let editors build pages without breaking the design.', tags: ['Gutenberg', 'Blocks', 'Training'], icon: 'grid', doc: 'cms-3' },
     ],
     room: 'cms',
   },
@@ -108,6 +108,7 @@ export const LAYERS: LayerConfig[] = [
     samples: [
       { title: 'Hosting migration', blurb: 'Sites moved with DNS, SSL and mail kept working.', tags: ['DNS', 'SSL', 'Nginx'], icon: 'server', doc: 'infrastructure-1' },
       { title: 'Backup and monitor plan', blurb: 'Daily backups and alerts that catch downtime early.', tags: ['Backups', 'Cloudflare', 'Monitoring'], icon: 'bolt', doc: 'infrastructure-2' },
+      { title: 'Domain, DNS and SSL setup', blurb: 'A new domain connected and secured end to end in one afternoon.', tags: ['Domain', 'DNS', 'SSL'], icon: 'globe', doc: 'infrastructure-3' },
     ],
     room: 'infrastructure',
   },

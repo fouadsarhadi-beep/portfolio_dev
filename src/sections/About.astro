@@ -1,5 +1,5 @@
 ---
-/** @module sections/About: statement, six-layer diagram, three color panels. @see docs/DESIGN.md (Sections), src/styles/sections.css */
+/** @module sections/About: bento grid -- statement card with a stacked-bar diagram of the six layers, three focus panels with tool chips. @see docs/DESIGN.md (Sections), src/styles/sections.css */
 import { LAYERS } from '@/config/layers';
 import { t } from '@/lib/i18n';
 
@@ -9,24 +9,33 @@ const panels = LAYERS.filter((l) => panelIds.includes(l.id));
 ---
 
 <section id="about" class="about shell">
-  <h2 class="section-head">{t('about.heading')}</h2>
+  <h2 class="section-head" data-t="about.heading">{t('about.heading')}</h2>
   <div class="about-cols">
-    <div>
-      <p class="statement">{t('about.body')}</p>
+    <div class="about-statement">
+      <p class="statement" data-t="about.body">{t('about.body')}</p>
       <ul class="layer-diagram">
         {LAYERS.map((l) => (
-          <li style={`--layer-c: var(--c-${l.color})`}>
-            <span class="ld-num" aria-hidden="true">{l.number}</span>
-            <span>{l.title}</span>
+          <li style={`--layer-c: var(--c-${l.color})`} data-layer-id={l.id}>
+            <a href={`/work/${l.id}/`} data-layer-open aria-label={`${t('a11y.openLayer')} ${l.number}: ${l.title}`}>
+              <span class="ld-num" aria-hidden="true">{l.number}</span>
+              <svg class="ld-icon" viewBox="0 0 24 24" aria-hidden="true"><path d={l.icon} /></svg>
+              <span class="ld-title" data-lf="title">{l.title}</span>
+              <span class="ld-arrow" aria-hidden="true">&#8594;</span>
+            </a>
           </li>
         ))}
       </ul>
     </div>
     <div class="about-panels">
       {panels.map((p) => (
-        <article class="panel" style={`--layer-c: var(--c-${p.color})`}>
-          <h3>{p.title}</h3>
-          <p>{p.short}</p>
+        <article class="panel" style={`--layer-c: var(--c-${p.color})`} data-layer-id={p.id}>
+          <h3 data-lf="title">{p.title}</h3>
+          <p data-lf="short">{p.short}</p>
+          <ul class="chips" data-lf-list="toolkit">
+            {p.toolkit.map((tool) => (
+              <li class="chip">{tool}</li>
+            ))}
+          </ul>
         </article>
       ))}
     </div>

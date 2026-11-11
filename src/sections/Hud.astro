@@ -1,34 +1,38 @@
 ---
-/** @module sections/Hud: sticky header with name, role, nav links, availability, progress bar. @see src/styles/hud.css, docs/DESIGN.md (HUD and UI style) */
+/** @module sections/Hud: floating island header (floating pill on wide screens, hamburger circle with a dropdown card below 1024px, per the header sample). Brand, nav, language, availability, theme toggle. @see src/styles/hud.css, docs/DESIGN.md (HUD and UI style), header sample (parent folder) */
 import { SITE } from '@/config/site';
 import { t } from '@/lib/i18n';
 
 const links = [
-  { href: '#stack', label: t('nav.stack') },
-  { href: '#about', label: t('nav.about') },
-  { href: '#contact', label: t('nav.contact') },
+  { href: '#stack', label: t('nav.stack'), key: 'nav.stack' },
+  { href: '#about', label: t('nav.about'), key: 'nav.about' },
+  { href: '#contact', label: t('nav.contact'), key: 'nav.contact' },
 ];
 ---
 
 <header class="hud">
-  <div class="hud-row">
+  <div class="isle" data-isle>
     <p class="hud-id">
       <strong>{SITE.name}</strong>
       <span>{SITE.role}</span>
     </p>
-    <nav aria-label={SITE.name}>
+    <nav class="hud-navwrap" aria-label={SITE.name}>
       <ul class="hud-nav">
         {links.map((l) => (
-          <li><a href={l.href}>{l.label}</a></li>
+          <li><a href={l.href} data-t={l.key}>{l.label}</a></li>
         ))}
       </ul>
     </nav>
     <div class="hud-status">
+      <button type="button" class="lang-toggle" data-lang-toggle aria-label={t('a11y.langToggle')} data-t-aria="a11y.langToggle">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3a9 9 0 1 0 0 18 9 9 0 0 0 0-18z"/><path d="M3.5 12h17M12 3c2.5 2.4 3.8 5.6 3.8 9S14.5 18.6 12 21c-2.5-2.4-3.8-5.6-3.8-9S9.5 5.4 12 3z"/></svg>
+        <span data-lang-label>En</span>
+      </button>
       <p class="avail" data-available={String(SITE.available)}>
         <span class="dot" aria-hidden="true"></span>
-        {t('contact.availability')}
+        <span data-t="contact.availability">{t('contact.availability')}</span>
       </p>
-      <button type="button" id="theme-toggle" class="theme-toggle" aria-pressed="false" aria-label={t('a11y.themeToggle')}>
+      <button type="button" id="theme-toggle" class="theme-toggle" aria-pressed="false" aria-label={t('a11y.themeToggle')} data-t-aria="a11y.themeToggle">
         <svg class="icon-sun" viewBox="0 0 24 24" aria-hidden="true">
           <circle cx="12" cy="12" r="4.5" />
           <path d="M12 2v3M12 19v3M2 12h3M19 12h3M4.5 4.5l2.1 2.1M17.4 17.4l2.1 2.1M19.5 4.5l-2.1 2.1M6.6 17.4l-2.1 2.1" />
@@ -36,6 +40,9 @@ const links = [
         <svg class="icon-moon" viewBox="0 0 24 24" aria-hidden="true">
           <path d="M20 14.5A8.5 8.5 0 0 1 9.5 4a8.5 8.5 0 1 0 10.5 10.5z" />
         </svg>
+      </button>
+      <button type="button" class="burger" data-burger aria-expanded="false" aria-label={t('a11y.menu')} data-t-aria="a11y.menu">
+        <span></span><span></span><span></span>
       </button>
     </div>
   </div>
@@ -45,9 +52,27 @@ const links = [
   import { initThemeToggle } from '@/ui/theme';
   initThemeToggle(document.getElementById('theme-toggle'));
 
-  // The HUD wraps to two rows on narrow screens. Publish its real height so
-  // anchor offsets use the measured bar, not the 56px guess. It must be a
-  // separate variable: --hud-h feeds the bar's own min-height (feedback loop).
+  // The island collapses to a burger below 1024px; the nav opens as a dropdown
+  // card under the pill (header sample pattern, restyled to the site tokens).
+  const isle = document.querySelector<HTMLElement>('[data-isle]');
+  const burger = document.querySelector<HTMLButtonElement>('[data-burger]');
+  if (isle && burger) {
+    const setOpen = (open: boolean): void => {
+      isle.classList.toggle('open', open);
+      burger.setAttribute('aria-expanded', String(open));
+    };
+    burger.addEventListener('click', () => setOpen(!isle.classList.contains('open')));
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape') setOpen(false);
+    });
+    document.addEventListener('click', (e) => {
+      if (isle.classList.contains('open') && e.target instanceof Node && !isle.contains(e.target)) setOpen(false);
+    });
+    isle.querySelectorAll('a').forEach((a) => a.addEventListener('click', () => setOpen(false)));
+  }
+
+  // The island floats, so anchor offsets still need its measured height.
+  // --hud-offset is separate from --hud-h on purpose (no feedback loop).
   const hud = document.querySelector<HTMLElement>('.hud');
   if (hud) {
     const sync = (): void => {

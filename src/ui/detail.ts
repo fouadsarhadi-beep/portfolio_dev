@@ -1,10 +1,9 @@
 /** @module ui/detail: expanded floor view: square text card on the right, work tiles beneath. @see docs/MOTION.md (Detail view), docs/WIRING.md (Routes), src/ui/detail-samples.ts, src/ui/dialog.ts, src/scene/focus.ts */
 import { gsap } from 'gsap';
 import { bus } from '@/lib/bus';
-import { LAYERS } from '@/config/layers';
+import { applyLocaleDom, layersView, t } from '@/lib/i18n';
 import { focusLayer, releaseFocus } from '@/scene/api';
 import { prefersReducedMotion } from '@/lib/reduced-motion';
-import { t } from '@/lib/i18n';
 import { createSamplesView, type SamplesView } from './detail-samples';
 import { createDialog, type DialogHandle } from './dialog';
 import { closeDocument } from './doc-viewer';
@@ -17,7 +16,11 @@ let savedScrollY = 0;
 
 export function initDetail(): void {
   if (dialog) return;
-  const host = document.querySelector<HTMLElement>('.stage-sticky');
+  // On the interactive page the panel lives in the stage; the simple build
+  // (/simple/) has no stage, so it attaches to the main column there.
+  const host = document.querySelector<HTMLElement>('.stage-sticky')
+    ?? document.querySelector<HTMLElement>('main')
+    ?? document.body;
   if (!host) return;
 
   dialog = createDialog(buildPanel, {
@@ -30,6 +33,10 @@ export function initDetail(): void {
   host.appendChild(dialog.panel);
 
   bus.on('layer:open', ({ id }) => open(id));
+  bus.on('locale:change', () => {
+    applyLocaleDom();
+    if (isOpen && currentId) fillPanel(currentId); // samples and text re-render in the new language
+  });
   window.addEventListener('popstate', () => {
     if (isOpen) close({ fromPop: true });
   });
@@ -38,7 +45,7 @@ export function initDetail(): void {
   // pushState below, so the link and the history entry agree.
   const deep = window.location.pathname.match(/^\/work\/([^/]+)\/?$/);
   const deepId = deep?.[1];
-  if (deepId && LAYERS.some((l) => l.id === deepId)) open(deepId);
+  if (deepId && layersView().some((l) => l.id === deepId)) open(deepId);
 }
 
 function buildPanel(panel: HTMLElement): void {
@@ -47,21 +54,21 @@ function buildPanel(panel: HTMLElement): void {
   panel.innerHTML = `
     <div class="dv-card">
       <p class="dv-top"><button type="button" class="dv-back" data-dv-back>
-        <span aria-hidden="true">&#8592;</span> ${t('detail.back')}</button></p>
+        <span aria-hidden="true">&#8592;</span> <span data-t="detail.back">${t('detail.back')}</span></button></p>
       <p class="dv-kicker" aria-hidden="true"><span class="dv-num" data-dv-num></span></p>
       <h2 id="detail-title" class="dv-title" data-dv-title></h2>
       <p class="dv-short" data-dv-short></p>
       <p class="dv-intro" data-dv-intro></p>
-      <h3 class="dv-heading">${t('detail.capabilitiesHeading')}</h3>
+      <h3 class="dv-heading" data-t="detail.capabilitiesHeading">${t('detail.capabilitiesHeading')}</h3>
       <ul class="dv-caps" data-dv-caps></ul>
-      <h3 class="dv-heading">${t('detail.toolkitHeading')}</h3>
+      <h3 class="dv-heading" data-t="detail.toolkitHeading">${t('detail.toolkitHeading')}</h3>
       <ul class="dv-tools" data-dv-toolkit></ul>
       <section class="dv-samples">
-        <h3 class="dv-heading dv-samples-head">${t('detail.samplesHeading')}</h3>
+        <h3 class="dv-heading dv-samples-head" data-t="detail.samplesHeading">${t('detail.samplesHeading')}</h3>
         <div class="dv-sample-row" data-dv-samples></div>
         <div class="dv-pager" data-dv-pager hidden>
           <button type="button" data-dv-prev aria-label="${t('detail.samplesPrev')}">&#8592;</button>
-          <input type="range" min="0" max="0" step="1" value="0" aria-label="${t('detail.samplesPage')}" />
+          <input type="range" min="0" max="0" step="1" value="0" aria-label="${t('detail.samplesPage')}" data-t-aria="detail.samplesPage" />
           <span class="dv-pager-count" aria-hidden="true"></span>
           <button type="button" data-dv-next aria-label="${t('detail.samplesNext')}">&#8594;</button>
         </div>
@@ -72,7 +79,7 @@ function buildPanel(panel: HTMLElement): void {
 }
 
 function fillPanel(id: string): void {
-  const layer = LAYERS.find((l) => l.id === id);
+  const layer = layersView().find((l) => l.id === id);
   const panel = dialog?.panel;
   if (!layer || !panel) return;
   panel.style.setProperty('--layer-c', `var(--c-${layer.color})`);
@@ -91,7 +98,7 @@ function fillPanel(id: string): void {
 function open(id: string): void {
   if (isOpen && currentId === id) return;
   if (isOpen) close({ fromPop: false, quick: true });
-  const layer = LAYERS.find((l) => l.id === id);
+  const layer = layersView().find((l) => l.id === id);
   if (!layer || !dialog) return;
 
   isOpen = true;

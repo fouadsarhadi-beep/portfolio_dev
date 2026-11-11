@@ -1,0 +1,91 @@
+/* @module styles/picker: first-visit popups (language, then view mode). The page sits blurred under 20% black; the choices are two large rounded-square pills in the site surface language. @see src/ui/picker.ts, src/styles/tokens.css */
+
+.picker {
+  position: fixed;
+  inset: 0;
+  z-index: 100;
+  display: grid;
+  place-items: center;
+  padding: 24px;
+  background: rgba(0, 0, 0, 0.2);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  opacity: 1;
+  transition: opacity 0.18s ease;
+}
+
+.picker--closing {
+  opacity: 0;
+}
+
+.picker-box {
+  display: grid;
+  gap: 22px;
+  justify-items: center;
+}
+
+.picker-title {
+  font-family: var(--font-display);
+  font-size: var(--fs-20);
+  font-weight: 650;
+  letter-spacing: var(--tracking-tight);
+  color: var(--ink);
+  text-shadow: 0 1px 8px color-mix(in srgb, var(--bg) 70%, transparent);
+}
+
+.picker-choices {
+  display: flex;
+  gap: 18px;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+/* Two large rounded-square pills, in the shared surface language. */
+.picker-choice {
+  min-inline-size: 132px;
+  min-block-size: 132px;
+  padding: 28px 36px;
+  background: var(--surface-grad);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-l);
+  box-shadow: var(--edge-highlight), var(--shadow-lift);
+  font-family: var(--font-display);
+  font-size: var(--fs-28);
+  font-weight: 650;
+  color: var(--ink);
+  cursor: pointer;
+  transition: transform 0.15s, box-shadow 0.15s, border-color 0.15s;
+}
+
+.picker-choice:hover,
+.picker-choice:focus-visible {
+  transform: translateY(-2px);
+  border-color: color-mix(in srgb, var(--ink) 30%, var(--line));
+  box-shadow: var(--edge-highlight), var(--shadow-hover);
+}
+
+.picker-choice:active {
+  transform: translateY(0);
+}
+
+@media (max-width: 480px) {
+  .picker-choice {
+    min-inline-size: 108px;
+    min-block-size: 108px;
+    font-size: var(--fs-20);
+  }
+
+  .picker-choices {
+    gap: 12px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .picker {
+    transition: none;
+  }
+
+  .picker-choice {
+    transition: none;
+  }
+}

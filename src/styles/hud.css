@@ -1,49 +1,40 @@
-/* @module styles/hud: HUD header, progress bar, layer nav, floor info panel, detail view chrome. @cap-exempt: the header, nav, panel and detail chrome share one HUD surface language (T31); splitting it would cut the shared tokens away from their users. @see src/sections/Hud.astro, src/sections/Hero.astro, docs/DESIGN.md (HUD and UI style) */
+/* @module styles/hud: floating island header, layer nav, floor hover card, detail view chrome. @cap-exempt: the header, nav, card and detail chrome share one HUD surface language (T31); splitting it would cut the shared tokens away from their users. @see src/sections/Hud.astro, src/sections/Hero.astro, docs/DESIGN.md (HUD and UI style) */
 
+/* --- The floating island header (header sample pattern, site tokens) --------
+   Wide screens: a glass pill floating at the top centre, holding the brand, the
+   nav and the status cluster. Below 1024px the pill collapses to a hamburger
+   circle and the nav opens as a dropdown card under it. */
 .hud {
-  position: sticky;
-  top: 0;
+  position: fixed;
+  top: 14px;
+  inset-inline: 0;
   z-index: 50;
-  /* Glass: the scene shows through the bar as it scrolls under it. */
-  background: color-mix(in srgb, var(--bg) 78%, transparent);
-  backdrop-filter: blur(16px) saturate(1.2);
-  -webkit-backdrop-filter: blur(16px) saturate(1.2);
-  border-block-end: 1px solid color-mix(in srgb, var(--line) 75%, transparent);
+  display: flex;
+  justify-content: center;
+  pointer-events: none;
 }
 
-/* One item per cell of the shell (src/styles/layout.css): identity, nav, status.
-   Deterministic placement instead of flex-wrap, so the bar cannot reorder itself
-   at an awkward width. */
-.hud-row {
-  display: grid;
-  grid-template-columns: var(--shell-cols);
-  column-gap: var(--page-gap);
+.isle {
+  pointer-events: auto;
+  display: flex;
   align-items: center;
-  min-height: var(--hud-h);
-  padding-block: 8px;
-  padding-inline: var(--page-inset);
+  gap: 18px;
+  width: max-content;
+  max-width: min(1080px, calc(100% - 24px));
+  padding: 8px 10px 8px 18px;
+  background: color-mix(in srgb, var(--bg) 78%, transparent);
+  backdrop-filter: blur(16px) saturate(1.25);
+  -webkit-backdrop-filter: blur(16px) saturate(1.25);
+  border: 1px solid color-mix(in srgb, var(--line) 80%, transparent);
+  border-radius: var(--radius-pill);
+  box-shadow: var(--edge-highlight), var(--shadow-lift);
+  transition: border-radius 0.3s, padding 0.3s, gap 0.3s, width 0.3s;
 }
 
 .hud-id {
-  grid-column: 1;
   display: flex;
   flex-direction: column;
-}
-
-.hud-row nav {
-  grid-column: 2;
-  justify-self: center;
-  /* The cell may be narrower than the nav: it wraps instead of spilling into
-     the status cell. */
-  min-inline-size: 0;
-}
-
-.hud-status {
-  grid-column: 3;
-  justify-self: end;
-  display: flex;
-  align-items: center;
-  gap: 12px;
+  line-height: 1.25;
 }
 
 .hud-id strong {
@@ -55,6 +46,10 @@
 .hud-id span {
   font-size: var(--fs-12);
   color: var(--ink-soft);
+}
+
+.hud-navwrap {
+  min-inline-size: 0;
 }
 
 .hud-nav {
@@ -76,6 +71,109 @@
 .hud-nav a:hover,
 .hud-nav a:focus-visible {
   border-block-end-color: var(--ink);
+}
+
+.hud-status {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-inline-start: auto;
+}
+
+/* The burger is desktop-hidden; below 1024px the island is a circle holding it. */
+.burger {
+  display: none;
+  width: 40px;
+  height: 40px;
+  flex: none;
+  border-radius: 50%;
+  border: 1px solid var(--line);
+  background: var(--surface);
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  cursor: pointer;
+}
+
+.burger span {
+  width: 16px;
+  height: 2px;
+  border-radius: 2px;
+  background: var(--ink);
+  transition: transform 0.25s, opacity 0.25s;
+}
+
+.isle.open .burger span:nth-child(1) { transform: translateY(6px) rotate(45deg); }
+.isle.open .burger span:nth-child(2) { opacity: 0; }
+.isle.open .burger span:nth-child(3) { transform: translateY(-6px) rotate(-45deg); }
+
+@media (max-width: 1023px) {
+  .isle {
+    gap: 8px;
+    padding: 8px 10px 8px 14px;
+  }
+
+  .hud-id,
+  .hud-navwrap,
+  .hud-status .avail {
+    display: none;
+  }
+
+  .burger {
+    display: flex;
+  }
+
+  /* Open state: the pill grows and the nav becomes a dropdown card under it. */
+  .isle.open {
+    width: min(420px, calc(100% - 24px));
+    border-radius: var(--radius-l);
+    padding-block-end: 10px;
+  }
+
+  .isle.open .hud-id {
+    display: flex;
+  }
+
+  .isle.open .hud-navwrap {
+    display: block;
+    position: absolute;
+    top: calc(100% + 8px);
+    inset-inline: 0;
+    background: var(--surface-grad);
+    border: 1px solid var(--line);
+    border-radius: var(--radius-l);
+    box-shadow: var(--edge-highlight), var(--shadow-lift);
+    padding: 10px;
+  }
+
+  .isle.open .hud-nav {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 2px;
+  }
+
+  .isle.open .hud-nav a {
+    display: block;
+    padding: 10px 12px;
+    border-radius: var(--radius-m);
+    border-block-end: 0;
+  }
+
+  .isle.open .hud-nav a:hover,
+  .isle.open .hud-nav a:focus-visible {
+    background: color-mix(in srgb, var(--ink) 6%, transparent);
+  }
+}
+
+@media (max-width: 480px) {
+  .hud {
+    top: 10px;
+  }
+
+  .hud-nav {
+    gap: 14px;
+  }
 }
 
 .avail {
@@ -158,22 +256,35 @@ html[data-theme='dark'] .theme-toggle .icon-moon {
   }
 }
 
-.progress {
-  display: flex;
-  gap: 4px;
-  margin-inline-start: auto;
+/* Language toggle: a small pill with a globe icon, next to the theme toggle. */
+.lang-toggle {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  height: 34px;
+  padding: 0 12px;
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-pill);
+  color: var(--ink);
+  font-size: var(--fs-12);
+  font-weight: 700;
+  cursor: pointer;
+  transition: transform 0.15s, border-color 0.15s;
 }
 
-.progress li {
-  width: 26px;
-  height: 4px;
-  border-radius: 2px;
-  background: var(--line);
-  transition: background 0.3s;
+.lang-toggle:hover,
+.lang-toggle:focus-visible {
+  transform: translateY(-1px);
+  border-color: color-mix(in srgb, var(--ink) 28%, var(--line));
 }
 
-.progress li.on {
-  background: var(--ink);
+.lang-toggle svg {
+  width: 16px;
+  height: 16px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.6;
 }
 
 /* Layer nav: real buttons, one per layer (AGENTS accessibility rules) */
@@ -298,38 +409,10 @@ html.no-webgl .layer-nav {
   min-inline-size: 1.6ch;
 }
 
-/* The HUD nav needs about 220px on one line. Below 900px its cell cannot hold
-   it, so the bar reflows to two rows: identity and status on the first, the
-   nav under them across the whole band. */
-@media (max-width: 900px) {
-  .hud-row {
-    grid-template-columns: 1fr auto;
-    row-gap: 4px;
-  }
-
-  .hud-status {
-    grid-column: 2;
-    grid-row: 1;
-  }
-
-  .hud-row nav {
-    grid-column: 1 / -1;
-    grid-row: 2;
-    justify-self: start;
-  }
-}
-
-@media (max-width: 760px) {
-  .progress {
-    display: none;
-  }
-}
-
-/* --- Floor info panel (T29 card, merged with the old stage-guide-right in T39) ---
-   The always-on panel at the top of the side column: it names the floor the
-   scroll is on, and while a floor is hovered (or keyboard-selected) it swaps to
-   that one. It sits above the layer nav, which is docked to the column's end
-   edge below it, so the two never overlap.
+/* --- Floor info panel (the hover card; T29, merged with the old guide in T39) ---
+   Shows only while a floor is hovered or keyboard-selected (ui/preview.ts).
+   It sits at the top of the side column, above the layer nav, so the two never
+   overlap.
    Shares its visual language with the T30 expanded card: same surface, radius,
    hairline border, accent rule, soft shadow. No hard cartoon offsets. */
 .layer-card {
@@ -557,6 +640,22 @@ html.no-webgl .layer-nav {
   .stage-sticky[data-detail='true'] .hero-copy {
     transition: none;
   }
+}
+
+/* The simple build has no 3D floor: the expanded card takes the whole band and
+   sits in the viewport (its host is the plain main column, not the stage). */
+html.simple .detail-view {
+  position: fixed;
+  grid-template-columns: minmax(0, 1fr);
+  overflow-y: auto;
+}
+
+html.simple .dv-card {
+  grid-column: 1;
+  inline-size: 100%;
+  max-inline-size: 760px;
+  aspect-ratio: auto;
+  max-block-size: none;
 }
 
 .dv-card {
@@ -866,14 +965,6 @@ button.dv-sample:focus-visible {
 
 /* Small phones (360-480): tighter chrome, same composition. */
 @media (max-width: 480px) {
-  .hud-row {
-    column-gap: 10px;
-  }
-
-  .hud-nav {
-    gap: 14px;
-  }
-
   .detail-view {
     padding-block-end: 20px;
   }

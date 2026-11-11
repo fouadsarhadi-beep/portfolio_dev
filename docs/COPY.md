@@ -21,7 +21,18 @@ Sub: Alex Morgan is a web generalist. Scroll to take the stack apart and see eac
 - web-design-development, Web Design & Development: Design systems and fast, accessible interfaces, from first sketch to shipped front-end.
 - cms, CMS & WordPress: Themes, plugins and editing setups your team can run alone.
 - infrastructure, Infrastructure: Hosting, DNS, SSL, backups and monitoring that keep sites up.
-Write for each layer: a two-sentence intro, four capabilities and two sample projects (title, one-line blurb, three tags). Mark them placeholder in a code comment.
+Write for each layer: a two-sentence intro, four capabilities and sample projects (title, one-line blurb, three tags). Mark them placeholder in a code comment.
+
+## Sample plan (T53, 2026-11-11)
+
+Each floor's samples are its signature deliverables: one tile stands for the skill on one look.
+
+- content (6): guide series (long-form article), product pages rewrite, help center rewrite, editorial calendar (sheet), tone of voice guide, case study library.
+- translation (3): site localization, technical docs translation, bilingual glossary (sheet).
+- seo (3): technical audit, keyword map (sheet), speed and Core Web Vitals pass.
+- web-design-development (3): portfolio redesign, 3D product viewer, design system build.
+- cms (3): theme build, shop setup (sheet), editor workflow with custom blocks.
+- infrastructure (3): hosting migration (sheet), backup and monitor plan, domain/DNS/SSL setup (sheet).
 
 ## Toolkit placeholders (rendered as pills inside each floor's detail card)
 content: Briefs, Editorial calendars, Style guides, Interviews, Editing. translation: Persian, English, Glossaries, Localization QA, CAT tools. seo: Search Console, GA4, Screaming Frog, Ahrefs, Schema markup. web-design-development: Figma, HTML, CSS, TypeScript, Astro, Three.js. cms: WordPress, Gutenberg, ACF, WooCommerce, Custom themes. infrastructure: cPanel, Nginx, Cloudflare, SSL, Backups.

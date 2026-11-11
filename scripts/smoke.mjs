@@ -31,7 +31,7 @@ for (const id of layers) {
   ok(`og card: ${id}`, exists(`og/${id}.svg`));
   ok(`samples json: ${id}`, exists(`work/${id}/samples/0.json`));
 }
-ok('content has a second samples page', exists('work/content/samples/1.json'));
+ok('content samples json ships', exists('work/content/samples/0.json'));
 
 const failed = checks.filter((c) => !c.pass);
 for (const c of checks) console.log(`${c.pass ? 'ok  ' : 'FAIL'} ${c.name}${c.detail ? ` (${c.detail})` : ''}`);

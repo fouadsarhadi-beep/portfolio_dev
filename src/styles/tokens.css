@@ -42,6 +42,10 @@
   --font-display-alt: '__reserved-display-alt';
   --font-body-alt: '__reserved-body-alt';
 
+  /* Persian uses Vazirmatn (local, Fontsource) through the reserved alt slots. */
+  --font-display-fa: 'Vazirmatn Variable', 'DM Sans Variable', sans-serif;
+  --font-body-fa: 'Vazirmatn Variable', 'DM Sans Variable', sans-serif;
+
   /* Type scale (px): 12, 14, 16, 20, 28, 44, 72, 120 */
   --fs-12: 12px;
   --fs-14: 14px;
@@ -102,6 +106,12 @@
      and FOOTPRINT / CAM_VIEW_HEIGHT in src/config/tuning.ts -- no rule consumes it;
      the real fit is overviewFitZoom (focus-pose.ts), which caps the zoom per cell. */
   --tower-w: 67.5vh;
+}
+
+/* Persian: the document flips to RTL and the fonts come from the alt slots. */
+html[lang='fa'] {
+  --font-display: var(--font-display-fa);
+  --font-body: var(--font-body-fa);
 }
 
 /* Dark theme (values mirror DARK in config/theme.ts; approved design in docs/DESIGN.md) */

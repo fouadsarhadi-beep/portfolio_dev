@@ -3,7 +3,7 @@
 Search this file before creating anything.
 
 ## src/
-- main.ts: main: page entry; resolves the locale, boots the scene, then wires the UI layer to it. @see src/scene/boot.ts, src/lib/i18n.ts, src/ui/preview.ts, src/ui/detail.ts, src/ui/keyboard.ts, src/ui/nav-level.ts
+- main.ts: main: page entry; resolves the locale, runs the first-visit pickers, boots the scene (skipped on the simple build), then wires the UI layer to it. @see src/scene/boot.ts, src/lib/i18n.ts, src/ui/picker.ts, src/ui/preview.ts, src/ui/detail.ts, src/ui/keyboard.ts, src/ui/nav-level.ts
   uses: src/lib/i18n, src/lib/bus
 
 ## src/config/
@@ -12,7 +12,7 @@ Search this file before creating anything.
   uses: src/config/types
 - detail.ts: config/detail: shared constants for the expanded floor view. @see src/ui/detail.ts, src/ui/detail-samples.ts, src/pages/work/[id]/samples/[page].json.ts
   exports: SAMPLE_PAGE
-- documents.ts: config/documents: text of each sample document, keyed by Sample.doc. @see src/config/layers.ts, src/ui/doc-viewer.ts, docs/DESIGN.md (Document reader)
+- documents.ts: config/documents: text of each sample document, keyed by Sample.doc. @cap-exempt: pure placeholder data, one entry per Sample.doc key; the one long-form body lives in src/config/articles.ts so this file stays a flat key-value table. @see src/config/layers.ts, src/ui/doc-viewer.ts, docs/DESIGN.md (Document reader)
   exports: DOCUMENTS
   uses: src/config/types
 - layers.ts: config/layers: the six layer configs in locked top-to-bottom order. @see docs/COPY.md, src/config/types.ts
@@ -39,9 +39,9 @@ Search this file before creating anything.
 ## src/content/
 - en.ts: content/en: every English UI string, read through t(). @see src/lib/i18n.ts, docs/COPY.md
   exports: en, Dict
-- fa.ts: content/fa: Persian strings, partial by design; anything missing falls back to English. @see src/lib/i18n.ts, src/content/en.ts, docs/DESIGN.md (Dual theme)
-  exports: LocaleOverrides, fa
-  uses: src/content/en
+- fa.ts: content/fa: the full Persian dictionary plus per-layer content overrides; anything missing still falls back to English. @see src/lib/i18n.ts, src/content/en.ts, docs/DESIGN.md (Dual theme)
+  exports: LocaleOverrides, fa, faLayers
+  uses: src/content/en, src/config/types
 
 ## src/layouts/
 - Base.astro: layouts/Base: html head, fonts, global styles, meta, JSON-LD, skip link. @see src/pages/index.astro, src/styles/base.css
@@ -51,9 +51,9 @@ Search this file before creating anything.
 - bus.ts: lib/bus: typed event bus, one of two doors between UI and scene. @see docs/WIRING.md, src/config/types.ts, src/scene/api.ts
   exports: bus
   uses: src/config/types
-- i18n.ts: lib/i18n: reads UI strings from the active locale through t(). @see src/content/en.ts, src/content/fa.ts
-  exports: TKey, setLocale, t, initLocale
-  uses: src/content/en, src/content/fa
+- i18n.ts: lib/i18n: reads UI strings from the active locale through t(), exposes the locale-aware layer view, and re-applies the locale to the DOM after a switch. @see src/content/en.ts, src/content/fa.ts, src/config/layers.ts
+  exports: TKey, locale, setLocale, t, layersView, initLocale, applyDir, applyLocaleDom
+  uses: src/content/en, src/content/fa, src/config/layers, src/config/types, src/lib/bus
 - quality.ts: lib/quality: picks the quality tier from screen width, CPU cores and data preference. @see docs/DESIGN.md (Responsive), src/config/tuning.ts
   exports: QualityTier, detectTier
 - reduced-motion.ts: lib/reduced-motion: reads prefers-reduced-motion for every motion decision. @see docs/MOTION.md (Reduced motion)
@@ -69,6 +69,8 @@ Search this file before creating anything.
 - robots.txt.ts: pages/robots.txt: crawl everything, point at the sitemap. @see src/pages/sitemap.xml.ts, src/config/site.ts
   exports: GET
   uses: src/config/site
+- simple.astro: pages/simple: the simple build — section 1 is a 2x3 grid of floor tiles instead of the 3D tower; clicking a tile opens the same detail card (no 3D floor). Chosen from the first-visit mode popup. @see src/ui/picker.ts, src/pages/index.astro, src/styles/sections.css (.simple-tiles)
+  uses: src/layouts/Base.astro, src/sections/Hud.astro, src/sections/About.astro, src/sections/Contact.astro, src/sections/Footer.astro, src/config/layers, src/config/site, src/lib/i18n, src/lib/bus
 - sitemap.xml.ts: pages/sitemap.xml: one entry per route, generated from LAYERS. @see src/pages/robots.txt.ts, src/config/layers.ts, src/config/site.ts
   exports: GET
   uses: src/config/layers, src/config/site
@@ -294,15 +296,15 @@ Search this file before creating anything.
   uses: src/config/tuning, src/config/layers
 
 ## src/sections/
-- About.astro: sections/About: statement, six-layer diagram, three color panels. @see docs/DESIGN.md (Sections), src/styles/sections.css
+- About.astro: sections/About: bento grid -- statement card with a stacked-bar diagram of the six layers, three focus panels with tool chips. @see docs/DESIGN.md (Sections), src/styles/sections.css
   uses: src/config/layers, src/lib/i18n
-- Contact.astro: sections/Contact: end-of-level panel with heading, mailto, socials, availability. @see docs/COPY.md, src/config/site.ts
+- Contact.astro: sections/Contact: end-of-level panel with a contact form, socials and availability. @see docs/COPY.md, src/config/site.ts
   uses: src/config/site, src/lib/i18n, src/lib/i18n
 - Footer.astro: sections/Footer: compact footer with name, note, top link. @see docs/DESIGN.md (Sections)
   uses: src/config/site, src/lib/i18n
 - Hero.astro: sections/Hero: tall scroll stage, sticky canvas mount, layer nav, hero copy, no-JS fallback. @see docs/MOTION.md, src/styles/hud.css, src/styles/sections.css
   uses: src/config/layers, src/lib/i18n, src/lib/bus
-- Hud.astro: sections/Hud: sticky header with name, role, nav links, availability, progress bar. @see src/styles/hud.css, docs/DESIGN.md (HUD and UI style)
+- Hud.astro: sections/Hud: floating island header (floating pill on wide screens, hamburger circle with a dropdown card below 1024px, per the header sample). Brand, nav, language, availability, theme toggle. @see src/styles/hud.css, docs/DESIGN.md (HUD and UI style), header sample (parent folder)
   uses: src/config/site, src/lib/i18n, src/ui/theme
 - Ladder.astro: sections/Ladder: the scroll ladder: one rung per floor, click to jump. @see src/styles/ladder.css, docs/MOTION.md (Scroll mapping), src/pages/index.astro
   uses: src/config/layers, src/lib/i18n, src/lib/bus
@@ -313,7 +315,7 @@ Search this file before creating anything.
   uses: src/config/detail, src/config/sample-icons, src/config/types, src/lib/i18n, src/ui/doc-viewer
 - detail.ts: ui/detail: expanded floor view: square text card on the right, work tiles beneath. @see docs/MOTION.md (Detail view), docs/WIRING.md (Routes), src/ui/detail-samples.ts, src/ui/dialog.ts, src/scene/focus.ts
   exports: initDetail
-  uses: src/lib/bus, src/config/layers, src/scene/api, src/lib/reduced-motion, src/lib/i18n, src/ui/detail-samples, src/ui/dialog, src/ui/doc-viewer
+  uses: src/lib/bus, src/lib/i18n, src/scene/api, src/lib/reduced-motion, src/ui/detail-samples, src/ui/dialog, src/ui/doc-viewer
 - dialog.ts: ui/dialog: dialog semantics: aria, focus in and out, Tab trap, Escape. @see docs/MOTION.md (Detail view), src/ui/detail.ts
   exports: DialogHandle, createDialog
 - doc-viewer.ts: ui/doc-viewer: text reader for a sample document, opened over the expanded floor. @see src/config/documents.ts, src/ui/detail-samples.ts, src/ui/detail.ts, docs/DESIGN.md (Document reader)
@@ -325,9 +327,12 @@ Search this file before creating anything.
 - nav-level.ts: ui/nav-level: levels the layer-nav pills with their floors: each frame, every slab's screen position is projected through the camera and its pill is placed at that height inside the side column (min-gap spreading keeps them readable when floors are stacked). Active only in the five-part stage; in the collapsed one-cell stage the nav is a bottom strip and the CSS owns it. @see src/sections/Hero.astro, src/lib/bus.ts, src/styles/hud.css (.layer-nav)
   exports: initNavLevel
   uses: src/config/layers, src/lib/bus
+- picker.ts: ui/picker: first-visit popups -- language (En /فا), then view mode (Interactive / Simple) -- and the header language toggle. The backdrop is the page blurred under 20% black; the choices are two large rounded-square pills in the site surface language. @see src/lib/i18n.ts, src/pages/simple.astro, src/styles/picker.css
+  exports: initPicker, initLangToggle
+  uses: src/lib/i18n
 - preview.ts: ui/preview: the floor hover card: appears only while a floor is hovered or keyboard-selected, and names that floor. @see src/sections/Hero.astro, src/lib/bus.ts, src/styles/hud.css (.layer-card)
   exports: initPreview
-  uses: src/lib/bus, src/config/layers
+  uses: src/lib/bus, src/lib/i18n
 - theme.ts: ui/theme: the theme toggle; flips data-theme, persists the choice, emits on the bus. @see docs/DESIGN.md (Dual theme), src/config/theme.ts, src/sections/Hud.astro
   exports: initThemeToggle
   uses: src/lib/bus, src/config/theme

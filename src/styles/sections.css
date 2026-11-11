@@ -239,6 +239,93 @@ html:not(.js) .layer-nav {
   box-shadow: var(--shadow-card);
 }
 
+/* --- The simple build (/simple/): section 1 is a 2x3 tile grid ---------------
+   Same shell band, same surface language. Each tile is one floor; clicking it
+   opens the expanded card without the 3D floor. */
+.simple-stage {
+  padding-block: calc(var(--hud-offset, var(--hud-h)) + 48px) clamp(64px, 12vh, 120px);
+}
+
+.simple-tiles {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 14px;
+  margin-block-start: 32px;
+}
+
+.simple-tile {
+  display: flex;
+  flex-direction: column;
+  align-items: start;
+  gap: 8px;
+  text-align: start;
+  padding: 20px 22px;
+  background: var(--surface-grad);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-l);
+  box-shadow: var(--edge-highlight), var(--shadow-card);
+  cursor: pointer;
+  transition: transform 0.15s, box-shadow 0.15s, border-color 0.15s;
+}
+
+.simple-tile:hover,
+.simple-tile:focus-visible {
+  transform: translateY(-2px);
+  border-color: color-mix(in srgb, var(--layer-c, var(--ink)) 45%, var(--line));
+  box-shadow: var(--edge-highlight), var(--shadow-lift);
+}
+
+.st-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  inline-size: 100%;
+}
+
+.st-num {
+  font-family: var(--font-display);
+  font-weight: 600;
+  font-size: var(--fs-12);
+  color: var(--ink-soft);
+  font-variant-numeric: tabular-nums;
+}
+
+.st-icon {
+  width: 20px;
+  height: 20px;
+  fill: none;
+  stroke: var(--layer-c, var(--ink-soft));
+  stroke-width: 1.7;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.st-title {
+  font-family: var(--font-display);
+  font-size: var(--fs-20);
+  font-weight: 650;
+  letter-spacing: var(--tracking-tight);
+  color: var(--ink);
+}
+
+.st-short {
+  font-size: var(--fs-14);
+  line-height: 1.5;
+  color: var(--ink-soft);
+}
+
+@media (max-width: 860px) {
+  .simple-tiles {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 480px) {
+  .simple-tiles {
+    grid-template-columns: 1fr;
+  }
+}
+
 /* --- Sections --- */
 #about, #contact {
   padding-block: clamp(64px, 12vh, 120px);
@@ -264,7 +351,9 @@ html:not(.js) .layer-nav {
   color: var(--ink-soft);
 }
 
-/* About */
+/* About: a bento on the shell band. Left: the statement in display type above a
+   stacked-bar diagram of the six floors (each bar links to its work page).
+   Right: three focus panels with their tool chips. */
 .about-cols {
   display: grid;
   grid-template-columns: 1.1fr 1fr;
@@ -273,30 +362,45 @@ html:not(.js) .layer-nav {
 }
 
 .statement {
-  font-size: var(--fs-20);
-  line-height: 1.5;
+  font-size: clamp(var(--fs-20), 2vw, var(--fs-28));
+  line-height: 1.45;
 }
 
+/* The diagram reads like the tower itself: six bars stacked top to bottom. */
 .layer-diagram {
   display: flex;
   flex-direction: column;
-  margin-block-start: 24px;
+  gap: 6px;
+  margin-block-start: 28px;
 }
 
 .layer-diagram li {
+  min-inline-size: 0;
+}
+
+.layer-diagram a {
   display: flex;
   align-items: center;
   gap: 12px;
-  padding-block: 9px;
-  border-block-end: 1px solid var(--line);
+  padding: 10px 14px;
+  background: var(--surface-grad);
+  border: 1px solid var(--line);
+  border-inline-start: 3px solid var(--layer-c, var(--ink-soft));
+  border-radius: var(--radius-m);
+  box-shadow: var(--edge-highlight), var(--shadow-card);
   font-size: var(--fs-14);
   font-weight: 600;
-  /* The rule runs the full column: the global list measure would cut it short. */
-  max-inline-size: none;
+  text-decoration: none;
+  color: var(--ink);
+  transition: transform 0.15s, box-shadow 0.15s, border-color 0.15s;
 }
 
-.layer-diagram li:first-child {
-  border-block-start: 1px solid var(--line);
+.layer-diagram a:hover,
+.layer-diagram a:focus-visible {
+  transform: translateY(-1px);
+  box-shadow: var(--edge-highlight), var(--shadow-lift);
+  border-color: color-mix(in srgb, var(--layer-c, var(--ink)) 45%, var(--line));
+  border-inline-start-color: var(--layer-c, var(--ink));
 }
 
 .ld-num {
@@ -306,6 +410,36 @@ html:not(.js) .layer-nav {
   color: var(--ink-soft);
   font-variant-numeric: tabular-nums;
   min-inline-size: 1.8ch;
+}
+
+.ld-icon {
+  width: 17px;
+  height: 17px;
+  flex: none;
+  fill: none;
+  stroke: var(--layer-c, var(--ink-soft));
+  stroke-width: 1.7;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.ld-title {
+  min-inline-size: 0;
+  overflow-wrap: anywhere;
+}
+
+.ld-arrow {
+  margin-inline-start: auto;
+  color: var(--ink-soft);
+  opacity: 0;
+  translate: -4px 0;
+  transition: opacity 0.15s, translate 0.15s;
+}
+
+.layer-diagram a:hover .ld-arrow,
+.layer-diagram a:focus-visible .ld-arrow {
+  opacity: 1;
+  translate: 0 0;
 }
 
 .about-panels {
@@ -343,9 +477,26 @@ html:not(.js) .layer-nav {
   color: var(--ink-soft);
 }
 
-/* Toolkit tiles are gone (T46): the toolkit lives in each floor's detail card. */
+.panel .chips {
+  margin-block-start: 14px;
+}
 
-/* Contact */
+.chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.chip {
+  font-size: var(--fs-12);
+  font-weight: 500;
+  padding: 3px 10px;
+  border: 1px solid var(--line);
+  border-radius: var(--radius-pill);
+  color: var(--ink-soft);
+  background: var(--bg);
+}
+/* Contact: an end-of-level panel with a form, socials and availability. */
 .contact-panel {
   max-width: 720px;
   margin-inline: auto;
@@ -366,14 +517,61 @@ html:not(.js) .layer-nav {
   color: var(--ink-soft);
 }
 
+/* Contact form: fields on the same surface language as the cards. */
+.contact-form {
+  margin-block-start: 22px;
+  text-align: start;
+  display: grid;
+  gap: 12px;
+}
+
+.cf-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+
+.cf-field {
+  display: grid;
+  gap: 6px;
+  font-size: var(--fs-12);
+  font-weight: 600;
+  color: var(--ink-soft);
+}
+
+.cf-field input,
+.cf-field textarea {
+  font: inherit;
+  font-size: var(--fs-14);
+  font-weight: 400;
+  color: var(--ink);
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-m);
+  padding: 10px 12px;
+  box-shadow: var(--edge-highlight);
+  resize: vertical;
+}
+
+.cf-field input:focus-visible,
+.cf-field textarea:focus-visible {
+  outline: 2px solid var(--ink);
+  outline-offset: 2px;
+  border-color: color-mix(in srgb, var(--ink) 40%, var(--line));
+}
+
 .contact-panel .avail {
   display: flex;
   justify-content: center;
-  margin-block: 16px 20px;
+  margin-block: 16px 4px;
 }
 
-.contact-panel .btn {
-  margin-block-start: 4px;
+.contact-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  justify-content: center;
+  margin-block-start: 6px;
 }
 
 .socials {
@@ -544,6 +742,10 @@ html:not(.js) .layer-nav {
     padding: 24px 20px;
   }
 
+  .cf-row {
+    grid-template-columns: 1fr;
+  }
+
   .hero-copy .sub {
     font-size: var(--fs-14);
   }
@@ -640,16 +842,7 @@ html:not(.js) .layer-nav {
   }
 }
 
-/* Contact actions: the mailto link plus a copy button for machines with no
-   mail client. The ghost button is the outline variant of .btn. */
-.contact-actions {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 10px;
-  justify-content: center;
-  margin-block-start: 18px;
-}
-
+/* The ghost button is the outline variant of .btn (used next to the submit). */
 .btn-ghost {
   background: transparent;
   color: var(--ink);

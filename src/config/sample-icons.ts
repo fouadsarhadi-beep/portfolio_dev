@@ -16,4 +16,5 @@ export const SAMPLE_ICONS: Record<string, string> = {
   layout: '<rect x="4" y="4" width="16" height="16" rx="2"/><path d="M4 10h16"/><path d="M10 10v10"/>',
   search: '<circle cx="11" cy="11" r="6"/><path d="M15.5 15.5L20 20"/>',
   bolt: '<path d="M13 3L5 14h5l-1 7 8-11h-5z"/>',
+  grid: '<rect x="4" y="4" width="7" height="7" rx="1.4"/><rect x="13" y="4" width="7" height="7" rx="1.4"/><rect x="4" y="13" width="7" height="7" rx="1.4"/><rect x="13" y="13" width="7" height="7" rx="1.4"/>',
 };

@@ -8,19 +8,19 @@ import { t } from '@/lib/i18n';
 <Base title={`${t('nf.title')} | ${t('nf.home')}`}>
   <main id="main" class="shell nf">
     <p class="nf-kicker">404</p>
-    <h1>{t('nf.title')}</h1>
-    <p class="nf-line">{t('nf.line')}</p>
+    <h1 data-t="nf.title">{t('nf.title')}</h1>
+    <p class="nf-line" data-t="nf.line">{t('nf.line')}</p>
     <ul class="nf-list">
       {LAYERS.map((l) => (
-        <li style={`--layer-c: var(--c-${l.color})`}>
+        <li style={`--layer-c: var(--c-${l.color})`} data-layer-id={l.id}>
           <a href={`/work/${l.id}/`}>
             <span class="nf-num">{l.number}</span>
-            <span class="nf-title">{l.title}</span>
+            <span class="nf-title" data-lf="title">{l.title}</span>
           </a>
         </li>
       ))}
     </ul>
-    <a class="btn" href="/">{t('nf.home')}</a>
+    <a class="btn" href="/" data-t="nf.home">{t('nf.home')}</a>
   </main>
 </Base>
 

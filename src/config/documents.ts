@@ -1,4 +1,4 @@
-/** @module config/documents: text of each sample document, keyed by Sample.doc. @see src/config/layers.ts, src/ui/doc-viewer.ts, docs/DESIGN.md (Document reader) */
+/** @module config/documents: text of each sample document, keyed by Sample.doc. @cap-exempt: pure placeholder data, one entry per Sample.doc key; the one long-form body lives in src/config/articles.ts so this file stays a flat key-value table. @see src/config/layers.ts, src/ui/doc-viewer.ts, docs/DESIGN.md (Document reader) */
 import type { SampleDocument } from './types';
 
 /**
@@ -114,6 +114,17 @@ export const DOCUMENTS: Record<string, SampleDocument> = {
       'Reviewers work inside the CAT tool, so comments and segments stay together.',
     ],
   },
+  'translation-3': {
+    kind: 'sheet',
+    meta: 'Sheet · 4 rows',
+    rows: [
+      ['English', 'Persian', 'Note'],
+      ['Workspace', 'فضای کاری', 'UI and docs'],
+      ['Token', 'توکن', 'Docs only'],
+      ['Deploy', 'استقرار', 'Button label'],
+      ['Queue', 'صف', 'Infra term, keep English in code'],
+    ],
+  },
   'seo-1': {
     kind: 'pdf',
     meta: '14 pages',
@@ -131,6 +142,14 @@ export const DOCUMENTS: Record<string, SampleDocument> = {
       ['Pricing', '/pricing', 'cms pricing', '720'],
     ],
   },
+  'seo-3': {
+    kind: 'doc',
+    meta: 'Before / after report',
+    text: [
+      'The ten heaviest pages lost their render-blocking scripts, their un-sized images and their third-party fonts. Largest Contentful Paint moved from 4.1s to 1.8s.',
+      'Each fix lists the file, the change and the measured result, so the next audit starts from the numbers.',
+    ],
+  },
   'web-design-development-1': {
     kind: 'doc',
     meta: 'Type and color',
@@ -145,6 +164,14 @@ export const DOCUMENTS: Record<string, SampleDocument> = {
     text: [
       'An interactive viewer for one product, built on WebGL with a fixed camera. It runs on phones at 30 frames per second with the pixel ratio capped.',
       'The model ships as a compressed mesh. Text and buttons stay in the DOM, so the page works without the scene.',
+    ],
+  },
+  'web-design-development-3': {
+    kind: 'doc',
+    meta: 'Tokens and components',
+    text: [
+      'One token file holds color, spacing and type as names, and every component reads from it. A new brand is a new token file, not a new component.',
+      'The docs show each component with its states, so a designer and a developer hand off the same picture.',
     ],
   },
   'cms-1': {
@@ -164,6 +191,14 @@ export const DOCUMENTS: Record<string, SampleDocument> = {
       ['Payments', 'Card and invoice', 'Invoice for schools'],
     ],
   },
+  'cms-3': {
+    kind: 'doc',
+    meta: '6 custom blocks',
+    text: [
+      'Six Gutenberg blocks cover every page layout: hero, text, gallery, quote, form and footer. Editors combine them without breaking the grid.',
+      'Each block locks the fields editors should not change and frees the ones they should. A short training video ships with the theme.',
+    ],
+  },
   'infrastructure-1': {
     kind: 'sheet',
     meta: 'Sheet · 3 rows',
@@ -179,6 +214,17 @@ export const DOCUMENTS: Record<string, SampleDocument> = {
     text: [
       'Backups run nightly and stay for thirty days. A restore test runs on the first Monday of each month.',
       'Monitoring checks the home page, the checkout and the API every minute from two regions. Alerts go to mail and phone.',
+    ],
+  },
+  'infrastructure-3': {
+    kind: 'sheet',
+    meta: 'Sheet · 4 rows',
+    rows: [
+      ['Step', 'Record', 'Result'],
+      ['Domain', 'A record to the CDN', 'Site loads over HTTPS'],
+      ['DNS', 'MX and SPF moved first', 'Mail kept working'],
+      ['SSL', 'Full (strict) mode', 'No mixed content'],
+      ['Cutover', 'TTL lowered 48h before', 'Zero downtime'],
     ],
   },
 };

@@ -41,26 +41,26 @@ const listJson = {
 >
   <Hud />
   <main id="main">
-    <article class="work" style={`--layer-c: var(--c-${layer.color})`}>
+    <article class="work" style={`--layer-c: var(--c-${layer.color})`} data-layer-id={layer.id}>
       <p class="work-num" aria-hidden="true">{layer.number}</p>
-      <h1>{layer.title}</h1>
-      <p class="work-short">{layer.short}</p>
-      <p class="work-intro">{layer.intro}</p>
+      <h1 data-lf="title">{layer.title}</h1>
+      <p class="work-short" data-lf="short">{layer.short}</p>
+      <p class="work-intro" data-lf="intro">{layer.intro}</p>
 
-      <h2>{t('detail.capabilitiesHeading')}</h2>
-      <ul class="cap-list">
+      <h2 data-t="detail.capabilitiesHeading">{t('detail.capabilitiesHeading')}</h2>
+      <ul class="cap-list" data-lf-list="capabilities">
         {layer.capabilities.map((c) => (
           <li>{c}</li>
         ))}
       </ul>
 
-      <h2>{t('detail.samplesHeading')}</h2>
+      <h2 data-t="detail.samplesHeading">{t('detail.samplesHeading')}</h2>
       <div class="samples">
-        {layer.samples.map((s) => (
-          <article class="sample-card">
-            <h3>{s.title}</h3>
-            <p>{s.blurb}</p>
-            <ul class="chips">
+        {layer.samples.map((s, i) => (
+          <article class="sample-card" data-sample-i={i}>
+            <h3 data-sf="title">{s.title}</h3>
+            <p data-sf="blurb">{s.blurb}</p>
+            <ul class="chips" data-sf="tags">
               {s.tags.map((tag) => (
                 <li class="chip">{tag}</li>
               ))}
@@ -69,15 +69,15 @@ const listJson = {
         ))}
       </div>
 
-      <h2>{t('detail.toolkitHeading')}</h2>
-      <ul class="chips">
+      <h2 data-t="detail.toolkitHeading">{t('detail.toolkitHeading')}</h2>
+      <ul class="chips" data-lf-list="toolkit">
         {layer.toolkit.map((tool) => (
           <li class="chip">{tool}</li>
         ))}
       </ul>
 
       <p class="work-back">
-        <a class="btn" href="/#stack">{t('detail.back')}</a>
+        <a class="btn" href="/#stack" data-t="detail.back">{t('detail.back')}</a>
       </p>
       <script is:inline type="application/ld+json" set:html={JSON.stringify(listJson)} />
     </article>

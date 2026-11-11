@@ -1,21 +1,39 @@
 ---
-/** @module sections/Contact: end-of-level panel with heading, mailto, socials, availability. @see docs/COPY.md, src/config/site.ts */
+/** @module sections/Contact: end-of-level panel with a contact form, socials and availability. @see docs/COPY.md, src/config/site.ts */
 import { SITE } from '@/config/site';
 import { t } from '@/lib/i18n';
 ---
 
 <section id="contact" class="contact shell">
   <div class="contact-panel" style="--layer-c: var(--c-butter)">
-    <h2>{t('contact.heading')}</h2>
-    <p>{t('contact.body')}</p>
+    <h2 data-t="contact.heading">{t('contact.heading')}</h2>
+    <p data-t="contact.body">{t('contact.body')}</p>
     <p class="avail" data-available={String(SITE.available)}>
       <span class="dot" aria-hidden="true"></span>
-      {t('contact.availability')}
+      <span data-t="contact.availability">{t('contact.availability')}</span>
     </p>
-    <div class="contact-actions">
-      <a class="btn" href={`mailto:${SITE.email}`}>{t('contact.emailButton')}</a>
-      <button type="button" class="btn btn-ghost" data-copy-email={SITE.email}>{t('contact.copyEmail')}</button>
-    </div>
+
+    <form class="contact-form" data-contact-form>
+      <div class="cf-row">
+        <label class="cf-field">
+          <span data-t="contact.formName">{t('contact.formName')}</span>
+          <input type="text" name="name" autocomplete="name" required />
+        </label>
+        <label class="cf-field">
+          <span data-t="contact.formEmail">{t('contact.formEmail')}</span>
+          <input type="email" name="email" autocomplete="email" required />
+        </label>
+      </div>
+      <label class="cf-field">
+        <span data-t="contact.formMessage">{t('contact.formMessage')}</span>
+        <textarea name="message" rows="4" required></textarea>
+      </label>
+      <div class="contact-actions">
+        <button class="btn" type="submit" data-t="contact.formSend">{t('contact.formSend')}</button>
+        <button type="button" class="btn btn-ghost" data-copy-email={SITE.email} data-t="contact.copyEmail">{t('contact.copyEmail')}</button>
+      </div>
+    </form>
+
     <ul class="socials">
       {SITE.socials.map((s) => (
         <li><a href={s.href}>{s.label}</a></li>
@@ -43,9 +61,26 @@ import { t } from '@/lib/i18n';
           }, 1600);
         },
         () => {
-          /* clipboard blocked: the mailto button still works */
+          /* clipboard blocked: the form's mailto still works */
         },
       );
+    });
+  }
+
+  // The form opens the visitor's mail client with the message pre-filled.
+  const form = document.querySelector<HTMLFormElement>('[data-contact-form]');
+  if (form) {
+    form.addEventListener('submit', (e) => {
+      e.preventDefault();
+      const email = (form.querySelector('[data-copy-email]') as HTMLElement)?.dataset.copyEmail
+        ?? document.querySelector<HTMLElement>('[data-copy-email]')?.dataset.copyEmail ?? '';
+      const data = new FormData(form);
+      const name = String(data.get('name') ?? '');
+      const from = String(data.get('email') ?? '');
+      const message = String(data.get('message') ?? '');
+      const subject = encodeURIComponent(`Site inquiry from ${name || from || 'the portfolio form'}`);
+      const body = encodeURIComponent(`${message}\n\n-- ${name}${from ? ` (${from})` : ''}`);
+      window.location.href = `mailto:${email}?subject=${subject}&body=${body}`;
     });
   }
 </script>

@@ -1,6 +1,6 @@
 /** @module ui/preview: the floor hover card: appears only while a floor is hovered or keyboard-selected, and names that floor. @see src/sections/Hero.astro, src/lib/bus.ts, src/styles/hud.css (.layer-card) */
 import { bus } from '@/lib/bus';
-import { LAYERS } from '@/config/layers';
+import { layersView } from '@/lib/i18n';
 
 let card: HTMLElement | null = null;
 let hoverId: string | null = null; // a hovered (or selected) floor shows the card
@@ -22,7 +22,7 @@ export function initPreview(): void {
   el.dataset.show = 'false';
   el.setAttribute('aria-hidden', 'true');
   el.innerHTML = `
-    <p class="lc-count"><span data-lc-num></span><span class="lc-of">/ ${String(LAYERS.length).padStart(2, '0')}</span></p>
+    <p class="lc-count"><span data-lc-num></span><span class="lc-of">/ ${String(layersView().length).padStart(2, '0')}</span></p>
     <p class="lc-title" data-lc-title></p>
     <p class="lc-short" data-lc-short></p>
     <p class="lc-note" data-lc-note></p>`;
@@ -52,6 +52,8 @@ export function initPreview(): void {
     detail = false;
     hide();
   });
+  // A live locale switch re-renders the card in the new language.
+  bus.on('locale:change', () => sync());
 }
 
 /** The card shows only for a hovered (or keyboard-selected) floor. */
@@ -60,7 +62,7 @@ function sync(): void {
     hide();
     return;
   }
-  const layer = LAYERS.find((l) => l.id === hoverId);
+  const layer = layersView().find((l) => l.id === hoverId);
   if (!layer) {
     hide();
     return;

@@ -1,0 +1,51 @@
+---
+/** @module pages/simple: the simple build — section 1 is a 2x3 grid of floor tiles instead of the 3D tower; clicking a tile opens the same detail card (no 3D floor). Chosen from the first-visit mode popup. @see src/ui/picker.ts, src/pages/index.astro, src/styles/sections.css (.simple-tiles) */
+import Base from '@/layouts/Base.astro';
+import Hud from '@/sections/Hud.astro';
+import About from '@/sections/About.astro';
+import Contact from '@/sections/Contact.astro';
+import Footer from '@/sections/Footer.astro';
+import { LAYERS } from '@/config/layers';
+import { SITE } from '@/config/site';
+import { t } from '@/lib/i18n';
+---
+
+<Base title={`${SITE.name} — ${SITE.role}`}>
+  <script is:inline>document.documentElement.classList.add('simple');</script>
+  <Hud />
+  <main id="main">
+    <section class="simple-stage shell">
+      <h1 class="section-head" data-t="hero.h1">{t('hero.h1')}</h1>
+      <p class="section-intro" data-t="hero.sub">{t('hero.sub')}</p>
+      <div class="simple-tiles">
+        {LAYERS.map((l) => (
+          <button type="button" class="simple-tile" data-layer-id={l.id} data-layer-open
+            style={`--layer-c: var(--c-${l.color})`}
+            aria-label={`${t('a11y.openLayer')} ${l.number}: ${l.title}`}>
+            <span class="st-top">
+              <span class="st-num" aria-hidden="true">{l.number}</span>
+              <svg class="st-icon" viewBox="0 0 24 24" aria-hidden="true"><path d={l.icon} /></svg>
+            </span>
+            <span class="st-title" data-lf="title">{l.title}</span>
+            <span class="st-short" data-lf="short">{l.short}</span>
+          </button>
+        ))}
+      </div>
+    </section>
+    <About />
+    <Contact />
+  </main>
+  <Footer />
+</Base>
+
+<script>
+  import { bus } from '@/lib/bus';
+
+  // A tile opens the same expanded view a floor click opens; the scene never
+  // boots here, so the card shows without the 3D floor.
+  document.querySelectorAll<HTMLButtonElement>('.simple-tile').forEach((btn) => {
+    btn.addEventListener('click', () => bus.emit('layer:open', { id: btn.dataset.layerId ?? '' }));
+  });
+
+  import '@/main';
+</script>

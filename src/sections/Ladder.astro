@@ -4,16 +4,16 @@ import { LAYERS } from '@/config/layers';
 import { t } from '@/lib/i18n';
 ---
 
-<nav class="ladder" aria-label={t('ladder.label')}>
+<nav class="ladder" aria-label={t('ladder.label')} data-t-aria="ladder.label">
   <span class="ladder-track" aria-hidden="true"><span class="ladder-fill" data-ladder-fill></span></span>
   <p class="sr-only" aria-live="polite" data-floor-live></p>
   <ol class="ladder-list">
     {LAYERS.map((l, i) => (
-      <li>
+      <li data-layer-id={l.id}>
         <button type="button" class="ladder-rung" data-step={i} style={`--layer-c: var(--c-${l.color})`}>
           <span class="ladder-dot" aria-hidden="true"></span>
           <span class="ladder-num" aria-hidden="true">{l.number}</span>
-          <span class="ladder-label">{l.title}</span>
+          <span class="ladder-label" data-lf="title">{l.title}</span>
         </button>
       </li>
     ))}

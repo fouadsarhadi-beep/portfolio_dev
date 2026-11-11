@@ -38,6 +38,10 @@ export const en = {
     body: 'Tell me what the site should do. I answer within two working days.',
     emailButton: 'Send email',
     availability: 'Open for projects.',
+    formName: 'Your name',
+    formEmail: 'Your email',
+    formMessage: 'What should the site do?',
+    formSend: 'Send message',
   },
   preview: {
     viewWork: 'View work',
@@ -65,6 +69,14 @@ export const en = {
     openLayer: 'Open layer',
     close: 'Close',
     themeToggle: 'Toggle color theme',
+    langToggle: 'Switch language',
+    menu: 'Open menu',
+  },
+  picker: {
+    langTitle: 'Choose a language',
+    modeTitle: 'Choose a view',
+    interactive: 'Interactive',
+    simple: 'Simple',
   },
   footer: {
     note: 'Built as one page and six layers.',
