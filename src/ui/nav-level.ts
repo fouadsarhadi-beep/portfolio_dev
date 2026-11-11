@@ -43,7 +43,6 @@ export function initNavLevel(): void {
     const rect = side.getBoundingClientRect();
     if (rect.height < 10 || rect.bottom < 0 || rect.top > innerHeight) return;
 
-    const padTop = Math.min(Math.max(innerHeight * 0.16, 96), 180);
     const padBottom = Math.min(Math.max(innerHeight * 0.02, 12), 24);
     const canvas = document.querySelector<HTMLElement>('#canvas-mount');
     const cr = canvas ? canvas.getBoundingClientRect() : rect;
@@ -59,18 +58,21 @@ export function initNavLevel(): void {
     }
     if (targets.length !== items.length) return;
 
-    // Min-gap spreading, top to bottom, then clamp into the padded column.
+    // Min-gap spreading, top to bottom, so stacked floors stay readable.
     targets.sort((a, b) => a.y - b.y);
     const h = items.map((li) => li.offsetHeight || 40);
     for (let k = 1; k < targets.length; k++) {
       const minY = targets[k - 1].y + h[targets[k - 1].i] + MIN_GAP;
       if (targets[k].y < minY) targets[k].y = minY;
     }
-    const last = targets[targets.length - 1];
-    const shift = Math.max(0, last.y + h[last.i] - (rect.height - padBottom));
+    // Clamp only the bottom: a pill whose floor has scrolled up out of view
+    // keeps its true (negative) position and is clipped by the container,
+    // instead of piling up at the top on top of the other pills.
     for (const t of targets) {
-      const y = Math.max(padTop, Math.min(rect.height - padBottom - h[t.i], t.y - shift));
+      const y = Math.min(rect.height - padBottom - h[t.i], t.y);
       items[t.i].style.transform = `translateY(${y.toFixed(1)}px)`;
+      // Fully out of view: also take it out of the tab order.
+      items[t.i].style.visibility = (y + h[t.i] < 0 || y > rect.height) ? 'hidden' : '';
     }
     nav.classList.add('leveled');
   };

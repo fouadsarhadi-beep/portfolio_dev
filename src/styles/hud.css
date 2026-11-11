@@ -349,6 +349,9 @@ html[data-theme='dark'] .theme-toggle .icon-moon {
     display: block;
     margin: 0;
     pointer-events: none;
+    /* Pills whose floor has scrolled out of view keep their true position and
+       are clipped here instead of stacking at the top. */
+    overflow: hidden;
   }
 
   .layer-nav.leveled li {
