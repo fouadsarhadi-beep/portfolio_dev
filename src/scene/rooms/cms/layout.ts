@@ -1,12 +1,10 @@
 /** @module scene/rooms/cms/layout: places the publishing studio props. @see docs/ROOMS.md (6 cms), src/scene/rooms/props/index.ts */
 import * as THREE from 'three';
-import { FOOTPRINT, WALL_THICK } from '@/config/tuning';
 import { PALETTE, lighten, darken } from '@/config/palette';
 import type { RoomContext } from '@/config/types';
+import { WALL_FACE } from '@/config/tuning';
 import { makeCanvasTexture } from '../props/screen.ts';
 
-const FLOOR_HALF = FOOTPRINT / 2 - 0.26;
-const WALL_FACE = FLOOR_HALF - WALL_THICK * 1.5;
 
 export interface CmsHandles {
   blockTex: THREE.CanvasTexture;

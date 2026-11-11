@@ -1,13 +1,11 @@
 /** @module scene/rooms/translation/layout: places the language studio props. @see docs/ROOMS.md (2 translation), src/scene/rooms/props/index.ts */
 import * as THREE from 'three';
 import { RoundedBoxGeometry } from 'three/addons/geometries/RoundedBoxGeometry.js';
-import { FOOTPRINT, WALL_THICK } from '@/config/tuning';
 import { PALETTE, lighten, darken } from '@/config/palette';
 import type { RoomContext } from '@/config/types';
+import { WALL_FACE } from '@/config/tuning';
 import { makeCanvasTexture } from '../props/screen.ts';
 
-const FLOOR_HALF = FOOTPRINT / 2 - 0.26;
-const WALL_FACE = FLOOR_HALF - WALL_THICK * 1.5; // inner face of the back walls
 
 export interface TranslationHandles {
   screenTex: THREE.CanvasTexture;

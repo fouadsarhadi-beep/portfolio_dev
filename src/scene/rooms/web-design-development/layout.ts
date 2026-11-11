@@ -1,14 +1,12 @@
 /** @module scene/rooms/web-design-development/layout: places the merged workspace props. @see docs/ROOMS.md (4), src/scene/rooms/props/index.ts */
 import * as THREE from 'three';
 import { RoundedBoxGeometry } from 'three/addons/geometries/RoundedBoxGeometry.js';
-import { FOOTPRINT, WALL_THICK } from '@/config/tuning';
 import { PALETTE, lighten } from '@/config/palette';
 import type { RoomContext } from '@/config/types';
+import { WALL_FACE } from '@/config/tuning';
 import { makeCanvasTexture } from '../props/screen.ts';
 import { drawEditor, drawStroke, drawBrowser } from './anim';
 
-const FLOOR_HALF = FOOTPRINT / 2 - 0.26;
-const WALL_FACE = FLOOR_HALF - WALL_THICK * 1.5;
 
 export interface WddHandles {
   editorTex: THREE.CanvasTexture;

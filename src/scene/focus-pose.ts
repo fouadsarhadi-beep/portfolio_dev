@@ -6,7 +6,7 @@ const ZOOM_DESKTOP = 1.45;
 const ZOOM_MOBILE = 1.35;
 const COL_FILL = 0.86;        // the floor fills most of, not all of, its share
 const FLOOR_W = FOOTPRINT * Math.SQRT2; // 8.49: projected slab width in the isometric view
-const FLOOR_H = (FOOTPRINT + SLAB_T) * 0.8165; // 6.37: projected slab height with its walls
+const FLOOR_H = (FOOTPRINT + SLAB_T) * 0.8165; // 6.81: projected slab height with its walls
 const TOWER_FILL = 0.53;      // share of its cell's width the tower fills (three size cuts + one 10% camera zoom-out, air around it)
 
 /**

@@ -1,12 +1,11 @@
-/** @module scene/rooms/shell: room floor, back walls, AO strips and the shared material kit. @see docs/ROOMS.md (Rules), docs/DESIGN.md, src/scene/rooms/props/screen.ts, src/scene/scene-theme.ts */
+/** @module scene/rooms/shell: room floor, back walls, AO strips and the shared material kit. @see src/scene/rooms/geometry.ts, docs/ROOMS.md (Rules), docs/DESIGN.md, src/scene/rooms/props/screen.ts */
 import * as THREE from 'three';
-import { FOOTPRINT, WALL_H, WALL_THICK } from '@/config/tuning';
+import { WALL_H, WALL_THICK } from '@/config/tuning';
 import { PALETTE, lighten, darken } from '@/config/palette';
 import type { MaterialKit } from '@/config/types';
+import { FLOOR_HALF, WALL_CENTER, WALL_LEN } from '@/config/tuning';
 import { makeGradientTexture } from './props/screen';
 import { registerMaterial } from '../scene-theme';
-
-const FLOOR_HALF = FOOTPRINT / 2 - 0.26; // room floor inset from the slab edge
 
 /** Disposes a room's geometries and texture maps. Shared kit materials and
  *  theme-registered materials survive (they belong to the scene, not the room). */
@@ -91,24 +90,27 @@ export function buildShell(ctx: { mat: MaterialKit }): THREE.Group {
 }
 
 function addWall(group: THREE.Group, ctx: { mat: MaterialKit }, axis: 'x' | 'z'): void {
-  const inner = FLOOR_HALF - WALL_THICK;
-  const len = FLOOR_HALF * 2;
+  // WALL_CENTER puts the wall's outer face exactly on the slab's edge
+  // (FOOTPRINT/2), so the room box is flush with the floor's back edges.
+  const at = WALL_CENTER;
+  const len = WALL_LEN;
   const capMat = ctx.mat.white;
   if (axis === 'x') {
     const wall = new THREE.Mesh(new THREE.BoxGeometry(WALL_THICK, WALL_H, len), ctx.mat.wall);
-    wall.position.set(-inner, WALL_H / 2, 0);
+    wall.position.set(-at, WALL_H / 2, 0);
     setWallShadows(wall);
     group.add(wall);
-    const cap = new THREE.Mesh(new THREE.BoxGeometry(WALL_THICK + 0.05, 0.05, len + 0.05), capMat);
-    cap.position.set(-inner, WALL_H + 0.02, 0);
+    // The cap is flush with the wall's ends, not overhanging the slab edge.
+    const cap = new THREE.Mesh(new THREE.BoxGeometry(WALL_THICK + 0.05, 0.05, len), capMat);
+    cap.position.set(-at, WALL_H + 0.02, 0);
     group.add(cap);
   } else {
     const wall = new THREE.Mesh(new THREE.BoxGeometry(len, WALL_H, WALL_THICK), ctx.mat.wallShade);
-    wall.position.set(0, WALL_H / 2, -inner);
+    wall.position.set(0, WALL_H / 2, -at);
     setWallShadows(wall);
     group.add(wall);
-    const cap = new THREE.Mesh(new THREE.BoxGeometry(len + 0.05, 0.05, WALL_THICK + 0.05), capMat);
-    cap.position.set(0, WALL_H + 0.02, -inner);
+    const cap = new THREE.Mesh(new THREE.BoxGeometry(len, 0.05, WALL_THICK + 0.05), capMat);
+    cap.position.set(0, WALL_H + 0.02, -at);
     group.add(cap);
   }
 }
@@ -124,7 +126,7 @@ function addAoStrip(group: THREE.Group, axis: 'x' | 'z'): void {
   const mat = new THREE.MeshBasicMaterial({ map: tex, transparent: true, opacity: 0.09, depthWrite: false });
   const strip = new THREE.Mesh(new THREE.PlaneGeometry(WALL_H, 0.34), mat);
   strip.rotation.x = -Math.PI / 2;
-  const at = FLOOR_HALF - WALL_THICK - 0.17;
+  const at = WALL_CENTER + WALL_THICK / 2 - 0.17;
   if (axis === 'x') {
     strip.rotation.z = Math.PI / 2;
     strip.position.set(-at + 0.17, 0.045, 0);

@@ -1,12 +1,8 @@
 /** @module scene/rooms/content/layout: places every prop in the writing studio. @see docs/ROOMS.md (1 content), src/scene/rooms/props/index.ts */
 import * as THREE from 'three';
-import { FOOTPRINT, WALL_THICK } from '@/config/tuning';
 import { PALETTE, lighten } from '@/config/palette';
 import type { RoomContext } from '@/config/types';
-
-const FLOOR_HALF = FOOTPRINT / 2 - 0.26;
-const WALL_CENTER = FLOOR_HALF - WALL_THICK; // center of the back walls
-const WALL_FACE = WALL_CENTER - WALL_THICK / 2; // inner face of the back walls
+import { WALL_FACE } from '@/config/tuning';
 
 export function buildLayout(ctx: RoomContext, room: THREE.Group): void {
   const p = ctx.props;

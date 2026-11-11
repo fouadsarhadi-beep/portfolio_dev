@@ -1,14 +1,12 @@
 /** @module scene/rooms/seo/layout: places the analytics command center props. @see docs/ROOMS.md (3 seo), src/scene/rooms/props/index.ts */
 import * as THREE from 'three';
 import { RoundedBoxGeometry } from 'three/addons/geometries/RoundedBoxGeometry.js';
-import { FOOTPRINT, WALL_THICK } from '@/config/tuning';
 import { PALETTE, lighten, darken } from '@/config/palette';
 import type { RoomContext } from '@/config/types';
+import { WALL_FACE } from '@/config/tuning';
 import { makeCanvasTexture } from '../props/screen.ts';
 import { drawDash, drawMetrics } from './anim';
 
-const FLOOR_HALF = FOOTPRINT / 2 - 0.26;
-const WALL_FACE = FLOOR_HALF - WALL_THICK * 1.5;
 
 export interface SeoHandles {
   dashTex: THREE.CanvasTexture;

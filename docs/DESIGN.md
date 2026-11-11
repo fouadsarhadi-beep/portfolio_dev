@@ -70,12 +70,16 @@ Layer accents must stay distinguishable in both themes; dark variants are valida
 ## Geometry constants (src/config/tuning.ts)
 ```ts
 export const FOOTPRINT = 6;            // slab width and depth, world units
-export const SLAB_T = 1.8;             // slab thickness
+export const SLAB_T = 2.34;             // slab thickness; wall height equals it (+30% on 2026-11-11)
 export const WALL_H = SLAB_T;          // wall height equals slab thickness (locked)
 export const WALL_THICK = 0.14;
 export const CORNER_R = 0;             // sharp corners: the slabs are cut stone
-export const LIFT = FOOTPRINT + SLAB_T + 0.4; // 8.2: how far a lifted layer rises
-export const STACK_BASE_Y = 1.35;      // T28: the whole tower floats this high (see below)
+export const LIFT = FOOTPRINT + SLAB_T + 0.4; // 8.74: how far a lifted layer rises
+export const STACK_BASE_Y = SLAB_T / 2 + 0.45; // 1.62: the whole tower floats this high
+// Room shell (derived, see src/config/tuning.ts): FLOOR_HALF insets the wood
+// deck from the slab edge; the two back walls stand with their OUTER face
+// exactly on the slab edge (WALL_CENTER = FOOTPRINT/2 - WALL_THICK/2, length
+// FOOTPRINT), so a room is flush with its floor's back edges.
 ```
 Why these numbers
 - Closed stack: each layer's floor sits SLAB_T above the floor below. A lower room's walls then fill exactly the volume of the slab above it, so the stack reads as seven equal chunky plates. When the layer above lifts, the walls appear where that slab's side used to be.

@@ -31,7 +31,7 @@ Search this file before creating anything.
   exports: ThemeName, ThemeColors, THEMES
   uses: src/config/palette
 - tuning.ts: config/tuning: geometry, scroll step, camera and render tuning constants. @see docs/DESIGN.md, docs/MOTION.md, src/config/types.ts
-  exports: FOOTPRINT, SLAB_T, WALL_H, WALL_THICK, CORNER_R, LIFT, STACK_BASE_Y, STEP_VH, CAM_DIR, CAM_DISTANCE, CAM_TARGET_OFFSET_Y, CAM_VIEW_HEIGHT, CAM_DAMP_LAMBDA, CAM_FRAME_OFFSET_Y, OVERVIEW_STEPS, OVERVIEW_ZOOM, OVERVIEW_GAP, OVERVIEW_BASE_ZOOM, LOW_TIER_BASE_ZOOM, EXPOSURE, MAX_PIXEL_RATIO, SHADOW_MAP_DESKTOP, SHADOW_MAP_MOBILE
+  exports: FOOTPRINT, SLAB_T, WALL_H, WALL_THICK, CORNER_R, LIFT, STACK_BASE_Y, FLOOR_HALF, WALL_CENTER, WALL_FACE, WALL_LEN, STEP_VH, CAM_DIR, CAM_DISTANCE, CAM_TARGET_OFFSET_Y, CAM_VIEW_HEIGHT, CAM_DAMP_LAMBDA, CAM_FRAME_OFFSET_Y, OVERVIEW_STEPS, OVERVIEW_ZOOM, OVERVIEW_GAP, OVERVIEW_BASE_ZOOM, LOW_TIER_BASE_ZOOM, EXPOSURE, MAX_PIXEL_RATIO, SHADOW_MAP_DESKTOP, SHADOW_MAP_MOBILE
   uses: src/config/types
 - types.ts: config/types: shared contracts for config, scene and UI. @see docs/WIRING.md, src/config/layers.ts
   exports: PaletteKey, LayerId, Vec3, DocKind, SampleDocument, Sample, LayerConfig, MaterialKit, PropFactory, PropKit, RoomContext, RoomInstance, RoomBuilder, StackEvents, StackDebugState
@@ -133,9 +133,9 @@ Search this file before creating anything.
 - index.ts: scene/rooms/index: room registry; keys match LayerConfig.room. @see docs/WIRING.md (How to add a layer), src/config/layers.ts
   exports: ROOMS
   uses: src/config/types, src/scene/rooms/content, src/scene/rooms/translation, src/scene/rooms/seo, src/scene/rooms/web-design-development, src/scene/rooms/cms, src/scene/rooms/infrastructure
-- shell.ts: scene/rooms/shell: room floor, back walls, AO strips and the shared material kit. @see docs/ROOMS.md (Rules), docs/DESIGN.md, src/scene/rooms/props/screen.ts, src/scene/scene-theme.ts
+- shell.ts: scene/rooms/shell: room floor, back walls, AO strips and the shared material kit. @see src/scene/rooms/geometry.ts, docs/ROOMS.md (Rules), docs/DESIGN.md, src/scene/rooms/props/screen.ts
   exports: disposeObject, createMaterialKit, buildShell
-  uses: src/config/tuning, src/config/palette, src/config/types, src/scene/rooms/props/screen, src/scene/scene-theme
+  uses: src/config/tuning, src/config/palette, src/config/types, src/config/tuning, src/scene/rooms/props/screen, src/scene/scene-theme
 
 ## src/scene/rooms/cms/
 - anim.ts: scene/rooms/cms/anim: idle loops of the publishing studio. @see docs/ROOMS.md (6 cms), docs/MOTION.md (Idle animation)
@@ -146,7 +146,7 @@ Search this file before creating anything.
   uses: src/config/types, src/scene/rooms/shell.ts, src/scene/rooms/cms/layout, src/scene/rooms/cms/anim
 - layout.ts: scene/rooms/cms/layout: places the publishing studio props. @see docs/ROOMS.md (6 cms), src/scene/rooms/props/index.ts
   exports: CmsHandles, drawBlocks, drawCalendar, buildLayout
-  uses: src/config/tuning, src/config/palette, src/config/types, src/scene/rooms/props/screen.ts
+  uses: src/config/palette, src/config/types, src/config/tuning, src/scene/rooms/props/screen.ts
 
 ## src/scene/rooms/content/
 - anim.ts: scene/rooms/content/anim: the five idle loops of the writing studio. @see docs/ROOMS.md (1 content), docs/MOTION.md (Idle animation)
@@ -156,7 +156,7 @@ Search this file before creating anything.
   uses: src/config/types, src/scene/rooms/shell.ts, src/scene/rooms/content/layout, src/scene/rooms/content/anim
 - layout.ts: scene/rooms/content/layout: places every prop in the writing studio. @see docs/ROOMS.md (1 content), src/scene/rooms/props/index.ts
   exports: buildLayout
-  uses: src/config/tuning, src/config/palette, src/config/types
+  uses: src/config/palette, src/config/types, src/config/tuning
 
 ## src/scene/rooms/infrastructure/
 - anim.ts: scene/rooms/infrastructure/anim: idle loops of the server facility. @see docs/ROOMS.md (7 infrastructure), docs/MOTION.md (Idle animation)
@@ -167,7 +167,7 @@ Search this file before creating anything.
   uses: src/config/types, src/scene/rooms/shell.ts, src/scene/rooms/infrastructure/layout, src/scene/rooms/infrastructure/anim
 - layout.ts: scene/rooms/infrastructure/layout: places the server facility props. @see docs/ROOMS.md (7 infrastructure), src/scene/rooms/props/index.ts
   exports: InfraHandles, buildLayout
-  uses: src/config/tuning, src/config/palette, src/config/types, src/scene/rooms/props/screen.ts, src/scene/rooms/infrastructure/anim
+  uses: src/config/palette, src/config/tuning, src/config/types, src/config/tuning, src/scene/rooms/props/screen.ts, src/scene/rooms/infrastructure/anim
 
 ## src/scene/rooms/props/
 - cardgrid.ts: scene/rooms/props/cardgrid: wall grid of component cards (names: card-0..5). @see src/scene/rooms/props/index.ts
@@ -249,7 +249,7 @@ Search this file before creating anything.
   uses: src/config/types, src/scene/rooms/shell.ts, src/scene/rooms/seo/layout, src/scene/rooms/seo/anim
 - layout.ts: scene/rooms/seo/layout: places the analytics command center props. @see docs/ROOMS.md (3 seo), src/scene/rooms/props/index.ts
   exports: SeoHandles, buildLayout
-  uses: src/config/tuning, src/config/palette, src/config/types, src/scene/rooms/props/screen.ts, src/scene/rooms/seo/anim
+  uses: src/config/palette, src/config/types, src/config/tuning, src/scene/rooms/props/screen.ts, src/scene/rooms/seo/anim
 
 ## src/scene/rooms/translation/
 - anim.ts: scene/rooms/translation/anim: idle loops of the language studio. @see docs/ROOMS.md (2 translation), docs/MOTION.md (Idle animation)
@@ -260,7 +260,7 @@ Search this file before creating anything.
   uses: src/config/types, src/scene/rooms/shell.ts, src/scene/rooms/translation/layout, src/scene/rooms/translation/anim
 - layout.ts: scene/rooms/translation/layout: places the language studio props. @see docs/ROOMS.md (2 translation), src/scene/rooms/props/index.ts
   exports: TranslationHandles, drawDualPane, buildLayout
-  uses: src/config/tuning, src/config/palette, src/config/types, src/scene/rooms/props/screen.ts
+  uses: src/config/palette, src/config/types, src/config/tuning, src/scene/rooms/props/screen.ts
 
 ## src/scene/rooms/web-design-development/
 - anim.ts: scene/rooms/web-design-development/anim: idle loops of the merged workspace. @see docs/ROOMS.md (4), docs/MOTION.md (Idle animation)
@@ -271,7 +271,7 @@ Search this file before creating anything.
   uses: src/config/types, src/scene/rooms/shell.ts, src/scene/rooms/web-design-development/layout, src/scene/rooms/web-design-development/anim
 - layout.ts: scene/rooms/web-design-development/layout: places the merged workspace props. @see docs/ROOMS.md (4), src/scene/rooms/props/index.ts
   exports: WddHandles, buildLayout
-  uses: src/config/tuning, src/config/palette, src/config/types, src/scene/rooms/props/screen.ts, src/scene/rooms/web-design-development/anim
+  uses: src/config/palette, src/config/types, src/config/tuning, src/scene/rooms/props/screen.ts, src/scene/rooms/web-design-development/anim
 
 ## src/scene/stack/
 - dust.ts: scene/stack/dust: pooled pixel dust along the two front faces at touchdown (T28). @see docs/MOTION.md (Slam), src/scene/stack/landing.ts
