@@ -40,13 +40,14 @@ export const OVERVIEW_ZOOM = 0.5;
 // (WALL_H = 1.8) or the exploded floors would clip the slab above them.
 export const OVERVIEW_GAP = 2.2;
 
-// Base view zoom (user sketch 2026-11-08): the tower renders this much bigger
-// than the raw frustum fit, so the 50% stage column carries a taller stack.
+// Base view zoom (user sketch 2026-11-08, resized 2026-11-11: the whole tower
+// is 15% smaller): the tower renders this much bigger than the raw frustum fit,
+// so the 50% stage column carries a taller stack.
 // Mirrors --tower-w in tokens.css; capped per cell by overviewFitZoom
 // (src/scene/focus-pose.ts) so the silhouette never bleeds out of its column.
-export const OVERVIEW_BASE_ZOOM = 1.4;
+export const OVERVIEW_BASE_ZOOM = 1.19; // 1.4 x 0.85
 // The low tier keeps its own, smaller zoom: fewer pixels, wider safety margin.
-export const LOW_TIER_BASE_ZOOM = 1.3;
+export const LOW_TIER_BASE_ZOOM = 1.11; // 1.3 x 0.85
 
 // Render
 export const EXPOSURE = 1.05;

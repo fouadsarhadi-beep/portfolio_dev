@@ -7,7 +7,7 @@ const ZOOM_MOBILE = 1.35;
 const COL_FILL = 0.86;        // the floor fills most of, not all of, its share
 const FLOOR_W = FOOTPRINT * Math.SQRT2; // 8.49: projected slab width in the isometric view
 const FLOOR_H = (FOOTPRINT + SLAB_T) * 0.8165; // 6.37: projected slab height with its walls
-const TOWER_FILL = 0.85;      // share of its cell's width the tower fills: 7.5% air each side
+const TOWER_FILL = 0.7225;    // share of its cell's width the tower fills (0.85 fill x 0.85 size: the whole tower is 15% smaller, with air around it)
 
 /**
  * T39: the floor pills left the stage cell for their own column, so the tower
@@ -20,11 +20,10 @@ export function stageShiftPx(): number {
 
 /**
  * The base overview zoom for a cell. The tower always fills TOWER_FILL of its
- * cell's width (7.5% margin on each side), so the air around it is constant at
- * every viewport: the tower never shrinks below that share when the screen
- * gets smaller, and on large screens it is capped at OVERVIEW_BASE_ZOOM so it
- * does not grow without bound. Pure maths, no scene access; boot applies it and
- * re-fits it on resize.
+ * cell's width, so the air around it is constant at every viewport: the tower
+ * never shrinks below that share when the screen gets smaller, and on large
+ * screens it is capped at OVERVIEW_BASE_ZOOM so it does not grow without bound.
+ * Pure maths, no scene access; boot applies it and re-fits it on resize.
  */
 export function overviewFitZoom(cellW: number, cellH: number): number {
   const fit = (TOWER_FILL * cellW * CAM_VIEW_HEIGHT) / (cellH * FLOOR_W);
