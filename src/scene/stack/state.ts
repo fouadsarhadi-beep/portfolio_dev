@@ -1,5 +1,5 @@
 /** @module scene/stack/state: scroll-derived step, the u and e arrays, the invariant, window.__stack. @see docs/MOTION.md (Scroll mapping, State, Debug), src/scene/stack/motion.ts */
-import { LIFT, OVERVIEW_GAP, OVERVIEW_STEPS, SLAB_T, STACK_BASE_Y } from '@/config/tuning';
+import { LIFT, OVERVIEW_GAP, OVERVIEW_RAMP, OVERVIEW_STEPS, SLAB_T, STACK_BASE_Y } from '@/config/tuning';
 import { LAYERS } from '@/config/layers';
 import * as THREE from 'three';
 
@@ -61,8 +61,10 @@ export function createState(): StackState {
       const stepPx = STEP_PX_FACTOR * viewportH;
       state.s = Math.min(STEPS, Math.max(0, (scrollY - stageTop) / stepPx));
       // Past the last floor the step holds and the camera pulls back instead, so
-      // the sixth floor keeps the frame for a few steps of scroll.
-      state.overview = clamp01((state.s - LAYER_STEPS) / OVERVIEW_STEPS);
+      // the sixth floor keeps the frame for a few steps of scroll. The ramp to
+      // the exploded view is quick (OVERVIEW_RAMP steps); the rest of the range
+      // holds the six separated slabs for a few slow scrolls (user review).
+      state.overview = clamp01((state.s - LAYER_STEPS) / OVERVIEW_RAMP);
       let m = state.step;
       while (m < LAYER_STEPS && state.s >= m + OPEN_AT) m++;
       while (m > 0 && state.s < m - 1 + CLOSE_AT) m--;

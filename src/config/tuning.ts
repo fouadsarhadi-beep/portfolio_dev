@@ -50,11 +50,15 @@ export const CAM_DAMP_LAMBDA = 6;                        // target Y damping
 // CSS --hero-lift mirror is gone; the camera offset stays.)
 export const CAM_FRAME_OFFSET_Y = CAM_VIEW_HEIGHT * 0.22; // ≈ 200px at 900px tall
 
-// End of the scroll (user review 2026-11-07, sharpened 2026-11-11): after the
-// last floor opens, one more step pulls the camera right back and spreads the
-// six floors into an exploded column (the hamburger ad), so every room reads at
-// once. The step itself stays on the last layer.
-export const OVERVIEW_STEPS = 1;
+// End of the scroll (user review 2026-11-11): after the last floor opens, the
+// camera pulls back and explodes the column. The ramp itself is quick (one
+// step, OVERVIEW_RAMP), and the remaining OVERVIEW_STEPS hold the six
+// separated slabs on screen for a few slow scrolls before the stage ends --
+// so past the sixth floor there are 4 overview steps and the 5th scroll moves
+// normally into the next sections. The step itself stays on the last layer.
+export const OVERVIEW_STEPS = 4;
+/** The exploded view ramps in over this many steps, then holds at 1. */
+export const OVERVIEW_RAMP = 1;
 export const OVERVIEW_ZOOM = 0.5;
 // Extra air between floors in the overview. It has to clear a room's back walls
 // (WALL_H = SLAB_T = 2.34) or the exploded floors would clip the slab above them.

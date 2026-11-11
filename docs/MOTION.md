@@ -1,14 +1,14 @@
 # MOTION: scroll, lift, slam, camera, interaction
 
-Layers are indexed 0 (top) to N-1 (bottom). N = 6. LAYER_STEPS = N - 1 = 5 open one floor each; OVERVIEW_STEPS = 1 more snaps the camera right back and explodes the column, so the scroll range is STEPS = 6.
+Layers are indexed 0 (top) to N-1 (bottom). N = 6. LAYER_STEPS = N - 1 = 5 open one floor each; OVERVIEW_STEPS = 4 more steps past the sixth floor, so the scroll range is STEPS = 9.
 
 ## Scroll mapping
-- `#stage` height = 100svh + STEPS x STEP_VH (STEP_VH = 80svh). Total about 580svh.
+- `#stage` height = 100svh + STEPS x STEP_VH (STEP_VH = 80svh). Total about 820svh.
 - Its child is `position: sticky; top: 0; height: 100svh` and holds the canvas, the stage columns and the HUD.
 - progress s = (scrollY - stageTop) / STEP_PX, where STEP_PX = 0.8 x innerHeight. Clamp to 0..STEPS.
 - Wanted step m uses hysteresis so edges do not flicker: open to m+1 when s >= m + 0.2 (early, so the stack starts separating on the first scroll and the sixth floor lands lower and centred). Close to m-1 when s < m - 1 + 0.1. The step only ever runs 0..LAYER_STEPS.
 - Step m means layers 0..m-1 are lifted. Layer m is exposed. Layers below it stay closed.
-- Past the last floor the step holds and `overview` ramps 0 to 1 across OVERVIEW_STEPS (one step: the scroll after the sixth floor lands the exploded view): every layer's height blends from the opened stack to `spreadY`, an evenly gapped column (SLAB_T + OVERVIEW_GAP apart), every room opens (e ramps up on a cubic so walls never poke through the slab above), the camera target follows the middle of the spread column and the zoom pulls right back to OVERVIEW_ZOOM (0.5). The floors read as the exploded hamburger-ad stack: one room per band, air between them.
+- Past the last floor the step holds and `overview` ramps 0 to 1 over OVERVIEW_RAMP = 1 step (quick), then HOLDS at 1 for the remaining OVERVIEW_STEPS - 1 steps, so the six separated slabs stay on screen for a few slow scrolls: of the 4 steps past floor 6, the first snaps to the exploded view and the next ones just scroll slowly past it; the 5th scroll past the sixth floor leaves the stage and moves normally into the sections below. During the ramp every layer's height blends from the opened stack to `spreadY`, an evenly gapped column (SLAB_T + OVERVIEW_GAP apart), every room opens (e ramps up on a cubic so walls never poke through the slab above), the camera target follows the middle of the spread column and the zoom pulls right back to OVERVIEW_ZOOM (0.5). The floors read as the exploded hamburger-ad stack: one room per band, air between them.
 - Triggered, not scrubbed: a step change starts timed tweens. Scroll never drives the tween position directly.
 
 ## State (src/scene/stack/state.ts)
