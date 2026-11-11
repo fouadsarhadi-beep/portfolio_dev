@@ -81,6 +81,8 @@ const lines = (text, size, width) => Math.max(1, Math.ceil((text.length * size *
 const gapPx = (w) => Math.min(Math.max(w * GAP_MIN / 100, GAP_LO), GAP_HI);
 const insetPx = (w) => (w <= 600 ? w * 0.06 : w * INSET / 100);
 const bandPx = (w) => w - 2 * insetPx(w);
+// The stage grid halves the shell gap between its columns (layout.css).
+const stageGapPx = (w) => gapPx(w) / 2;
 
 // --- checks -----------------------------------------------------------------
 const checks = [];
@@ -100,6 +102,7 @@ for (const w of SIZES) {
 
   // 1. The stage: the side cells hold their content, or the stage is one cell.
   if (fivePart) {
+    const gap = stageGapPx(w);
     const usable = band - 2 * gap;
     const side = Math.max(SIDE_MIN, (usable * SIDE_FR) / (SIDE_FR * 2 + TOWER_FR));
     const tower = usable - 2 * side;
@@ -113,6 +116,7 @@ for (const w of SIZES) {
 
   // 2. The side column: the info panel and the nav must not meet.
   if (fivePart) {
+    const gap = stageGapPx(w);
     const usable = band - 2 * gap;
     const side = Math.max(SIDE_MIN, (usable * SIDE_FR) / (SIDE_FR * 2 + TOWER_FR));
     const inner = side - 2 * CARD_PAD[1] - 2;

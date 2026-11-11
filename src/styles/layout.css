@@ -43,7 +43,9 @@
      tower's cell gives up the difference. */
   grid-template-columns: minmax(200px, 15fr) minmax(0, 50fr) minmax(200px, 15fr);
   grid-template-rows: auto minmax(0, 1fr) auto;
-  column-gap: var(--page-gap);
+  /* Half the shell's gap: the side columns sit closer to the tower (user
+     review 2026-11-11) without touching it. */
+  column-gap: calc(var(--page-gap) / 2);
   row-gap: clamp(8px, 2vh, 20px);
   /* Inline only: the block edges belong to the pieces (sections.css), so the
      canvas in the middle cell keeps the stage's full height and the tower keeps
